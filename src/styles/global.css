@@ -173,26 +173,26 @@ body {
 }
 
 .masonry-container {
-  column-count: 4;
-  column-gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
 }
 
 @media (max-width: 1024px) {
   .masonry-container {
-    column-count: 3;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 768px) {
   .masonry-container {
-    column-count: 2;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 .masonry-item {
-  display: inline-block;
+  display: block;
   width: 100%;
-  break-inside: avoid;
 }
 
 .masonry-item img {

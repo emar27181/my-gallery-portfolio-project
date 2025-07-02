@@ -23,6 +23,7 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     <div class="sort-container">
       <label for="sort-select" class="sort-label">並び順:</label>
       <select id="sort-select" class="sort-select">
+        <option value="custom">カスタム順</option>
         <option value="date-desc">日付 (新しい順)</option>
         <option value="date-asc">日付 (古い順)</option>
         <option value="title-asc">タイトル (あ-ん)</option>
@@ -36,8 +37,8 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   <div id="gallery">
     <div class="masonry-container" id="masonry-container">
       {
-        images.map(({ src, alt, title, tags, date }) => (
-          <div class="masonry-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]}>
+        images.map(({ src, alt, title, tags, date }, index) => (
+          <div class="masonry-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index}>
             <img
               src={src}
               alt={alt}
@@ -70,7 +71,7 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
 
 <script>
   let currentFilter = 'all';
-  let currentSort = 'date-desc';
+  let currentSort = 'custom';
   
   function sortGallery(sortBy) {
     const masonryContainer = document.getElementById('masonry-container');
@@ -78,6 +79,8 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     
     items.sort((a, b) => {
       switch (sortBy) {
+        case 'custom':
+          return parseInt(a.getAttribute('data-index')) - parseInt(b.getAttribute('data-index'));
         case 'date-desc':
           return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
         case 'date-asc':
