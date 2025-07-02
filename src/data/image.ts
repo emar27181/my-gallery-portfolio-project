@@ -49,7 +49,7 @@ export const images: ImageData[] = [
     date: '2024-11-30',
     type: 'image'
   },
-  
+
   // Character Illustrations
   {
     src: '/images/image_girl.jpg',
@@ -115,7 +115,7 @@ export const images: ImageData[] = [
     date: '2024-11-15',
     type: 'image'
   },
-  
+
   // Manga/Anime Fan Art
   {
     src: '/images/image_manga_deku.jpg',
@@ -165,16 +165,6 @@ export const images: ImageData[] = [
     date: '2024-11-05',
     type: 'image'
   },
-  
-  // Game/Gaming Related
-  {
-    src: '/images/image_valo_omen1.jpg',
-    alt: 'Omen Valorant Art',
-    title: 'Omen from Valorant',
-    tags: ['イラスト'],
-    date: '2024-11-01',
-    type: 'image'
-  },
   {
     src: '/images/image_icon_astra.jpg',
     alt: 'Astra Icon',
@@ -191,7 +181,7 @@ export const images: ImageData[] = [
     date: '2024-10-29',
     type: 'image'
   },
-  
+
   // Hand Studies
   {
     src: '/images/image_hand1.jpg',
@@ -249,7 +239,7 @@ export const images: ImageData[] = [
     date: '2024-10-14',
     type: 'image'
   },
-  
+
   // Photography
   {
     src: '/images/image_photo_cat_nora.jpg',
@@ -323,7 +313,7 @@ export const images: ImageData[] = [
     date: '2024-10-02',
     type: 'image'
   },
-  
+
   // Logos and Generated Art
   {
     src: '/images/image_logo_shandy.jpg',
@@ -357,14 +347,6 @@ export const images: ImageData[] = [
     date: '2024-09-24',
     type: 'image'
   },
-  
+
   // Research
-  {
-    src: '/images/image_research_palette.jpg',
-    alt: 'Color Palette Research',
-    title: 'Illustration Color Palette Study',
-    tags: ['イラスト'],
-    date: '2024-10-01',
-    type: 'image'
-  }
 ];
