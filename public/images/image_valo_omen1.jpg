@@ -1,0 +1,11 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#0984e3"/>
+  <rect x="50" y="50" width="300" height="200" fill="#2d3436" rx="10"/>
+  <text x="200" y="130" text-anchor="middle" font-family="Arial" font-size="18" fill="#00b894">VALORANT</text>
+  <text x="200" y="160" text-anchor="middle" font-family="Arial" font-size="14" fill="#ffffff">Omen Ace</text>
+  <circle cx="100" cy="200" r="15" fill="#e17055"/>
+  <circle cx="150" cy="200" r="15" fill="#e17055"/>
+  <circle cx="200" cy="200" r="15" fill="#e17055"/>
+  <circle cx="250" cy="200" r="15" fill="#e17055"/>
+  <circle cx="300" cy="200" r="15" fill="#e17055"/>
+</svg>

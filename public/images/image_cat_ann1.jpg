@@ -1,0 +1,8 @@
+<svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="400" fill="#ffeaa7"/>
+  <circle cx="150" cy="150" r="40" fill="#2d3436"/>
+  <circle cx="130" cy="140" r="8" fill="#ffffff"/>
+  <circle cx="170" cy="140" r="8" fill="#ffffff"/>
+  <path d="M120 180 Q150 200 180 180" stroke="#2d3436" stroke-width="3" fill="none"/>
+  <text x="150" y="300" text-anchor="middle" font-family="Arial" font-size="16" fill="#2d3436">Ann the Cat</text>
+</svg>

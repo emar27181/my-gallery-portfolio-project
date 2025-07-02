@@ -1,0 +1,14 @@
+<svg width="350" height="500" xmlns="http://www.w3.org/2000/svg">
+  <rect width="350" height="500" fill="#ffffff"/>
+  <text x="175" y="40" text-anchor="middle" font-family="Arial" font-size="16" fill="#2d3436">Color Research</text>
+  <rect x="50" y="70" width="60" height="60" fill="#e17055"/>
+  <rect x="120" y="70" width="60" height="60" fill="#0984e3"/>
+  <rect x="190" y="70" width="60" height="60" fill="#00b894"/>
+  <rect x="260" y="70" width="60" height="60" fill="#fdcb6e"/>
+  <rect x="50" y="140" width="60" height="60" fill="#6c5ce7"/>
+  <rect x="120" y="140" width="60" height="60" fill="#a29bfe"/>
+  <rect x="190" y="140" width="60" height="60" fill="#fd79a8"/>
+  <rect x="260" y="140" width="60" height="60" fill="#e84393"/>
+  <text x="175" y="240" text-anchor="middle" font-family="Arial" font-size="12" fill="#636e72">Color Palette Study</text>
+  <text x="175" y="260" text-anchor="middle" font-family="Arial" font-size="12" fill="#636e72">for Illustration</text>
+</svg>

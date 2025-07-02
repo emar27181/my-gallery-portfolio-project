@@ -1,0 +1,25 @@
+---
+import Gallery from '../components/Gallery.astro';
+import '../styles/global.css';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Portfolio Gallery</title>
+	</head>
+	<body class="bg-gray-50 min-h-screen">
+		<div class="container mx-auto px-4 py-8">
+			<header class="mb-8 text-center">
+				<h1 class="text-4xl font-bold text-gray-900 mb-2">Portfolio Gallery</h1>
+				<p class="text-gray-600">作品・研究・ゲームなどの成果をまとめたポートフォリオ</p>
+			</header>
+			<main>
+				<Gallery />
+			</main>
+		</div>
+	</body>
+</html>
