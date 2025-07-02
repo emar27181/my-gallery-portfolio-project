@@ -305,6 +305,16 @@ body {
   margin: 0;
 }
 
+.navbar-title-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.navbar-title-link:hover {
+  opacity: 0.8;
+}
+
 .navbar-actions {
   flex-shrink: 0;
 }
@@ -458,4 +468,9 @@ body {
   .mobile-menu-content {
     width: 280px;
   }
+}
+
+/* Top anchor positioning */
+#top {
+  scroll-margin-top: 80px;
 }
