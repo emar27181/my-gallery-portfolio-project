@@ -1,34 +1,55 @@
 ---
 import { images } from '../data/image';
 const breakpointCols = { default: 4, 1024: 3, 768: 2, 640: 2 };
+
+// Get unique tags from all images
+const allTags = [...new Set(images.flatMap(image => image.tags))];
 ---
 
 <div class="gallery-container">
   <!-- 🔍 検索UI（機能は未実装） -->
-  <input
-    type="text"
-    placeholder="Search..."
-    class="search-input"
-  />
+  <div class="search-container">
+    <svg class="search-icon" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+    </svg>
+    <input
+      type="text"
+      placeholder="Search..."
+      class="search-input"
+      id="search-input"
+    />
+  </div>
 
-  <!-- 🏷️ タグUI（機能は未実装） -->
-  <div class="tag-container">
-    <button class="tag-button">#illust</button>
-    <button class="tag-button">#manga</button>
-    <button class="tag-button">#game</button>
-    <button class="tag-button">#photo</button>
-    <button class="tag-button">#study</button>
-    <button class="tag-button">#logo</button>
-    <button class="tag-button">#ai</button>
-    <button class="tag-button">#research</button>
+  <!-- 🏷️ フィルター & ソート -->
+  <div class="controls-container">
+    <div class="filter-container">
+      <label for="filter-select" class="filter-label">Filter:</label>
+      <select id="filter-select" class="filter-select">
+        <option value="all">All Categories</option>
+        {allTags.map(tag => (
+          <option value={tag}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</option>
+        ))}
+      </select>
+    </div>
+    
+    <div class="sort-container">
+      <label for="sort-select" class="sort-label">Sort by:</label>
+      <select id="sort-select" class="sort-select">
+        <option value="date-desc">Date (Newest)</option>
+        <option value="date-asc">Date (Oldest)</option>
+        <option value="title-asc">Title (A-Z)</option>
+        <option value="title-desc">Title (Z-A)</option>
+        <option value="category">Category</option>
+      </select>
+    </div>
   </div>
 
   <!-- 🖼 ギャラリー -->
   <div id="gallery">
-    <div class="masonry-container">
+    <div class="masonry-container" id="masonry-container">
       {
-        images.map(({ src, alt, title }) => (
-          <div class="masonry-item">
+        images.map(({ src, alt, title, tags, date }) => (
+          <div class="masonry-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]}>
             <img
               src={src}
               alt={alt}
@@ -47,9 +68,86 @@ const breakpointCols = { default: 4, 1024: 3, 768: 2, 640: 2 };
 
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const galleryImages = document.querySelectorAll('#gallery img');
+  let currentFilter = 'all';
+  let currentSort = 'date-desc';
+  
+  function sortGallery(sortBy) {
+    const masonryContainer = document.getElementById('masonry-container');
+    const items = Array.from(document.querySelectorAll('.masonry-item'));
     
+    items.sort((a, b) => {
+      switch (sortBy) {
+        case 'date-desc':
+          return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+        case 'date-asc':
+          return new Date(a.getAttribute('data-date')) - new Date(b.getAttribute('data-date'));
+        case 'title-asc':
+          return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'));
+        case 'title-desc':
+          return b.getAttribute('data-title').localeCompare(a.getAttribute('data-title'));
+        case 'category':
+          const categoryA = a.getAttribute('data-category');
+          const categoryB = b.getAttribute('data-category');
+          if (categoryA === categoryB) {
+            // Secondary sort by date if categories are the same
+            return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+          }
+          return categoryA.localeCompare(categoryB);
+        default:
+          return 0;
+      }
+    });
+    
+    // Clear container and re-append sorted items
+    masonryContainer.innerHTML = '';
+    items.forEach(item => {
+      masonryContainer.appendChild(item);
+    });
+    
+    currentSort = sortBy;
+    
+    // Re-apply current filter after sorting
+    filterGallery(currentFilter);
+  }
+  
+  function filterGallery(selectedTag) {
+    const masonryItems = document.querySelectorAll('.masonry-item');
+    
+    masonryItems.forEach(item => {
+      const itemTags = item.getAttribute('data-tags').split(',');
+      
+      if (selectedTag === 'all' || itemTags.includes(selectedTag)) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+    
+    currentFilter = selectedTag;
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialize with default sort
+    sortGallery(currentSort);
+    
+    // Add change handler to filter select
+    const filterSelect = document.getElementById('filter-select');
+    if (filterSelect) {
+      filterSelect.addEventListener('change', (e) => {
+        filterGallery(e.target.value);
+      });
+    }
+    
+    // Add change handler to sort select
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', (e) => {
+        sortGallery(e.target.value);
+      });
+    }
+    
+    // Add click handlers to gallery images
+    const galleryImages = document.querySelectorAll('#gallery img');
     galleryImages.forEach((img) => {
       img.addEventListener('click', () => {
         const src = img.getAttribute('data-src') || img.getAttribute('src');
