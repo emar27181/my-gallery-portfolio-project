@@ -3,28 +3,28 @@ import { images } from '../data/image';
 const breakpointCols = { default: 4, 1024: 3, 768: 2, 640: 2 };
 ---
 
-<div class="mb-8">
+<div class="gallery-container">
   <!-- 🔍 検索UI（機能は未実装） -->
   <input
     type="text"
     placeholder="Search..."
-    class="mb-4 w-full rounded-md border px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    class="search-input"
   />
 
   <!-- 🏷️ タグUI（機能は未実装） -->
-  <div class="mb-4 flex flex-wrap gap-2">
-    <button class="rounded-full bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300 transition-colors duration-200">#illust</button>
-    <button class="rounded-full bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300 transition-colors duration-200">#manga</button>
-    <button class="rounded-full bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300 transition-colors duration-200">#game</button>
-    <button class="rounded-full bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300 transition-colors duration-200">#photo</button>
-    <button class="rounded-full bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300 transition-colors duration-200">#study</button>
-    <button class="rounded-full bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300 transition-colors duration-200">#logo</button>
-    <button class="rounded-full bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300 transition-colors duration-200">#ai</button>
-    <button class="rounded-full bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300 transition-colors duration-200">#research</button>
+  <div class="tag-container">
+    <button class="tag-button">#illust</button>
+    <button class="tag-button">#manga</button>
+    <button class="tag-button">#game</button>
+    <button class="tag-button">#photo</button>
+    <button class="tag-button">#study</button>
+    <button class="tag-button">#logo</button>
+    <button class="tag-button">#ai</button>
+    <button class="tag-button">#research</button>
   </div>
 
   <!-- 🖼 ギャラリー -->
-  <div id="gallery" class="xl:-mx-48">
+  <div id="gallery">
     <div class="masonry-container">
       {
         images.map(({ src, alt, title }) => (
@@ -33,7 +33,6 @@ const breakpointCols = { default: 4, 1024: 3, 768: 2, 640: 2 };
               src={src}
               alt={alt}
               title={title}
-              class="mb-[4px] block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
               loading="lazy"
               data-src={src}
               data-alt={alt}
@@ -46,36 +45,6 @@ const breakpointCols = { default: 4, 1024: 3, 768: 2, 640: 2 };
   </div>
 </div>
 
-<style>
-  .masonry-container {
-    column-count: 4;
-    column-gap: 4px;
-  }
-  
-  @media (max-width: 1024px) {
-    .masonry-container {
-      column-count: 3;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .masonry-container {
-      column-count: 2;
-    }
-  }
-  
-  @media (max-width: 640px) {
-    .masonry-container {
-      column-count: 2;
-    }
-  }
-  
-  .masonry-item {
-    display: inline-block;
-    width: 100%;
-    break-inside: avoid;
-  }
-</style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
