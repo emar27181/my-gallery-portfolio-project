@@ -1,6 +1,6 @@
 ---
 import Gallery from '../components/Gallery.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import NavBar from '../components/NavBar.astro';
 import '../styles/global.css';
 ---
 
@@ -13,12 +13,8 @@ import '../styles/global.css';
 		<title>Portfolio Gallery</title>
 	</head>
 	<body>
-		<ThemeToggle />
+		<NavBar />
 		<div class="container" style="padding: 2rem 1rem;">
-			<header class="header">
-				<h1>Portfolio Gallery</h1>
-				<p>作品・研究・ゲームなどの成果をまとめたポートフォリオ</p>
-			</header>
 			<main>
 				<Gallery />
 			</main>
