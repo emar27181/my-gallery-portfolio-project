@@ -54,6 +54,19 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   </div>
 </div>
 
+<!-- Image Modal -->
+<div class="image-modal" id="image-modal">
+  <div class="image-modal-overlay" id="image-modal-overlay">
+    <div class="image-modal-content">
+      <img class="image-modal-img" id="image-modal-img" src="" alt="" />
+      <button class="image-modal-close" id="image-modal-close" aria-label="Close image">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
 
 <script>
   let currentFilter = 'all';
@@ -140,11 +153,62 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
       img.addEventListener('click', () => {
         const src = img.getAttribute('data-src') || img.getAttribute('src');
         const alt = img.getAttribute('data-alt') || img.getAttribute('alt');
+        const title = img.getAttribute('data-title') || img.getAttribute('title');
         
-        if (src && (window as any).openImageModal) {
-          (window as any).openImageModal(src, alt);
-        }
+        openImageModal(src, alt, title);
       });
     });
+    
+    // Image modal functionality
+    const imageModal = document.getElementById('image-modal');
+    const imageModalImg = document.getElementById('image-modal-img');
+    const imageModalClose = document.getElementById('image-modal-close');
+    const imageModalOverlay = document.getElementById('image-modal-overlay');
+    
+    // Close modal button
+    if (imageModalClose) {
+      imageModalClose.addEventListener('click', closeImageModal);
+    }
+    
+    // Close modal when clicking overlay or outside image
+    if (imageModal) {
+      imageModal.addEventListener('click', (e) => {
+        // Close if clicking on the modal background (not on the image or close button)
+        if (e.target === imageModal || e.target === imageModalOverlay) {
+          closeImageModal();
+        }
+      });
+    }
+    
+    // Close modal with escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && imageModal && imageModal.classList.contains('open')) {
+        closeImageModal();
+      }
+    });
   });
+  
+  function openImageModal(src, alt, title) {
+    const imageModal = document.getElementById('image-modal');
+    const imageModalImg = document.getElementById('image-modal-img');
+    
+    if (imageModal && imageModalImg) {
+      imageModalImg.src = src;
+      imageModalImg.alt = alt || title || '';
+      imageModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  
+  function closeImageModal() {
+    const imageModal = document.getElementById('image-modal');
+    
+    if (imageModal) {
+      imageModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+  
+  // Make openImageModal globally available for backwards compatibility
+  (window as any).openImageModal = openImageModal;
 </script>
