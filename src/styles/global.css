@@ -42,6 +42,7 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
+  padding-top: 80px;
 }
 
 .container {
@@ -268,4 +269,59 @@ body {
 
 .theme-toggle .moon-icon {
   color: #6366f1;
+}
+
+/* Navigation Bar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  transition: background-color 0.3s ease;
+}
+
+.navbar-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+}
+
+.navbar-brand {
+  flex-shrink: 0;
+}
+
+.navbar-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.navbar-actions {
+  flex-shrink: 0;
+}
+
+.navbar .theme-toggle {
+  position: static;
+  padding: 0.5rem;
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.navbar .theme-toggle svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (max-width: 768px) {
+  .navbar-content {
+    padding: 0.75rem 1rem;
+  }
 }
