@@ -11,23 +11,23 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   <!-- 🏷️ フィルター & ソート -->
   <div class="controls-container">
     <div class="filter-container">
-      <label for="filter-select" class="filter-label">Filter:</label>
+      <label for="filter-select" class="filter-label">フィルタ:</label>
       <select id="filter-select" class="filter-select">
-        <option value="all">All Categories</option>
+        <option value="all">全て</option>
         {allTags.map(tag => (
-          <option value={tag}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</option>
+          <option value={tag}>{tag}</option>
         ))}
       </select>
     </div>
     
     <div class="sort-container">
-      <label for="sort-select" class="sort-label">Sort by:</label>
+      <label for="sort-select" class="sort-label">並び順:</label>
       <select id="sort-select" class="sort-select">
-        <option value="date-desc">Date (Newest)</option>
-        <option value="date-asc">Date (Oldest)</option>
-        <option value="title-asc">Title (A-Z)</option>
-        <option value="title-desc">Title (Z-A)</option>
-        <option value="category">Category</option>
+        <option value="date-desc">日付 (新しい順)</option>
+        <option value="date-asc">日付 (古い順)</option>
+        <option value="title-asc">タイトル (あ-ん)</option>
+        <option value="title-desc">タイトル (ん-あ)</option>
+        <option value="category">カテゴリ</option>
       </select>
     </div>
   </div>
