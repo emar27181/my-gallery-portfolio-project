@@ -11,13 +11,18 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   <!-- 🏷️ フィルター & ソート -->
   <div class="controls-container">
     <div class="filter-container">
-      <label for="filter-select" class="filter-label">フィルタ:</label>
-      <select id="filter-select" class="filter-select">
-        <option value="all">全て</option>
-        {allTags.map(tag => (
-          <option value={tag}>{tag}</option>
-        ))}
-      </select>
+      <label for="filter-tags" class="filter-label">フィルタ:</label>
+      <div class="filter-tags-container">
+        <div class="filter-tags" id="filter-tags">
+          <span class="filter-placeholder">タグを選択してください</span>
+        </div>
+        <div class="filter-dropdown" id="filter-dropdown">
+          <div class="filter-option" data-value="all">全て</div>
+          {allTags.map(tag => (
+            <div class="filter-option" data-value={tag}>{tag}</div>
+          ))}
+        </div>
+      </div>
     </div>
     
     <div class="sort-container">
@@ -70,8 +75,9 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
 </div>
 
 <script>
-  let currentFilter = 'all';
+  let currentFilter = [];
   let currentSort = 'custom';
+  let selectedTags = [];
   
   function sortGallery(sortBy) {
     const masonryContainer = document.getElementById('masonry-container');
@@ -114,33 +120,71 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     filterGallery(currentFilter);
   }
   
-  function filterGallery(selectedTag) {
+  function filterGallery(selectedTags) {
     const masonryItems = document.querySelectorAll('.masonry-item');
     
     masonryItems.forEach(item => {
       const itemTags = item.getAttribute('data-tags').split(',');
       
-      if (selectedTag === 'all' || itemTags.includes(selectedTag)) {
+      if (selectedTags.length === 0 || selectedTags.includes('all')) {
         item.style.display = 'block';
       } else {
-        item.style.display = 'none';
+        // Check if item has ALL selected tags
+        const hasAllTags = selectedTags.every(tag => itemTags.includes(tag));
+        item.style.display = hasAllTags ? 'block' : 'none';
       }
     });
     
-    currentFilter = selectedTag;
+    currentFilter = selectedTags;
   }
   
   document.addEventListener('DOMContentLoaded', () => {
     // Initialize with default sort
     sortGallery(currentSort);
     
-    // Add change handler to filter select
-    const filterSelect = document.getElementById('filter-select');
-    if (filterSelect) {
-      filterSelect.addEventListener('change', (e) => {
-        filterGallery(e.target.value);
+    // Multi-tag filter functionality
+    const filterTags = document.getElementById('filter-tags');
+    const filterDropdown = document.getElementById('filter-dropdown');
+    const filterOptions = document.querySelectorAll('.filter-option');
+    
+    // Toggle dropdown
+    if (filterTags) {
+      filterTags.addEventListener('click', () => {
+        filterDropdown.classList.toggle('open');
       });
     }
+    
+    // Handle tag selection
+    filterOptions.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const value = e.target.getAttribute('data-value');
+        
+        if (value === 'all') {
+          selectedTags = [];
+          updateFilterDisplay();
+          filterGallery([]);
+        } else {
+          if (selectedTags.includes(value)) {
+            selectedTags = selectedTags.filter(tag => tag !== value);
+          } else {
+            selectedTags.push(value);
+          }
+          updateFilterDisplay();
+          filterGallery(selectedTags);
+        }
+        
+        // Keep dropdown open for multiple selections
+        // Don't close dropdown automatically
+      });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!filterTags.contains(e.target) && !filterDropdown.contains(e.target)) {
+        filterDropdown.classList.remove('open');
+      }
+    });
     
     // Add change handler to sort select
     const sortSelect = document.getElementById('sort-select');
@@ -209,6 +253,58 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     if (imageModal) {
       imageModal.classList.remove('open');
       document.body.style.overflow = '';
+    }
+  }
+  
+  // Update filter display
+  function updateFilterDisplay() {
+    const filterTags = document.getElementById('filter-tags');
+    const placeholder = filterTags.querySelector('.filter-placeholder');
+    const filterOptions = document.querySelectorAll('.filter-option');
+    
+    // Update dropdown options to show selected state
+    filterOptions.forEach(option => {
+      const value = option.getAttribute('data-value');
+      if (selectedTags.includes(value)) {
+        option.classList.add('selected');
+      } else {
+        option.classList.remove('selected');
+      }
+    });
+    
+    if (selectedTags.length === 0) {
+      if (placeholder) {
+        placeholder.style.display = 'block';
+      }
+      // Remove existing tag elements
+      const existingTags = filterTags.querySelectorAll('.selected-tag');
+      existingTags.forEach(tag => tag.remove());
+    } else {
+      if (placeholder) {
+        placeholder.style.display = 'none';
+      }
+      
+      // Remove existing tag elements
+      const existingTags = filterTags.querySelectorAll('.selected-tag');
+      existingTags.forEach(tag => tag.remove());
+      
+      // Add selected tags
+      selectedTags.forEach(tag => {
+        const tagElement = document.createElement('span');
+        tagElement.className = 'selected-tag';
+        tagElement.innerHTML = `${tag} <button class="remove-tag" data-tag="${tag}">×</button>`;
+        filterTags.appendChild(tagElement);
+        
+        // Add remove functionality
+        const removeBtn = tagElement.querySelector('.remove-tag');
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tagToRemove = e.target.getAttribute('data-tag');
+          selectedTags = selectedTags.filter(t => t !== tagToRemove);
+          updateFilterDisplay();
+          filterGallery(selectedTags);
+        });
+      });
     }
   }
   
