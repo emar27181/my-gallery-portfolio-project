@@ -271,22 +271,16 @@ body {
   opacity: 0.9;
 }
 
-.masonry-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+.masonry-grid {
+  display: flex;
+  gap: 8px;
+}
+
+.masonry-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
-}
-
-@media (max-width: 1024px) {
-  .masonry-container {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .masonry-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 .masonry-item {
@@ -298,7 +292,6 @@ body {
   display: block;
   width: 100%;
   height: auto;
-  margin-bottom: 4px;
   border-radius: 0.5rem;
   cursor: pointer;
   transition: opacity 0.2s;

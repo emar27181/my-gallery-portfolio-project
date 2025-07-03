@@ -39,24 +39,23 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   </div>
 
   <!-- 🖼 ギャラリー -->
-  <div id="gallery">
-    <div class="masonry-container" id="masonry-container">
-      {
-        images.map(({ src, alt, title, tags, date }, index) => (
-          <div class="masonry-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index}>
-            <img
-              src={src}
-              alt={alt}
-              title={title}
-              loading="lazy"
-              data-src={src}
-              data-alt={alt}
-              data-title={title}
-            />
-          </div>
-        ))
-      }
-    </div>
+  <div id="gallery" class="masonry-grid">
+    {
+      images.map(({ src, alt, title, tags, date }, index) => (
+        <div class="masonry-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index}>
+          <img
+            src={src}
+            alt={alt}
+            title={title}
+            class="mb-[4px] block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
+            loading="lazy"
+            data-src={src}
+            data-alt={alt}
+            data-title={title}
+          />
+        </div>
+      ))
+    }
   </div>
 </div>
 
@@ -80,7 +79,7 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   let selectedTags = [];
   
   function sortGallery(sortBy) {
-    const masonryContainer = document.getElementById('masonry-container');
+    const galleryContainer = document.getElementById('gallery');
     const items = Array.from(document.querySelectorAll('.masonry-item'));
     
     items.sort((a, b) => {
@@ -109,15 +108,18 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     });
     
     // Clear container and re-append sorted items
-    masonryContainer.innerHTML = '';
+    galleryContainer.innerHTML = '';
     items.forEach(item => {
-      masonryContainer.appendChild(item);
+      galleryContainer.appendChild(item);
     });
     
     currentSort = sortBy;
     
     // Re-apply current filter after sorting
     filterGallery(currentFilter);
+    
+    // Re-initialize masonry layout
+    initMasonryLayout();
   }
   
   function filterGallery(selectedTags) {
@@ -136,9 +138,74 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     });
     
     currentFilter = selectedTags;
+    
+    // Re-initialize masonry layout after filter changes
+    setTimeout(() => initMasonryLayout(), 10);
+  }
+  
+  // Masonry layout initialization
+  function initMasonryLayout() {
+    const gallery = document.getElementById('gallery');
+    if (!gallery) return;
+    
+    const items = Array.from(gallery.querySelectorAll('.masonry-item')).filter(item => 
+      item.style.display !== 'none'
+    );
+    
+    // Get current column count based on screen width
+    const screenWidth = window.innerWidth;
+    let columnCount = 4; // default
+    if (screenWidth <= 640) columnCount = 2;
+    else if (screenWidth <= 768) columnCount = 2;
+    else if (screenWidth <= 1024) columnCount = 3;
+    
+    // Create column arrays
+    const columns = Array.from({ length: columnCount }, () => []);
+    const columnHeights = Array.from({ length: columnCount }, () => 0);
+    
+    // Distribute items to columns
+    items.forEach(item => {
+      const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+      columns[shortestColumnIndex].push(item);
+      
+      // Estimate height (will be refined after images load)
+      const img = item.querySelector('img');
+      if (img && img.naturalHeight > 0) {
+        const aspectRatio = img.naturalWidth / img.naturalHeight;
+        const itemWidth = gallery.offsetWidth / columnCount - 8; // account for gaps
+        const estimatedHeight = itemWidth / aspectRatio + 4; // account for margin
+        columnHeights[shortestColumnIndex] += estimatedHeight;
+      } else {
+        columnHeights[shortestColumnIndex] += 200; // fallback height
+      }
+    });
+    
+    // Clear and rebuild gallery
+    gallery.innerHTML = '';
+    gallery.style.display = 'flex';
+    gallery.style.gap = '8px';
+    
+    // Create column containers
+    columns.forEach((columnItems, index) => {
+      const columnDiv = document.createElement('div');
+      columnDiv.className = 'masonry-column';
+      columnDiv.style.flex = '1';
+      columnDiv.style.display = 'flex';
+      columnDiv.style.flexDirection = 'column';
+      columnDiv.style.gap = '4px';
+      
+      columnItems.forEach(item => {
+        columnDiv.appendChild(item);
+      });
+      
+      gallery.appendChild(columnDiv);
+    });
   }
   
   document.addEventListener('DOMContentLoaded', () => {
+    // Initialize masonry layout
+    initMasonryLayout();
+    
     // Initialize with default sort
     sortGallery(currentSort);
     
@@ -194,16 +261,17 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
       });
     }
     
-    // Add click handlers to gallery images
-    const galleryImages = document.querySelectorAll('#gallery img');
-    galleryImages.forEach((img) => {
-      img.addEventListener('click', () => {
+    // Add click handlers to gallery images (delegated event)
+    const gallery = document.getElementById('gallery');
+    gallery.addEventListener('click', (e) => {
+      if (e.target.tagName === 'IMG') {
+        const img = e.target;
         const src = img.getAttribute('data-src') || img.getAttribute('src');
         const alt = img.getAttribute('data-alt') || img.getAttribute('alt');
         const title = img.getAttribute('data-title') || img.getAttribute('title');
         
         openImageModal(src, alt, title);
-      });
+      }
     });
     
     // Image modal functionality
@@ -232,6 +300,13 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
       if (e.key === 'Escape' && imageModal && imageModal.classList.contains('open')) {
         closeImageModal();
       }
+    });
+    
+    // Handle window resize to re-initialize masonry layout
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => initMasonryLayout(), 250);
     });
   });
   
