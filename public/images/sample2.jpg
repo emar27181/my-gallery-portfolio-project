@@ -1,0 +1,9 @@
+<svg width="400" height="250" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="250" fill="#00b894"/>
+  <rect x="30" y="30" width="340" height="190" fill="#2d3436" rx="10"/>
+  <rect x="50" y="50" width="80" height="30" fill="#00b894"/>
+  <rect x="150" y="50" width="80" height="30" fill="#00b894"/>
+  <rect x="250" y="50" width="80" height="30" fill="#00b894"/>
+  <rect x="50" y="100" width="300" height="100" fill="#636e72"/>
+  <text x="200" y="220" text-anchor="middle" font-family="Arial" font-size="12" fill="#ffffff">Game UI Sample</text>
+</svg>

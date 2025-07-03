@@ -1,0 +1,356 @@
+---
+import { images } from '../data/image';
+const breakpointCols = { default: 4, 1024: 3, 768: 2, 640: 2 };
+
+// Get unique tags from all images
+const allTags = [...new Set(images.flatMap(image => image.tags))];
+---
+
+<div class="gallery-container">
+
+  <!-- 🏷️ フィルター & ソート -->
+  <div class="controls-container">
+    <div class="filter-container">
+      <label for="filter-tags" class="filter-label">フィルタ:</label>
+      <div class="filter-tags-container">
+        <div class="filter-tags" id="filter-tags">
+          <span class="filter-placeholder">タグを選択</span>
+        </div>
+        <div class="filter-dropdown" id="filter-dropdown">
+          <div class="filter-option" data-value="all">全て</div>
+          {allTags.map(tag => (
+            <div class="filter-option" data-value={tag}>{tag}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+    
+    <div class="sort-container">
+      <label for="sort-select" class="sort-label">並び替え:</label>
+      <select id="sort-select" class="sort-select">
+        <option value="custom">カスタム順</option>
+        <option value="date-desc">日付 (新しい順)</option>
+        <option value="date-asc">日付 (古い順)</option>
+        <option value="title-asc">タイトル (あ-ん)</option>
+        <option value="title-desc">タイトル (ん-あ)</option>
+        <option value="category">カテゴリ</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 🖼 ギャラリー -->
+  <div id="gallery" class="gallery-grid">
+    {
+      images.map(({ src, alt, title, tags, date }, index) => (
+        <div class="gallery-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index}>
+          <img
+            src={src}
+            alt={alt}
+            title={title}
+            class="block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
+            loading="lazy"
+            data-src={src}
+            data-alt={alt}
+            data-title={title}
+          />
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<!-- Image Modal -->
+<div class="image-modal" id="image-modal">
+  <div class="image-modal-overlay" id="image-modal-overlay">
+    <div class="image-modal-content">
+      <img class="image-modal-img" id="image-modal-img" src="" alt="" />
+      <button class="image-modal-close" id="image-modal-close" aria-label="Close image">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentFilter = [];
+  let selectedTags = [];
+  let currentSort = 'custom';
+  
+  function layoutMasonryGrid() {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    galleryItems.forEach(item => {
+      const img = item.querySelector('img');
+      if (img.complete) {
+        setGridRowEnd(item, img);
+      } else {
+        img.onload = () => setGridRowEnd(item, img);
+      }
+    });
+  }
+  
+  function setGridRowEnd(item, img) {
+    const gap = 4;
+    const rowHeight = 10;
+    const rowSpan = Math.ceil((img.offsetHeight + gap) / (rowHeight + gap));
+    item.style.gridRowEnd = `span ${rowSpan}`;
+  }
+  
+  function sortGallery(sortBy) {
+    const galleryContainer = document.getElementById('gallery');
+    const items = Array.from(document.querySelectorAll('.gallery-item'));
+    
+    items.sort((a, b) => {
+      switch (sortBy) {
+        case 'custom':
+          return parseInt(a.getAttribute('data-index')) - parseInt(b.getAttribute('data-index'));
+        case 'date-desc':
+          return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+        case 'date-asc':
+          return new Date(a.getAttribute('data-date')) - new Date(b.getAttribute('data-date'));
+        case 'title-asc':
+          return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'));
+        case 'title-desc':
+          return b.getAttribute('data-title').localeCompare(a.getAttribute('data-title'));
+        case 'category':
+          const categoryA = a.getAttribute('data-category');
+          const categoryB = b.getAttribute('data-category');
+          if (categoryA === categoryB) {
+            // Secondary sort by date if categories are the same
+            return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+          }
+          return categoryA.localeCompare(categoryB);
+        default:
+          return 0;
+      }
+    });
+    
+    // Clear container and re-append sorted items
+    galleryContainer.innerHTML = '';
+    items.forEach(item => {
+      galleryContainer.appendChild(item);
+    });
+    
+    currentSort = sortBy;
+    
+    // Re-apply current filter after sorting
+    filterGallery(currentFilter);
+    
+    // Re-layout masonry grid after sorting
+    setTimeout(() => layoutMasonryGrid(), 100);
+  }
+  
+  function filterGallery(selectedTags) {
+    currentFilter = selectedTags;
+    
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    galleryItems.forEach(item => {
+      const itemTags = item.getAttribute('data-tags').split(',');
+      
+      if (selectedTags.length === 0) {
+        item.style.display = 'block';
+      } else {
+        // Check if item has ALL selected tags (AND condition)
+        const hasAllTags = selectedTags.every(tag => itemTags.includes(tag));
+        item.style.display = hasAllTags ? 'block' : 'none';
+      }
+    });
+    
+    // Re-layout masonry grid after filtering
+    setTimeout(() => layoutMasonryGrid(), 100);
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialize with default sort
+    sortGallery(currentSort);
+    
+    // Initialize masonry layout
+    setTimeout(() => layoutMasonryGrid(), 100);
+    
+    // Multi-tag filter functionality
+    const filterTags = document.getElementById('filter-tags');
+    const filterDropdown = document.getElementById('filter-dropdown');
+    const filterOptions = document.querySelectorAll('.filter-option');
+    
+    // Toggle dropdown
+    if (filterTags) {
+      filterTags.addEventListener('click', () => {
+        filterDropdown.classList.toggle('open');
+      });
+    }
+    
+    // Handle tag selection
+    filterOptions.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const value = e.target.getAttribute('data-value');
+        
+        if (value === 'all') {
+          selectedTags = [];
+          updateFilterDisplay();
+          filterGallery([]);
+        } else {
+          if (selectedTags.includes(value)) {
+            selectedTags = selectedTags.filter(tag => tag !== value);
+          } else {
+            selectedTags.push(value);
+          }
+          updateFilterDisplay();
+          filterGallery(selectedTags);
+        }
+        
+        // Keep dropdown open for multiple selections
+        // Don't close dropdown automatically
+      });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!filterTags.contains(e.target) && !filterDropdown.contains(e.target)) {
+        filterDropdown.classList.remove('open');
+      }
+    });
+    
+    // Add change handler to sort select
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', (e) => {
+        sortGallery(e.target.value);
+      });
+    }
+    
+    // Add click handlers to gallery images (delegated event)
+    const gallery = document.getElementById('gallery');
+    gallery.addEventListener('click', (e) => {
+      if (e.target.tagName === 'IMG') {
+        const img = e.target;
+        const src = img.getAttribute('data-src') || img.getAttribute('src');
+        const alt = img.getAttribute('data-alt') || img.getAttribute('alt');
+        const title = img.getAttribute('data-title') || img.getAttribute('title');
+        
+        openImageModal(src, alt, title);
+      }
+    });
+    
+    // Image modal functionality
+    const imageModal = document.getElementById('image-modal');
+    const imageModalImg = document.getElementById('image-modal-img');
+    const imageModalClose = document.getElementById('image-modal-close');
+    const imageModalOverlay = document.getElementById('image-modal-overlay');
+    
+    // Close modal button
+    if (imageModalClose) {
+      imageModalClose.addEventListener('click', closeImageModal);
+    }
+    
+    // Close modal when clicking overlay or outside image
+    if (imageModal) {
+      imageModal.addEventListener('click', (e) => {
+        // Close if clicking on the modal background (not on the image or close button)
+        if (e.target === imageModal || e.target === imageModalOverlay) {
+          closeImageModal();
+        }
+      });
+    }
+    
+    // Close modal with escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && imageModal && imageModal.classList.contains('open')) {
+        closeImageModal();
+      }
+    });
+  });
+  
+  function openImageModal(src, alt, title) {
+    const imageModal = document.getElementById('image-modal');
+    const imageModalImg = document.getElementById('image-modal-img');
+    
+    if (imageModal && imageModalImg) {
+      imageModalImg.src = src;
+      imageModalImg.alt = alt || title || '';
+      imageModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  
+  function closeImageModal() {
+    const imageModal = document.getElementById('image-modal');
+    
+    if (imageModal) {
+      imageModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+  
+  // Update filter display
+  function updateFilterDisplay() {
+    const filterTags = document.getElementById('filter-tags');
+    const placeholder = filterTags.querySelector('.filter-placeholder');
+    const filterOptions = document.querySelectorAll('.filter-option');
+    
+    // Update dropdown options to show selected state
+    filterOptions.forEach(option => {
+      const value = option.getAttribute('data-value');
+      if (value === 'all') {
+        // 'all' option should be selected when no specific tags are selected
+        if (selectedTags.length === 0) {
+          option.classList.add('selected');
+        } else {
+          option.classList.remove('selected');
+        }
+      } else {
+        if (selectedTags.includes(value)) {
+          option.classList.add('selected');
+        } else {
+          option.classList.remove('selected');
+        }
+      }
+    });
+    
+    if (selectedTags.length === 0) {
+      if (placeholder) {
+        placeholder.style.display = 'block';
+      }
+      // Remove existing tag elements
+      const existingTags = filterTags.querySelectorAll('.selected-tag');
+      existingTags.forEach(tag => tag.remove());
+    } else {
+      if (placeholder) {
+        placeholder.style.display = 'none';
+      }
+      
+      // Remove existing tag elements
+      const existingTags = filterTags.querySelectorAll('.selected-tag');
+      existingTags.forEach(tag => tag.remove());
+      
+      // Add selected tags
+      selectedTags.forEach(tag => {
+        const tagElement = document.createElement('span');
+        tagElement.className = 'selected-tag';
+        tagElement.innerHTML = `${tag} <button class="remove-tag" data-tag="${tag}">×</button>`;
+        filterTags.appendChild(tagElement);
+        
+        // Add remove functionality
+        const removeBtn = tagElement.querySelector('.remove-tag');
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tagToRemove = e.target.getAttribute('data-tag');
+          selectedTags = selectedTags.filter(t => t !== tagToRemove);
+          updateFilterDisplay();
+          filterGallery(selectedTags);
+        });
+      });
+    }
+  }
+  
+  // Re-layout on window resize
+  window.addEventListener('resize', () => {
+    setTimeout(() => layoutMasonryGrid(), 100);
+  });
+  
+  // Make openImageModal globally available for backwards compatibility
+  (window as any).openImageModal = openImageModal;
+</script>
