@@ -78,6 +78,26 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   let selectedTags = [];
   let currentSort = 'custom';
   
+  function layoutMasonryGrid() {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    galleryItems.forEach(item => {
+      const img = item.querySelector('img');
+      if (img.complete) {
+        setGridRowEnd(item, img);
+      } else {
+        img.onload = () => setGridRowEnd(item, img);
+      }
+    });
+  }
+  
+  function setGridRowEnd(item, img) {
+    const gap = 4;
+    const rowHeight = 10;
+    const rowSpan = Math.ceil((img.offsetHeight + gap) / (rowHeight + gap));
+    item.style.gridRowEnd = `span ${rowSpan}`;
+  }
+  
   function sortGallery(sortBy) {
     const galleryContainer = document.getElementById('gallery');
     const items = Array.from(document.querySelectorAll('.gallery-item'));
@@ -117,6 +137,9 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     
     // Re-apply current filter after sorting
     filterGallery(currentFilter);
+    
+    // Re-layout masonry grid after sorting
+    setTimeout(() => layoutMasonryGrid(), 100);
   }
   
   function filterGallery(selectedTags) {
@@ -135,11 +158,17 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
         item.style.display = hasAllTags ? 'block' : 'none';
       }
     });
+    
+    // Re-layout masonry grid after filtering
+    setTimeout(() => layoutMasonryGrid(), 100);
   }
   
   document.addEventListener('DOMContentLoaded', () => {
     // Initialize with default sort
     sortGallery(currentSort);
+    
+    // Initialize masonry layout
+    setTimeout(() => layoutMasonryGrid(), 100);
     
     // Multi-tag filter functionality
     const filterTags = document.getElementById('filter-tags');
@@ -316,6 +345,11 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
       });
     }
   }
+  
+  // Re-layout on window resize
+  window.addEventListener('resize', () => {
+    setTimeout(() => layoutMasonryGrid(), 100);
+  });
   
   // Make openImageModal globally available for backwards compatibility
   (window as any).openImageModal = openImageModal;
