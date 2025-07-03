@@ -14,7 +14,7 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
       <label for="filter-tags" class="filter-label">フィルタ:</label>
       <div class="filter-tags-container">
         <div class="filter-tags" id="filter-tags">
-          <span class="filter-placeholder">タグを選択してください</span>
+          <span class="filter-placeholder">タグを選択</span>
         </div>
         <div class="filter-dropdown" id="filter-dropdown">
           <div class="filter-option" data-value="all">全て</div>
@@ -26,7 +26,7 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     </div>
     
     <div class="sort-container">
-      <label for="sort-select" class="sort-label">並び順:</label>
+      <label for="sort-select" class="sort-label">並び替え:</label>
       <select id="sort-select" class="sort-select">
         <option value="custom">カスタム順</option>
         <option value="date-desc">日付 (新しい順)</option>

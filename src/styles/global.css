@@ -42,7 +42,7 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
-  padding-top: 80px;
+  padding-top: 70px;
 }
 
 .container {
@@ -53,7 +53,7 @@ body {
 
 /* Gallery styles */
 .gallery-container {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .search-container {
@@ -93,7 +93,7 @@ body {
   display: flex;
   align-items: center;
   gap: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   flex-wrap: wrap;
 }
 
@@ -113,7 +113,7 @@ body {
 
 .filter-tags-container {
   position: relative;
-  min-width: 200px;
+  width: 140px;
 }
 
 .filter-tags {
@@ -129,7 +129,7 @@ body {
   font-size: 0.875rem;
   cursor: pointer;
   transition: border-color 0.2s ease;
-  min-height: 2.25rem;
+  min-height: 2rem;
 }
 
 .filter-tags:hover {
@@ -221,7 +221,8 @@ body {
   font-size: 0.875rem;
   cursor: pointer;
   transition: border-color 0.2s ease;
-  min-width: 140px;
+  width: 140px;
+  min-height: 2rem;
 }
 
 .sort-select:focus {
@@ -231,9 +232,9 @@ body {
 
 @media (max-width: 640px) {
   .controls-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
   }
   
   .filter-container,
