@@ -274,6 +274,8 @@ body {
 .masonry-grid {
   display: flex;
   gap: 8px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .masonry-column {
@@ -281,6 +283,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0; /* Prevent flex item from overflowing */
 }
 
 .masonry-item {
@@ -292,13 +295,45 @@ body {
   display: block;
   width: 100%;
   height: auto;
+  max-width: 100%;
   border-radius: 0.5rem;
   cursor: pointer;
   transition: opacity 0.2s;
+  object-fit: cover;
 }
 
 .masonry-item img:hover {
   opacity: 0.9;
+}
+
+/* Responsive adjustments for masonry */
+@media (max-width: 1024px) {
+  .masonry-grid {
+    max-width: 900px;
+    gap: 6px;
+  }
+  
+  .masonry-column {
+    gap: 3px;
+  }
+}
+
+@media (max-width: 768px) {
+  .masonry-grid {
+    max-width: 600px;
+    gap: 4px;
+  }
+  
+  .masonry-column {
+    gap: 2px;
+  }
+}
+
+@media (max-width: 640px) {
+  .masonry-grid {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
 }
 
 /* Header styles */
