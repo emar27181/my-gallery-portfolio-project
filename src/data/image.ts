@@ -319,7 +319,7 @@ export const images: ImageData[] = [
     src: '/images/image_logo_shandy.jpg',
     alt: 'Shandy Logo',
     title: 'Shandy Brand Logo',
-    tags: ['ジェネラティブアート', 'イラスト'],
+    tags: ['ロゴ', 'イラスト'],
     date: '2024-09-30',
     type: 'image'
   },
@@ -327,7 +327,7 @@ export const images: ImageData[] = [
     src: '/images/image_logo_ylab.jpg',
     alt: 'Y-Lab Logo',
     title: 'Y-Lab Brand Logo',
-    tags: ['ジェネラティブアート', 'イラスト'],
+    tags: ['ロゴ', 'イラスト'],
     date: '2024-09-29',
     type: 'image'
   },

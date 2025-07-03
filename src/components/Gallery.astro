@@ -25,8 +25,6 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
       </div>
     </div>
     
-    <!-- 並び替え機能は一時的に非表示 -->
-    <!--
     <div class="sort-container">
       <label for="sort-select" class="sort-label">並び順:</label>
       <select id="sort-select" class="sort-select">
@@ -38,19 +36,18 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
         <option value="category">カテゴリ</option>
       </select>
     </div>
-    -->
   </div>
 
   <!-- 🖼 ギャラリー -->
-  <div id="gallery" class="masonry-grid">
+  <div id="gallery" class="gallery-grid">
     {
       images.map(({ src, alt, title, tags, date }, index) => (
-        <div class="masonry-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index}>
+        <div class="gallery-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index}>
           <img
             src={src}
             alt={alt}
             title={title}
-            class="mb-[4px] block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
+            class="block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
             loading="lazy"
             data-src={src}
             data-alt={alt}
@@ -78,12 +75,12 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
 
 <script>
   let currentFilter = [];
-  let currentSort = 'custom';
   let selectedTags = [];
+  let currentSort = 'custom';
   
   function sortGallery(sortBy) {
     const galleryContainer = document.getElementById('gallery');
-    const items = Array.from(document.querySelectorAll('.masonry-item'));
+    const items = Array.from(document.querySelectorAll('.gallery-item'));
     
     items.sort((a, b) => {
       switch (sortBy) {
@@ -120,95 +117,27 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     
     // Re-apply current filter after sorting
     filterGallery(currentFilter);
-    
-    // Re-initialize masonry layout
-    initMasonryLayout();
   }
   
   function filterGallery(selectedTags) {
-    const masonryItems = document.querySelectorAll('.masonry-item');
+    currentFilter = selectedTags;
     
-    masonryItems.forEach(item => {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    galleryItems.forEach(item => {
       const itemTags = item.getAttribute('data-tags').split(',');
       
-      if (selectedTags.length === 0 || selectedTags.includes('all')) {
+      if (selectedTags.length === 0) {
         item.style.display = 'block';
       } else {
-        // Check if item has ALL selected tags
+        // Check if item has ALL selected tags (AND condition)
         const hasAllTags = selectedTags.every(tag => itemTags.includes(tag));
         item.style.display = hasAllTags ? 'block' : 'none';
       }
     });
-    
-    currentFilter = selectedTags;
-    
-    // Re-initialize masonry layout after filter changes
-    setTimeout(() => initMasonryLayout(), 10);
-  }
-  
-  // Masonry layout initialization
-  function initMasonryLayout() {
-    const gallery = document.getElementById('gallery');
-    if (!gallery) return;
-    
-    const items = Array.from(gallery.querySelectorAll('.masonry-item')).filter(item => 
-      item.style.display !== 'none'
-    );
-    
-    // Get current column count based on screen width
-    const screenWidth = window.innerWidth;
-    let columnCount = 4; // default
-    if (screenWidth <= 640) columnCount = 2;
-    else if (screenWidth <= 768) columnCount = 2;
-    else if (screenWidth <= 1024) columnCount = 3;
-    
-    // Create column arrays
-    const columns = Array.from({ length: columnCount }, () => []);
-    const columnHeights = Array.from({ length: columnCount }, () => 0);
-    
-    // Distribute items to columns
-    items.forEach(item => {
-      const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-      columns[shortestColumnIndex].push(item);
-      
-      // Estimate height (will be refined after images load)
-      const img = item.querySelector('img');
-      if (img && img.naturalHeight > 0) {
-        const aspectRatio = img.naturalWidth / img.naturalHeight;
-        const itemWidth = gallery.offsetWidth / columnCount - 8; // account for gaps
-        const estimatedHeight = itemWidth / aspectRatio + 4; // account for margin
-        columnHeights[shortestColumnIndex] += estimatedHeight;
-      } else {
-        columnHeights[shortestColumnIndex] += 200; // fallback height
-      }
-    });
-    
-    // Clear and rebuild gallery
-    gallery.innerHTML = '';
-    gallery.style.display = 'flex';
-    gallery.style.gap = '8px';
-    
-    // Create column containers
-    columns.forEach((columnItems, index) => {
-      const columnDiv = document.createElement('div');
-      columnDiv.className = 'masonry-column';
-      columnDiv.style.flex = '1';
-      columnDiv.style.display = 'flex';
-      columnDiv.style.flexDirection = 'column';
-      columnDiv.style.gap = '4px';
-      
-      columnItems.forEach(item => {
-        columnDiv.appendChild(item);
-      });
-      
-      gallery.appendChild(columnDiv);
-    });
   }
   
   document.addEventListener('DOMContentLoaded', () => {
-    // Initialize masonry layout
-    initMasonryLayout();
-    
     // Initialize with default sort
     sortGallery(currentSort);
     
@@ -304,13 +233,6 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
         closeImageModal();
       }
     });
-    
-    // Handle window resize to re-initialize masonry layout
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => initMasonryLayout(), 250);
-    });
   });
   
   function openImageModal(src, alt, title) {
@@ -343,10 +265,19 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     // Update dropdown options to show selected state
     filterOptions.forEach(option => {
       const value = option.getAttribute('data-value');
-      if (selectedTags.includes(value)) {
-        option.classList.add('selected');
+      if (value === 'all') {
+        // 'all' option should be selected when no specific tags are selected
+        if (selectedTags.length === 0) {
+          option.classList.add('selected');
+        } else {
+          option.classList.remove('selected');
+        }
       } else {
-        option.classList.remove('selected');
+        if (selectedTags.includes(value)) {
+          option.classList.add('selected');
+        } else {
+          option.classList.remove('selected');
+        }
       }
     });
     
