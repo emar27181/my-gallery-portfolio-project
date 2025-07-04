@@ -49,26 +49,52 @@ const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a
       images.map(({ src, alt, title, tags, date, type, videoId }, index) => (
         <div class="gallery-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index} data-type={type} data-video-id={videoId || ''}>
           <div class="gallery-item-container">
-            <img
-              src={src}
-              alt={alt}
-              title={title}
-              class="block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
-              loading="lazy"
-              data-src={src}
-              data-alt={alt}
-              data-title={title}
-              data-type={type}
-              data-video-id={videoId || ''}
-            />
-            {type === 'video' && (
-              <div class="video-overlay">
-                <div class="play-button">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
+            {type === 'video' ? (
+              <div class="video-content">
+                <img
+                  src={src}
+                  alt={alt}
+                  title={title}
+                  class="video-thumbnail block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
+                  loading="lazy"
+                  data-src={src}
+                  data-alt={alt}
+                  data-title={title}
+                  data-type={type}
+                  data-video-id={videoId || ''}
+                />
+                <div class="video-player-container" style="display: none;">
+                  <iframe
+                    class="video-player"
+                    src=""
+                    title={title}
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    data-video-id={videoId || ''}
+                  ></iframe>
+                </div>
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
                 </div>
               </div>
+            ) : (
+              <img
+                src={src}
+                alt={alt}
+                title={title}
+                class="block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
+                loading="lazy"
+                data-src={src}
+                data-alt={alt}
+                data-title={title}
+                data-type={type}
+                data-video-id={videoId || ''}
+              />
             )}
           </div>
         </div>
@@ -111,15 +137,21 @@ const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a
   let currentFilter = [];
   let selectedTags = [];
   let currentSort = 'custom';
+  let isInlineMode = false;
   
   function layoutMasonryGrid() {
     const galleryItems = document.querySelectorAll('.gallery-item');
     
     galleryItems.forEach(item => {
       const img = item.querySelector('img');
-      if (img.complete) {
+      const videoPlayerContainer = item.querySelector('.video-player-container');
+      
+      // For video items, check if video player is shown
+      if (videoPlayerContainer && videoPlayerContainer.style.display === 'block') {
+        setGridRowEndForVideo(item, videoPlayerContainer);
+      } else if (img && img.complete) {
         setGridRowEnd(item, img);
-      } else {
+      } else if (img) {
         img.onload = () => setGridRowEnd(item, img);
       }
     });
@@ -129,6 +161,14 @@ const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a
     const gap = 4;
     const rowHeight = 10;
     const rowSpan = Math.ceil((img.offsetHeight + gap) / (rowHeight + gap));
+    item.style.gridRowEnd = `span ${rowSpan}`;
+  }
+  
+  function setGridRowEndForVideo(item, videoContainer) {
+    const gap = 4;
+    const rowHeight = 10;
+    const containerHeight = videoContainer.offsetHeight;
+    const rowSpan = Math.ceil((containerHeight + gap) / (rowHeight + gap));
     item.style.gridRowEnd = `span ${rowSpan}`;
   }
   
@@ -274,7 +314,7 @@ const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a
         const videoId = target.getAttribute('data-video-id');
         
         if (type === 'video' && videoId) {
-          openVideoModal(videoId, title);
+          toggleInlineVideo(target.closest('.gallery-item'));
         } else {
           openImageModal(src, alt, title);
         }
@@ -332,6 +372,9 @@ const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a
         }
       }
     });
+
+    // Initialize inline mode by default
+    isInlineMode = true;
   });
   
   function openImageModal(src, alt, title) {
@@ -376,6 +419,38 @@ const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a
       document.body.style.overflow = '';
     }
   }
+
+  function toggleInlineVideo(galleryItem) {
+    const videoContent = galleryItem.querySelector('.video-content');
+    const thumbnail = videoContent.querySelector('.video-thumbnail');
+    const playerContainer = videoContent.querySelector('.video-player-container');
+    const overlay = videoContent.querySelector('.video-overlay');
+    const iframe = playerContainer.querySelector('iframe');
+    const videoId = thumbnail.getAttribute('data-video-id');
+    
+    if (thumbnail.style.display === 'none') {
+      // Switch back to thumbnail
+      thumbnail.style.display = 'block';
+      playerContainer.style.display = 'none';
+      overlay.style.display = 'flex';
+      iframe.src = '';
+      
+      // Reset grid row span
+      galleryItem.style.gridRowEnd = 'auto';
+    } else {
+      // Switch to video player
+      thumbnail.style.display = 'none';
+      playerContainer.style.display = 'block';
+      overlay.style.display = 'none';
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+    
+    // Re-layout masonry grid after video toggle with delay for proper height calculation
+    setTimeout(() => {
+      layoutMasonryGrid();
+    }, 200);
+  }
+  
   
   // Update filter display
   function updateFilterDisplay() {
