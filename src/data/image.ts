@@ -370,4 +370,40 @@ export const images: ImageData[] = [
     type: 'video',
     videoId: '9bZkp7q19f0'
   },
+  {
+    src: 'https://img.youtube.com/vi/oos2PYWiRGM/maxresdefault.jpg',
+    alt: 'YouTube Video 1',
+    title: 'YouTube Video 1',
+    tags: ['動画'],
+    date: '2024-12-08',
+    type: 'video',
+    videoId: 'oos2PYWiRGM'
+  },
+  {
+    src: 'https://img.youtube.com/vi/ERb40ovB060/maxresdefault.jpg',
+    alt: 'YouTube Video 2',
+    title: 'YouTube Video 2',
+    tags: ['動画'],
+    date: '2024-12-07',
+    type: 'video',
+    videoId: 'ERb40ovB060'
+  },
+  {
+    src: 'https://img.youtube.com/vi/KTwFA1jQgFY/maxresdefault.jpg',
+    alt: 'YouTube Video 3',
+    title: 'YouTube Video 3',
+    tags: ['動画'],
+    date: '2024-12-06',
+    type: 'video',
+    videoId: 'KTwFA1jQgFY'
+  },
+  {
+    src: 'https://img.youtube.com/vi/1-tDSvjpxn4/maxresdefault.jpg',
+    alt: 'YouTube Video 4',
+    title: 'YouTube Video 4',
+    tags: ['動画'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: '1-tDSvjpxn4'
+  },
 ];
