@@ -2,8 +2,13 @@
 import { images } from '../data/image';
 const breakpointCols = { default: 4, 1024: 3, 768: 2, 640: 2 };
 
-// Get unique tags from all images
-const allTags = [...new Set(images.flatMap(image => image.tags))];
+// Get unique tags from all images and sort by usage count (descending)
+const tagCounts = images.flatMap(image => image.tags).reduce((acc, tag) => {
+  acc[tag] = (acc[tag] || 0) + 1;
+  return acc;
+}, {});
+
+const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a]);
 ---
 
 <div class="gallery-container">
@@ -41,18 +46,31 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   <!-- 🖼 ギャラリー -->
   <div id="gallery" class="gallery-grid">
     {
-      images.map(({ src, alt, title, tags, date }, index) => (
-        <div class="gallery-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index}>
-          <img
-            src={src}
-            alt={alt}
-            title={title}
-            class="block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
-            loading="lazy"
-            data-src={src}
-            data-alt={alt}
-            data-title={title}
-          />
+      images.map(({ src, alt, title, tags, date, type, videoId }, index) => (
+        <div class="gallery-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index} data-type={type} data-video-id={videoId || ''}>
+          <div class="gallery-item-container">
+            <img
+              src={src}
+              alt={alt}
+              title={title}
+              class="block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
+              loading="lazy"
+              data-src={src}
+              data-alt={alt}
+              data-title={title}
+              data-type={type}
+              data-video-id={videoId || ''}
+            />
+            {type === 'video' && (
+              <div class="video-overlay">
+                <div class="play-button">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       ))
     }
@@ -65,6 +83,22 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     <div class="image-modal-content">
       <img class="image-modal-img" id="image-modal-img" src="" alt="" />
       <button class="image-modal-close" id="image-modal-close" aria-label="Close image">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Video Modal -->
+<div class="video-modal" id="video-modal">
+  <div class="video-modal-overlay" id="video-modal-overlay">
+    <div class="video-modal-content">
+      <div class="video-container">
+        <iframe id="video-modal-iframe" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <button class="video-modal-close" id="video-modal-close" aria-label="Close video">
         <svg fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
         </svg>
@@ -222,16 +256,28 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
       });
     }
     
-    // Add click handlers to gallery images (delegated event)
+    // Add click handlers to gallery items (delegated event)
     const gallery = document.getElementById('gallery');
     gallery.addEventListener('click', (e) => {
-      if (e.target.tagName === 'IMG') {
-        const img = e.target;
-        const src = img.getAttribute('data-src') || img.getAttribute('src');
-        const alt = img.getAttribute('data-alt') || img.getAttribute('alt');
-        const title = img.getAttribute('data-title') || img.getAttribute('title');
+      let target = e.target;
+      
+      // Find the closest img element or container
+      if (target.tagName === 'IMG' || target.closest('.gallery-item-container')) {
+        if (target.tagName !== 'IMG') {
+          target = target.closest('.gallery-item-container').querySelector('img');
+        }
         
-        openImageModal(src, alt, title);
+        const src = target.getAttribute('data-src') || target.getAttribute('src');
+        const alt = target.getAttribute('data-alt') || target.getAttribute('alt');
+        const title = target.getAttribute('data-title') || target.getAttribute('title');
+        const type = target.getAttribute('data-type');
+        const videoId = target.getAttribute('data-video-id');
+        
+        if (type === 'video' && videoId) {
+          openVideoModal(videoId, title);
+        } else {
+          openImageModal(src, alt, title);
+        }
       }
     });
     
@@ -256,10 +302,34 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
       });
     }
     
+    // Video modal functionality
+    const videoModal = document.getElementById('video-modal');
+    const videoModalClose = document.getElementById('video-modal-close');
+    const videoModalOverlay = document.getElementById('video-modal-overlay');
+    
+    // Close video modal button
+    if (videoModalClose) {
+      videoModalClose.addEventListener('click', closeVideoModal);
+    }
+    
+    // Close video modal when clicking overlay
+    if (videoModal) {
+      videoModal.addEventListener('click', (e) => {
+        if (e.target === videoModal || e.target === videoModalOverlay) {
+          closeVideoModal();
+        }
+      });
+    }
+    
     // Close modal with escape key
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && imageModal && imageModal.classList.contains('open')) {
-        closeImageModal();
+      if (e.key === 'Escape') {
+        if (imageModal && imageModal.classList.contains('open')) {
+          closeImageModal();
+        }
+        if (videoModal && videoModal.classList.contains('open')) {
+          closeVideoModal();
+        }
       }
     });
   });
@@ -281,6 +351,28 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     
     if (imageModal) {
       imageModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+  
+  function openVideoModal(videoId, title) {
+    const videoModal = document.getElementById('video-modal');
+    const videoModalIframe = document.getElementById('video-modal-iframe');
+    
+    if (videoModal && videoModalIframe) {
+      videoModalIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      videoModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  
+  function closeVideoModal() {
+    const videoModal = document.getElementById('video-modal');
+    const videoModalIframe = document.getElementById('video-modal-iframe');
+    
+    if (videoModal && videoModalIframe) {
+      videoModalIframe.src = '';
+      videoModal.classList.remove('open');
       document.body.style.overflow = '';
     }
   }
@@ -351,6 +443,7 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
     setTimeout(() => layoutMasonryGrid(), 100);
   });
   
-  // Make openImageModal globally available for backwards compatibility
+  // Make functions globally available
   (window as any).openImageModal = openImageModal;
+  (window as any).openVideoModal = openVideoModal;
 </script>

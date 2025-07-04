@@ -5,6 +5,7 @@ export interface ImageData {
   tags: string[];
   date: string;
   type: 'image' | 'video';
+  videoId?: string; // YouTube video ID for video type
 }
 
 export const images: ImageData[] = [
@@ -349,4 +350,24 @@ export const images: ImageData[] = [
   },
 
   // Research
+  
+  // YouTube Videos
+  {
+    src: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+    alt: 'Rick Astley - Never Gonna Give You Up',
+    title: 'Rick Astley - Never Gonna Give You Up',
+    tags: ['動画', 'ミュージック'],
+    date: '2024-12-10',
+    type: 'video',
+    videoId: 'dQw4w9WgXcQ'
+  },
+  {
+    src: 'https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg',
+    alt: 'PSY - GANGNAM STYLE',
+    title: 'PSY - GANGNAM STYLE',
+    tags: ['動画', 'ミュージック'],
+    date: '2024-12-09',
+    type: 'video',
+    videoId: '9bZkp7q19f0'
+  },
 ];
