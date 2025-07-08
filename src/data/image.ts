@@ -170,7 +170,7 @@ export const images: ImageData[] = [
     src: '/images/image_icon_astra.jpg',
     alt: 'Astra Icon',
     title: 'Astra Character Icon',
-    tags: ['イラスト'],
+    tags: ['イラスト', 'VALORANT'],
     date: '2024-10-30',
     type: 'image'
   },
@@ -178,7 +178,7 @@ export const images: ImageData[] = [
     src: '/images/image_icon_omen.png',
     alt: 'Omen Icon',
     title: 'Omen Character Icon',
-    tags: ['イラスト'],
+    tags: ['イラスト', 'VALORANT', '猫'],
     date: '2024-10-29',
     type: 'image'
   },
@@ -356,7 +356,7 @@ export const images: ImageData[] = [
     src: 'https://img.youtube.com/vi/oos2PYWiRGM/maxresdefault.jpg',
     alt: 'YouTube Video 1',
     title: 'YouTube Video 1',
-    tags: ['動画'],
+    tags: ['動画', 'VALORANT'],
     date: '2024-12-08',
     type: 'video',
     videoId: 'oos2PYWiRGM'
@@ -365,7 +365,7 @@ export const images: ImageData[] = [
     src: 'https://img.youtube.com/vi/ERb40ovB060/maxresdefault.jpg',
     alt: 'YouTube Video 2',
     title: 'YouTube Video 2',
-    tags: ['動画'],
+    tags: ['動画', 'VALORANT'],
     date: '2024-12-07',
     type: 'video',
     videoId: 'ERb40ovB060'
@@ -374,7 +374,7 @@ export const images: ImageData[] = [
     src: 'https://img.youtube.com/vi/KTwFA1jQgFY/maxresdefault.jpg',
     alt: 'YouTube Video 3',
     title: 'YouTube Video 3',
-    tags: ['動画'],
+    tags: ['動画', 'VALORANT'],
     date: '2024-12-06',
     type: 'video',
     videoId: 'KTwFA1jQgFY'
@@ -383,7 +383,7 @@ export const images: ImageData[] = [
     src: 'https://img.youtube.com/vi/1-tDSvjpxn4/maxresdefault.jpg',
     alt: 'YouTube Video 4',
     title: 'YouTube Video 4',
-    tags: ['動画'],
+    tags: ['動画', '猫', 'イラスト'],
     date: '2024-12-05',
     type: 'video',
     videoId: '1-tDSvjpxn4'
@@ -392,7 +392,7 @@ export const images: ImageData[] = [
     src: 'https://img.youtube.com/vi/pqynYQGtxUM/maxresdefault.jpg',
     alt: 'YouTube Video 5',
     title: 'YouTube Video 5',
-    tags: ['動画'],
+    tags: ['動画', 'VALORANT'],
     date: '2024-12-05',
     type: 'video',
     videoId: 'pqynYQGtxUM'
@@ -401,7 +401,7 @@ export const images: ImageData[] = [
     src: 'https://img.youtube.com/vi/j3tKqZ3v0A0/maxresdefault.jpg',
     alt: 'YouTube Video 6',
     title: 'YouTube Video 6',
-    tags: ['動画'],
+    tags: ['動画', 'VALORANT'],
     date: '2024-12-05',
     type: 'video',
     videoId: 'j3tKqZ3v0A0'
@@ -410,7 +410,7 @@ export const images: ImageData[] = [
     src: 'https://img.youtube.com/vi/MPVyQnYQ6wo/maxresdefault.jpg',
     alt: 'YouTube Video 7',
     title: 'YouTube Video 7',
-    tags: ['動画'],
+    tags: ['動画', 'VALORANT'],
     date: '2024-12-05',
     type: 'video',
     videoId: 'MPVyQnYQ6wo'
