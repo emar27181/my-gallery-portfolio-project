@@ -11,14 +11,6 @@ export interface ImageData {
 export const images: ImageData[] = [
   // Cat Illustrations
   {
-    src: '/images/image_cat_illust.jpg',
-    alt: 'Cat Illustration',
-    title: 'Cat Illustration',
-    tags: ['猫', 'イラスト'],
-    date: '2024-12-10',
-    type: 'image'
-  },
-  {
     src: '/images/image_cat_ann1.jpg',
     alt: 'Cat Ann Illustration 1',
     title: 'Ann the Cat 1',
@@ -445,16 +437,6 @@ export const images: ImageData[] = [
     type: 'image'
   },
 
-  // Research
-  {
-    src: '/images/image_research_palette.jpg',
-    alt: 'Research Palette',
-    title: 'Color Palette Research',
-    tags: ['イラスト'],
-    date: '2024-09-20',
-    type: 'image'
-  },
-
   // YouTube Videos
   {
     src: 'https://img.youtube.com/vi/oos2PYWiRGM/maxresdefault.jpg',
@@ -518,5 +500,23 @@ export const images: ImageData[] = [
     date: '2024-12-05',
     type: 'video',
     videoId: 'MPVyQnYQ6wo'
+  },
+  {
+    src: 'https://img.youtube.com/vi/xGOPNPI7R18/maxresdefault.jpg',
+    alt: 'YouTube Video 8',
+    title: 'YouTube Video 8',
+    tags: ['動画'],
+    date: '2025-01-08',
+    type: 'video',
+    videoId: 'xGOPNPI7R18'
+  },
+  {
+    src: 'https://img.youtube.com/vi/xTLHy0v4RHY/maxresdefault.jpg',
+    alt: 'YouTube Video 9',
+    title: 'YouTube Video 9',
+    tags: ['動画'],
+    date: '2025-01-09',
+    type: 'video',
+    videoId: 'xTLHy0v4RHY'
   },
 ];
