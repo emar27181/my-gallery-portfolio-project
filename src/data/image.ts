@@ -11,6 +11,14 @@ export interface ImageData {
 export const images: ImageData[] = [
   // Cat Illustrations
   {
+    src: '/images/image_cat_illust.jpg',
+    alt: 'Cat Illustration',
+    title: 'Cat Illustration',
+    tags: ['猫', 'イラスト'],
+    date: '2024-12-10',
+    type: 'image'
+  },
+  {
     src: '/images/image_cat_ann1.jpg',
     alt: 'Cat Ann Illustration 1',
     title: 'Ann the Cat 1',
@@ -40,6 +48,14 @@ export const images: ImageData[] = [
     title: 'Ann the Cat 4',
     tags: ['猫', 'イラスト'],
     date: '2024-12-04',
+    type: 'image'
+  },
+  {
+    src: '/images/image_cat_ann5.jpg',
+    alt: 'Cat Ann Illustration 5',
+    title: 'Ann the Cat 5',
+    tags: ['猫', 'イラスト'],
+    date: '2024-12-05',
     type: 'image'
   },
   {
@@ -74,6 +90,22 @@ export const images: ImageData[] = [
     title: 'Dragon Fantasy',
     tags: ['イラスト'],
     date: '2024-11-20',
+    type: 'image'
+  },
+  {
+    src: '/images/image_illust_sea.jpg',
+    alt: 'Sea Illustration',
+    title: 'Sea Scene',
+    tags: ['イラスト'],
+    date: '2024-12-25',
+    type: 'image'
+  },
+  {
+    src: '/images/image_illust_splatoon.png',
+    alt: 'Splatoon Illustration',
+    title: 'Splatoon Character',
+    tags: ['イラスト'],
+    date: '2024-12-26',
     type: 'image'
   },
   {
@@ -140,6 +172,54 @@ export const images: ImageData[] = [
     title: 'Horks Character',
     tags: ['マンガ'],
     date: '2024-11-08',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_mizuhara.jpg',
+    alt: 'Mizuhara Illustration',
+    title: 'Mizuhara Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-27',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_ruka.jpg',
+    alt: 'Ruka Illustration',
+    title: 'Ruka Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-28',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_sterpratinum.jpg',
+    alt: 'Star Platinum Illustration',
+    title: 'Star Platinum Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-29',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_takagi.jpg',
+    alt: 'Takagi Illustration',
+    title: 'Takagi Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-30',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_tamaki.jpg',
+    alt: 'Tamaki Illustration',
+    title: 'Tamaki Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-31',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_zeno.jpg',
+    alt: 'Zeno Illustration',
+    title: 'Zeno Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2025-01-01',
     type: 'image'
   },
   {
@@ -251,6 +331,22 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
+    src: '/images/image_photo_misc4.jpg',
+    alt: 'Misc Photo 4',
+    title: 'Misc Photo 4',
+    tags: ['写真'],
+    date: '2025-01-02',
+    type: 'image'
+  },
+  {
+    src: '/images/image_photo_misc6.jpg',
+    alt: 'Misc Photo 6',
+    title: 'Misc Photo 6',
+    tags: ['写真'],
+    date: '2025-01-03',
+    type: 'image'
+  },
+  {
     src: '/images/image_photo_shoes.jpg',
     alt: 'Shoes Photography',
     title: 'Shoe Collection',
@@ -350,6 +446,14 @@ export const images: ImageData[] = [
   },
 
   // Research
+  {
+    src: '/images/image_research_palette.jpg',
+    alt: 'Research Palette',
+    title: 'Color Palette Research',
+    tags: ['イラスト'],
+    date: '2024-09-20',
+    type: 'image'
+  },
 
   // YouTube Videos
   {
