@@ -101,16 +101,7 @@
 
 <script>
   function updateFavicon(theme) {
-    const faviconLink = document.getElementById("favicon-link");
     const navbarFavicon = document.getElementById("navbar-favicon");
-    
-    if (faviconLink) {
-      if (theme === "dark") {
-        faviconLink.href = "/favicon/ema_sign_logo_white.png";
-      } else {
-        faviconLink.href = "/favicon/ema_sign_logo_black.png";
-      }
-    }
     
     if (navbarFavicon) {
       if (theme === "dark") {
