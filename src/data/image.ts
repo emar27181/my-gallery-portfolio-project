@@ -424,7 +424,7 @@ export const images: ImageData[] = [
     src: '/images/image_gen1.jpg',
     alt: 'Generated Art 1',
     title: 'AI Generated Art 1',
-    tags: ['AI', 'ジェネラティブアート'],
+    tags: ['ジェネラティブアート'],
     date: '2024-09-25',
     type: 'image'
   },
@@ -432,7 +432,7 @@ export const images: ImageData[] = [
     src: '/images/image_gen2.jpg',
     alt: 'Generated Art 2',
     title: 'AI Generated Art 2',
-    tags: ['AI', 'ジェネラティブアート'],
+    tags: ['ジェネラティブアート'],
     date: '2024-09-24',
     type: 'image'
   },
@@ -505,7 +505,7 @@ export const images: ImageData[] = [
     src: 'https://img.youtube.com/vi/xGOPNPI7R18/maxresdefault.jpg',
     alt: 'YouTube Video 8',
     title: 'YouTube Video 8',
-    tags: ['動画'],
+    tags: ['動画', 'スノボ'],
     date: '2025-01-08',
     type: 'video',
     videoId: 'xGOPNPI7R18'
@@ -514,7 +514,7 @@ export const images: ImageData[] = [
     src: 'https://img.youtube.com/vi/geEyOgN0SxU/maxresdefault.jpg',
     alt: 'YouTube Video 9',
     title: 'YouTube Video 9',
-    tags: ['動画'],
+    tags: ['動画', 'スノボ'],
     date: '2025-01-09',
     type: 'video',
     videoId: 'geEyOgN0SxU'
