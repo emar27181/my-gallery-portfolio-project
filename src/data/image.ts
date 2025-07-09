@@ -511,12 +511,12 @@ export const images: ImageData[] = [
     videoId: 'xGOPNPI7R18'
   },
   {
-    src: 'https://img.youtube.com/vi/xTLHy0v4RHY/maxresdefault.jpg',
+    src: 'https://img.youtube.com/vi/geEyOgN0SxU/maxresdefault.jpg',
     alt: 'YouTube Video 9',
     title: 'YouTube Video 9',
     tags: ['動画'],
     date: '2025-01-09',
     type: 'video',
-    videoId: 'xTLHy0v4RHY'
+    videoId: 'geEyOgN0SxU'
   },
 ];
