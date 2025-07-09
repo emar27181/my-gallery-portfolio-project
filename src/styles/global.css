@@ -490,10 +490,20 @@ body {
   color: var(--text-primary);
   text-decoration: none;
   transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .navbar-title-link:hover {
   opacity: 0.8;
+}
+
+.navbar-favicon {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .navbar-actions {
