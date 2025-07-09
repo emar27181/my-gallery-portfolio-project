@@ -5,7 +5,9 @@
       "Bash(npm run dev:*)",
       "Bash(git commit:*)",
       "Bash(netlify deploy:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "WebFetch(domain:emar27181-gallery-portfolio.netlify.app)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }
