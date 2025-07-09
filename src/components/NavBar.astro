@@ -7,7 +7,10 @@
     <!-- Logo/Title -->
     <div class="navbar-brand">
       <h1 class="navbar-title">
-        <a href="#top" class="navbar-title-link">emar27181 Gallery</a>
+        <a href="#top" class="navbar-title-link">
+          <img src="/favicon/ema_sign_logo_black.png" alt="emar27181 logo" class="navbar-favicon" id="navbar-favicon">
+          emar27181 Gallery
+        </a>
       </h1>
     </div>
 
@@ -97,6 +100,27 @@
 </div>
 
 <script>
+  function updateFavicon(theme) {
+    const faviconLink = document.getElementById("favicon-link");
+    const navbarFavicon = document.getElementById("navbar-favicon");
+    
+    if (faviconLink) {
+      if (theme === "dark") {
+        faviconLink.href = "/favicon/ema_sign_logo_white.png";
+      } else {
+        faviconLink.href = "/favicon/ema_sign_logo_black.png";
+      }
+    }
+    
+    if (navbarFavicon) {
+      if (theme === "dark") {
+        navbarFavicon.src = "/favicon/ema_sign_logo_white.png";
+      } else {
+        navbarFavicon.src = "/favicon/ema_sign_logo_black.png";
+      }
+    }
+  }
+
   function initNavbarTheme() {
     // Get saved theme or default to light
     const savedTheme = localStorage.getItem("theme") || "light";
@@ -104,7 +128,7 @@
     // Apply theme to document
     document.documentElement.setAttribute("data-theme", savedTheme);
 
-    // Update button icons
+    // Update button icons and favicon
     updateNavbarThemeIcons(savedTheme);
   }
 
@@ -121,6 +145,9 @@
         moonIcon.classList.add("hidden");
       }
     }
+    
+    // Update favicon based on theme
+    updateFavicon(theme);
   }
 
   function toggleNavbarTheme() {

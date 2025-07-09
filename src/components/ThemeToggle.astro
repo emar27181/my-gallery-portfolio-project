@@ -18,8 +18,19 @@
     // Apply theme to document
     document.documentElement.setAttribute('data-theme', savedTheme);
     
-    // Update button icons
+    // Update button icons and favicon
     updateThemeIcons(savedTheme);
+  }
+  
+  function updateFavicon(theme) {
+    const faviconLink = document.getElementById('favicon-link');
+    if (faviconLink) {
+      if (theme === 'dark') {
+        faviconLink.href = '/favicon/ema_sign_logo_white.png';
+      } else {
+        faviconLink.href = '/favicon/ema_sign_logo_black.png';
+      }
+    }
   }
   
   function updateThemeIcons(theme) {
@@ -35,6 +46,9 @@
         moonIcon.classList.add('hidden');
       }
     }
+    
+    // Update favicon based on theme
+    updateFavicon(theme);
   }
   
   function toggleTheme() {
