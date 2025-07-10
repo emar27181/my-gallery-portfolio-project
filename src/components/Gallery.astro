@@ -1,6 +1,6 @@
 ---
 import { images } from '../data/image';
-const breakpointCols = { default: 4, 1024: 3, 768: 2, 640: 2 };
+const breakpointCols = { default: 5, 1600: 4, 1024: 3, 768: 2, 640: 2 };
 
 // Get unique tags from all images and sort by usage count (descending)
 const tagCounts = images.flatMap(image => image.tags).reduce((acc, tag) => {
