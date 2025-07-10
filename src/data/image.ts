@@ -35,6 +35,14 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
+    src: '/images/image_cat_ann6.jpg',
+    alt: 'Cat Ann Illustration 6',
+    title: 'Ann the Cat 6',
+    tags: ['猫', 'イラスト'],
+    date: '2024-12-06',
+    type: 'image'
+  },
+  {
     src: '/images/image_cat_ann4.jpg',
     alt: 'Cat Ann Illustration 4',
     title: 'Ann the Cat 4',
@@ -50,6 +58,7 @@ export const images: ImageData[] = [
     date: '2024-12-05',
     type: 'image'
   },
+
   {
     src: '/images/image_cat_mona1.jpg',
     alt: 'Cat Mona Illustration',
@@ -130,6 +139,22 @@ export const images: ImageData[] = [
     title: 'Girl Character 5',
     tags: ['イラスト'],
     date: '2024-11-16',
+    type: 'image'
+  },
+  {
+    src: '/images/image_illust_girl6.jpg',
+    alt: 'Girl Character 6',
+    title: 'Girl Character 6',
+    tags: ['イラスト'],
+    date: '2024-11-15',
+    type: 'image'
+  },
+  {
+    src: '/images/image_illust_girl_miku.png',
+    alt: 'Hatsune Miku Illustration',
+    title: 'Hatsune Miku',
+    tags: ['イラスト', 'マンガ'],
+    date: '2024-11-14',
     type: 'image'
   },
   {
@@ -518,5 +543,23 @@ export const images: ImageData[] = [
     date: '2025-01-09',
     type: 'video',
     videoId: 'geEyOgN0SxU'
+  },
+  {
+    src: 'https://img.youtube.com/vi/V_hx-ft8w88/maxresdefault.jpg',
+    alt: 'YouTube Video 10',
+    title: 'YouTube Video 10',
+    tags: ['動画', 'VALORANT'],
+    date: '2025-01-10',
+    type: 'video',
+    videoId: 'V_hx-ft8w88'
+  },
+  {
+    src: 'https://img.youtube.com/vi/5IET-4mL9pA/maxresdefault.jpg',
+    alt: 'YouTube Video 11',
+    title: 'YouTube Video 11',
+    tags: ['動画', 'VALORANT'],
+    date: '2025-01-11',
+    type: 'video',
+    videoId: '5IET-4mL9pA'
   },
 ];
