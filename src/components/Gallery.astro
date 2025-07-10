@@ -138,6 +138,129 @@ const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a
   let selectedTags = [];
   let currentSort = 'custom';
   let isInlineMode = false;
+  let loadingQueue = [];
+  let loadingCount = 0;
+  const maxConcurrentLoads = 3;
+  
+  function initializeLazyLoading() {
+    // Load first batch of images immediately
+    const lazyImages = document.querySelectorAll('.lazy-image');
+    const visibleImages = Array.from(lazyImages).slice(0, 6); // Load first 6 images immediately
+    
+    visibleImages.forEach(image => {
+      const skeleton = image.previousElementSibling;
+      loadingQueue.push({ image: image, skeleton: skeleton });
+    });
+    
+    // Process initial queue
+    processLoadingQueue();
+    
+    // Create Intersection Observer for remaining images
+    const imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const lazyImage = entry.target;
+          const skeleton = lazyImage.previousElementSibling;
+          
+          // Add to loading queue
+          loadingQueue.push({ image: lazyImage, skeleton: skeleton });
+          imageObserver.unobserve(lazyImage);
+          
+          // Process queue
+          processLoadingQueue();
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '200px',
+      threshold: 0.01
+    });
+    
+    // Observe remaining lazy images
+    const remainingImages = Array.from(lazyImages).slice(6);
+    remainingImages.forEach(image => {
+      imageObserver.observe(image);
+    });
+  }
+  
+  function processLoadingQueue() {
+    while (loadingCount < maxConcurrentLoads && loadingQueue.length > 0) {
+      const { image, skeleton } = loadingQueue.shift();
+      loadingCount++;
+      
+      const img = new Image();
+      img.onload = () => {
+        // Set src and show image
+        image.src = image.dataset.src;
+        image.style.display = 'block';
+        
+        // Hide skeleton
+        if (skeleton && skeleton.classList.contains('image-skeleton')) {
+          skeleton.style.display = 'none';
+        }
+        
+        // Update masonry layout
+        setTimeout(() => {
+          setGridRowEnd(image.closest('.gallery-item'), image);
+          loadingCount--;
+          
+          // Continue processing queue
+          processLoadingQueue();
+        }, 50);
+      };
+      
+      img.onerror = () => {
+        // Handle error by showing placeholder
+        image.style.display = 'block';
+        image.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxNHB4IiBmaWxsPSIjOTk5Ij5FcnJvcjwvdGV4dD48L3N2Zz4=';
+        
+        if (skeleton && skeleton.classList.contains('image-skeleton')) {
+          skeleton.style.display = 'none';
+        }
+        
+        loadingCount--;
+        processLoadingQueue();
+      };
+      
+      img.src = image.dataset.src;
+    }
+  }
+  
+  function reinitializeLazyLoading() {
+    // Create new observer for newly visible images
+    const imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const lazyImage = entry.target;
+          const skeleton = lazyImage.previousElementSibling;
+          
+          // Add to loading queue
+          loadingQueue.push({ image: lazyImage, skeleton: skeleton });
+          imageObserver.unobserve(lazyImage);
+          
+          // Process queue
+          processLoadingQueue();
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '50px',
+      threshold: 0.1
+    });
+    
+    // Observe all lazy images that are visible and not loaded
+    const lazyImages = document.querySelectorAll('.lazy-image');
+    lazyImages.forEach(image => {
+      const item = image.closest('.gallery-item');
+      if (item && item.style.display !== 'none' && !image.src) {
+        const skeleton = image.previousElementSibling;
+        loadingQueue.push({ image: image, skeleton: skeleton });
+      }
+    });
+    
+    // Process queue for newly visible images
+    processLoadingQueue();
+  }
   
   function layoutMasonryGrid() {
     const galleryItems = document.querySelectorAll('.gallery-item');
@@ -213,7 +336,10 @@ const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a
     filterGallery(currentFilter);
     
     // Re-layout masonry grid after sorting
-    setTimeout(() => layoutMasonryGrid(), 100);
+    setTimeout(() => {
+      reinitializeLazyLoading();
+      layoutMasonryGrid();
+    }, 100);
   }
   
   function filterGallery(selectedTags) {
@@ -233,16 +359,26 @@ const allTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a
       }
     });
     
-    // Re-layout masonry grid after filtering
-    setTimeout(() => layoutMasonryGrid(), 100);
+    // Re-initialize lazy loading for newly visible items
+    setTimeout(() => {
+      reinitializeLazyLoading();
+      layoutMasonryGrid();
+    }, 100);
   }
   
   document.addEventListener('DOMContentLoaded', () => {
+    // Initialize lazy loading with Intersection Observer
+    initializeLazyLoading();
+    
     // Initialize with default sort
     sortGallery(currentSort);
     
     // Initialize masonry layout
     setTimeout(() => layoutMasonryGrid(), 100);
+    
+    // Debug: Check if images are loaded
+    console.log('DOM loaded, initializing gallery...');
+    console.log('Found lazy images:', document.querySelectorAll('.lazy-image').length);
     
     // Multi-tag filter functionality
     const filterTags = document.getElementById('filter-tags');
