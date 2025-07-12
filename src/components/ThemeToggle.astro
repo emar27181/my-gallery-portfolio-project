@@ -18,8 +18,12 @@
     // Apply theme to document
     document.documentElement.setAttribute('data-theme', savedTheme);
     
-    // Update button icons
+    // Update button icons and favicon
     updateThemeIcons(savedTheme);
+  }
+  
+  function updateFavicon(theme) {
+    // Tab favicon is now fixed to white, no dynamic switching needed
   }
   
   function updateThemeIcons(theme) {
@@ -35,6 +39,9 @@
         moonIcon.classList.add('hidden');
       }
     }
+    
+    // Update favicon based on theme
+    updateFavicon(theme);
   }
   
   function toggleTheme() {

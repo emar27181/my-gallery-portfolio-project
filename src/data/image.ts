@@ -5,6 +5,7 @@ export interface ImageData {
   tags: string[];
   date: string;
   type: 'image' | 'video';
+  videoId?: string; // YouTube video ID for video type
 }
 
 export const images: ImageData[] = [
@@ -34,6 +35,14 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
+    src: '/images/image_cat_ann6.jpg',
+    alt: 'Cat Ann Illustration 6',
+    title: 'Ann the Cat 6',
+    tags: ['猫', 'イラスト'],
+    date: '2024-12-06',
+    type: 'image'
+  },
+  {
     src: '/images/image_cat_ann4.jpg',
     alt: 'Cat Ann Illustration 4',
     title: 'Ann the Cat 4',
@@ -41,6 +50,15 @@ export const images: ImageData[] = [
     date: '2024-12-04',
     type: 'image'
   },
+  {
+    src: '/images/image_cat_ann5.jpg',
+    alt: 'Cat Ann Illustration 5',
+    title: 'Ann the Cat 5',
+    tags: ['猫', 'イラスト', 'オリジナル'],
+    date: '2024-12-05',
+    type: 'image'
+  },
+
   {
     src: '/images/image_cat_mona1.jpg',
     alt: 'Cat Mona Illustration',
@@ -55,7 +73,7 @@ export const images: ImageData[] = [
     src: '/images/image_girl.jpg',
     alt: 'Girl Character Illustration',
     title: 'Girl Character',
-    tags: ['イラスト'],
+    tags: ['イラスト', 'オリジナル'],
     date: '2024-11-25',
     type: 'image'
   },
@@ -71,8 +89,24 @@ export const images: ImageData[] = [
     src: '/images/image_illust_dragon.jpg',
     alt: 'Dragon Illustration',
     title: 'Dragon Fantasy',
-    tags: ['イラスト'],
+    tags: ['イラスト', 'オリジナル'],
     date: '2024-11-20',
+    type: 'image'
+  },
+  {
+    src: '/images/image_illust_sea.jpg',
+    alt: 'Sea Illustration',
+    title: 'Sea Scene',
+    tags: ['イラスト', 'オリジナル'],
+    date: '2024-12-25',
+    type: 'image'
+  },
+  {
+    src: '/images/image_illust_splatoon.png',
+    alt: 'Splatoon Illustration',
+    title: 'Splatoon Character',
+    tags: ['イラスト'],
+    date: '2024-12-26',
     type: 'image'
   },
   {
@@ -105,6 +139,22 @@ export const images: ImageData[] = [
     title: 'Girl Character 5',
     tags: ['イラスト'],
     date: '2024-11-16',
+    type: 'image'
+  },
+  {
+    src: '/images/image_illust_girl6.jpg',
+    alt: 'Girl Character 6',
+    title: 'Girl Character 6',
+    tags: ['イラスト'],
+    date: '2024-11-15',
+    type: 'image'
+  },
+  {
+    src: '/images/image_illust_girl_miku.png',
+    alt: 'Hatsune Miku Illustration',
+    title: 'Hatsune Miku',
+    tags: ['イラスト', 'マンガ'],
+    date: '2024-11-14',
     type: 'image'
   },
   {
@@ -142,6 +192,62 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
+    src: '/images/image_manga_horks_2.jpg',
+    alt: 'Horks Fan Art 2',
+    title: 'Horks Character 2',
+    tags: ['マンガ'],
+    date: '2024-11-08',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_mizuhara.jpg',
+    alt: 'Mizuhara Illustration',
+    title: 'Mizuhara Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-27',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_ruka.jpg',
+    alt: 'Ruka Illustration',
+    title: 'Ruka Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-28',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_sterpratinum.jpg',
+    alt: 'Star Platinum Illustration',
+    title: 'Star Platinum Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-29',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_takagi.jpg',
+    alt: 'Takagi Illustration',
+    title: 'Takagi Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-30',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_tamaki.jpg',
+    alt: 'Tamaki Illustration',
+    title: 'Tamaki Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2024-12-31',
+    type: 'image'
+  },
+  {
+    src: '/images/image_manga_illust_zeno.jpg',
+    alt: 'Zeno Illustration',
+    title: 'Zeno Character',
+    tags: ['マンガ', 'イラスト'],
+    date: '2025-01-01',
+    type: 'image'
+  },
+  {
     src: '/images/image_manga_itadori.jpg',
     alt: 'Itadori Fan Art',
     title: 'Itadori from Jujutsu Kaisen',
@@ -169,7 +275,7 @@ export const images: ImageData[] = [
     src: '/images/image_icon_astra.jpg',
     alt: 'Astra Icon',
     title: 'Astra Character Icon',
-    tags: ['イラスト'],
+    tags: ['イラスト', 'VALORANT', 'オリジナル'],
     date: '2024-10-30',
     type: 'image'
   },
@@ -177,7 +283,7 @@ export const images: ImageData[] = [
     src: '/images/image_icon_omen.png',
     alt: 'Omen Icon',
     title: 'Omen Character Icon',
-    tags: ['イラスト'],
+    tags: ['イラスト', 'VALORANT', '猫', 'オリジナル'],
     date: '2024-10-29',
     type: 'image'
   },
@@ -250,6 +356,22 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
+    src: '/images/image_photo_misc4.jpg',
+    alt: 'Misc Photo 4',
+    title: 'Misc Photo 4',
+    tags: ['写真'],
+    date: '2025-01-02',
+    type: 'image'
+  },
+  {
+    src: '/images/image_photo_misc6.jpg',
+    alt: 'Misc Photo 6',
+    title: 'Misc Photo 6',
+    tags: ['写真'],
+    date: '2025-01-03',
+    type: 'image'
+  },
+  {
     src: '/images/image_photo_shoes.jpg',
     alt: 'Shoes Photography',
     title: 'Shoe Collection',
@@ -316,26 +438,42 @@ export const images: ImageData[] = [
 
   // Logos and Generated Art
   {
+    src: '/images/image_logo_ylab.jpg',
+    alt: 'Y-Lab Logo',
+    title: 'Y-Lab Brand Logo',
+    tags: ['ロゴ', 'イラスト', 'オリジナル'],
+    date: '2024-09-29',
+    type: 'image'
+  },
+  {
     src: '/images/image_logo_shandy.jpg',
     alt: 'Shandy Logo',
     title: 'Shandy Brand Logo',
-    tags: ['ロゴ', 'イラスト'],
+    tags: ['ロゴ', 'イラスト', 'オリジナル'],
     date: '2024-09-30',
     type: 'image'
   },
   {
-    src: '/images/image_logo_ylab.jpg',
-    alt: 'Y-Lab Logo',
-    title: 'Y-Lab Brand Logo',
-    tags: ['ロゴ', 'イラスト'],
-    date: '2024-09-29',
+    src: '/images/image_logo_shandy_t-shirt_head.jpg',
+    alt: 'Shandy T-shirt Design Head',
+    title: 'Shandy T-shirt Head Design',
+    tags: ['ロゴ', 'イラスト', 'オリジナル'],
+    date: '2024-09-28',
+    type: 'image'
+  },
+  {
+    src: '/images/image_logo_shandy_t-shirt_tail.jpg',
+    alt: 'Shandy T-shirt Design Tail',
+    title: 'Shandy T-shirt Tail Design',
+    tags: ['ロゴ', 'イラスト', 'オリジナル'],
+    date: '2024-09-27',
     type: 'image'
   },
   {
     src: '/images/image_gen1.jpg',
     alt: 'Generated Art 1',
     title: 'AI Generated Art 1',
-    tags: ['AI', 'ジェネラティブアート'],
+    tags: ['ジェネラティブアート'],
     date: '2024-09-25',
     type: 'image'
   },
@@ -343,10 +481,109 @@ export const images: ImageData[] = [
     src: '/images/image_gen2.jpg',
     alt: 'Generated Art 2',
     title: 'AI Generated Art 2',
-    tags: ['AI', 'ジェネラティブアート'],
+    tags: ['ジェネラティブアート'],
     date: '2024-09-24',
     type: 'image'
   },
 
-  // Research
+  // YouTube Videos
+  {
+    src: 'https://img.youtube.com/vi/oos2PYWiRGM/maxresdefault.jpg',
+    alt: 'YouTube Video 1',
+    title: 'YouTube Video 1',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-08',
+    type: 'video',
+    videoId: 'oos2PYWiRGM'
+  },
+  {
+    src: 'https://img.youtube.com/vi/ERb40ovB060/maxresdefault.jpg',
+    alt: 'YouTube Video 2',
+    title: 'YouTube Video 2',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-07',
+    type: 'video',
+    videoId: 'ERb40ovB060'
+  },
+  {
+    src: 'https://img.youtube.com/vi/KTwFA1jQgFY/maxresdefault.jpg',
+    alt: 'YouTube Video 3',
+    title: 'YouTube Video 3',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-06',
+    type: 'video',
+    videoId: 'KTwFA1jQgFY'
+  },
+  {
+    src: 'https://img.youtube.com/vi/1-tDSvjpxn4/maxresdefault.jpg',
+    alt: 'YouTube Video 4',
+    title: 'YouTube Video 4',
+    tags: ['動画', '猫', 'イラスト', 'オリジナル'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: '1-tDSvjpxn4'
+  },
+  {
+    src: 'https://img.youtube.com/vi/pqynYQGtxUM/maxresdefault.jpg',
+    alt: 'YouTube Video 5',
+    title: 'YouTube Video 5',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: 'pqynYQGtxUM'
+  },
+  {
+    src: 'https://img.youtube.com/vi/j3tKqZ3v0A0/maxresdefault.jpg',
+    alt: 'YouTube Video 6',
+    title: 'YouTube Video 6',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: 'j3tKqZ3v0A0'
+  },
+  {
+    src: 'https://img.youtube.com/vi/MPVyQnYQ6wo/maxresdefault.jpg',
+    alt: 'YouTube Video 7',
+    title: 'YouTube Video 7',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: 'MPVyQnYQ6wo'
+  },
+  {
+    src: 'https://img.youtube.com/vi/xGOPNPI7R18/maxresdefault.jpg',
+    alt: 'YouTube Video 8',
+    title: 'YouTube Video 8',
+    tags: ['動画', 'スノボ'],
+    date: '2025-01-08',
+    type: 'video',
+    videoId: 'xGOPNPI7R18'
+  },
+  {
+    src: 'https://img.youtube.com/vi/geEyOgN0SxU/maxresdefault.jpg',
+    alt: 'YouTube Video 9',
+    title: 'YouTube Video 9',
+    tags: ['動画', 'スノボ'],
+    date: '2025-01-09',
+    type: 'video',
+    videoId: 'geEyOgN0SxU'
+  },
+  {
+    src: 'https://img.youtube.com/vi/V_hx-ft8w88/maxresdefault.jpg',
+    alt: 'YouTube Video 10',
+    title: 'YouTube Video 10',
+    tags: ['動画', 'VALORANT'],
+    date: '2025-01-10',
+    type: 'video',
+    videoId: 'V_hx-ft8w88'
+  },
+  {
+    src: 'https://img.youtube.com/vi/5IET-4mL9pA/maxresdefault.jpg',
+    alt: 'YouTube Video 11',
+    title: 'YouTube Video 11',
+    tags: ['動画', 'VALORANT'],
+    date: '2025-01-11',
+    type: 'video',
+    videoId: '5IET-4mL9pA'
+  },
 ];

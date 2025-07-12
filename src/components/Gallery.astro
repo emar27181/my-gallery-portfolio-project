@@ -1,13 +1,21 @@
 ---
-import { images } from '../data/image';
-const breakpointCols = { default: 4, 1024: 3, 768: 2, 640: 2 };
+import { images } from "../data/image";
+const breakpointCols = { default: 6, 1024: 5, 768: 2, 640: 2 };
 
-// Get unique tags from all images
-const allTags = [...new Set(images.flatMap(image => image.tags))];
+// Get unique tags from all images and sort by usage count (descending)
+const tagCounts = images
+  .flatMap((image) => image.tags)
+  .reduce((acc, tag) => {
+    acc[tag] = (acc[tag] || 0) + 1;
+    return acc;
+  }, {});
+
+const allTags = Object.keys(tagCounts).sort(
+  (a, b) => tagCounts[b] - tagCounts[a],
+);
 ---
 
 <div class="gallery-container">
-
   <!-- 🏷️ フィルター & ソート -->
   <div class="controls-container">
     <div class="filter-container">
@@ -18,13 +26,17 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
         </div>
         <div class="filter-dropdown" id="filter-dropdown">
           <div class="filter-option" data-value="all">全て</div>
-          {allTags.map(tag => (
-            <div class="filter-option" data-value={tag}>{tag}</div>
-          ))}
+          {
+            allTags.map((tag) => (
+              <div class="filter-option" data-value={tag}>
+                {tag}
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
-    
+
     <div class="sort-container">
       <label for="sort-select" class="sort-label">並び替え:</label>
       <select id="sort-select" class="sort-select">
@@ -41,18 +53,71 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   <!-- 🖼 ギャラリー -->
   <div id="gallery" class="gallery-grid">
     {
-      images.map(({ src, alt, title, tags, date }, index) => (
-        <div class="gallery-item" data-tags={tags.join(',')} data-title={title} data-date={date} data-category={tags[0]} data-index={index}>
-          <img
-            src={src}
-            alt={alt}
-            title={title}
-            class="block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
-            loading="lazy"
-            data-src={src}
-            data-alt={alt}
-            data-title={title}
-          />
+      images.map(({ src, alt, title, tags, date, type, videoId }, index) => (
+        <div
+          class="gallery-item"
+          data-tags={tags.join(",")}
+          data-title={title}
+          data-date={date}
+          data-category={tags[0]}
+          data-index={index}
+          data-type={type}
+          data-video-id={videoId || ""}
+        >
+          <div class="gallery-item-container">
+            {type === "video" ? (
+              <div class="video-content">
+                <img
+                  src={src}
+                  alt={alt}
+                  title={title}
+                  class="video-thumbnail block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
+                  loading="lazy"
+                  data-src={src}
+                  data-alt={alt}
+                  data-title={title}
+                  data-type={type}
+                  data-video-id={videoId || ""}
+                />
+                <div class="video-player-container" style="display: none;">
+                  <iframe
+                    class="video-player"
+                    src=""
+                    title={title}
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    data-video-id={videoId || ""}
+                  />
+                </div>
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <img
+                src={src}
+                alt={alt}
+                title={title}
+                class="block h-auto w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
+                loading="lazy"
+                data-src={src}
+                data-alt={alt}
+                data-title={title}
+                data-type={type}
+                data-video-id={videoId || ""}
+              />
+            )}
+          </div>
         </div>
       ))
     }
@@ -64,9 +129,45 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
   <div class="image-modal-overlay" id="image-modal-overlay">
     <div class="image-modal-content">
       <img class="image-modal-img" id="image-modal-img" src="" alt="" />
-      <button class="image-modal-close" id="image-modal-close" aria-label="Close image">
+      <button
+        class="image-modal-close"
+        id="image-modal-close"
+        aria-label="Close image"
+      >
         <svg fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          <path
+            fill-rule="evenodd"
+            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+            clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Video Modal -->
+<div class="video-modal" id="video-modal">
+  <div class="video-modal-overlay" id="video-modal-overlay">
+    <div class="video-modal-content">
+      <div class="video-container">
+        <iframe
+          id="video-modal-iframe"
+          src=""
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>
+      <button
+        class="video-modal-close"
+        id="video-modal-close"
+        aria-label="Close video"
+      >
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+            clip-rule="evenodd"></path>
         </svg>
       </button>
     </div>
@@ -76,281 +177,568 @@ const allTags = [...new Set(images.flatMap(image => image.tags))];
 <script>
   let currentFilter = [];
   let selectedTags = [];
-  let currentSort = 'custom';
-  
+  let currentSort = "custom";
+  let isInlineMode = false;
+  let loadingQueue = [];
+  let loadingCount = 0;
+  const maxConcurrentLoads = 3;
+
+  function initializeLazyLoading() {
+    // Load first batch of images immediately
+    const lazyImages = document.querySelectorAll(".lazy-image");
+    const visibleImages = Array.from(lazyImages).slice(0, 6); // Load first 6 images immediately
+
+    visibleImages.forEach((image) => {
+      const skeleton = image.previousElementSibling;
+      loadingQueue.push({ image: image, skeleton: skeleton });
+    });
+
+    // Process initial queue
+    processLoadingQueue();
+
+    // Create Intersection Observer for remaining images
+    const imageObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const lazyImage = entry.target;
+            const skeleton = lazyImage.previousElementSibling;
+
+            // Add to loading queue
+            loadingQueue.push({ image: lazyImage, skeleton: skeleton });
+            imageObserver.unobserve(lazyImage);
+
+            // Process queue
+            processLoadingQueue();
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "200px",
+        threshold: 0.01,
+      },
+    );
+
+    // Observe remaining lazy images
+    const remainingImages = Array.from(lazyImages).slice(6);
+    remainingImages.forEach((image) => {
+      imageObserver.observe(image);
+    });
+  }
+
+  function processLoadingQueue() {
+    while (loadingCount < maxConcurrentLoads && loadingQueue.length > 0) {
+      const { image, skeleton } = loadingQueue.shift();
+      loadingCount++;
+
+      const img = new Image();
+      img.onload = () => {
+        // Set src and show image
+        image.src = image.dataset.src;
+        image.style.display = "block";
+
+        // Hide skeleton
+        if (skeleton && skeleton.classList.contains("image-skeleton")) {
+          skeleton.style.display = "none";
+        }
+
+        // Update masonry layout
+        setTimeout(() => {
+          setGridRowEnd(image.closest(".gallery-item"), image);
+          loadingCount--;
+
+          // Continue processing queue
+          processLoadingQueue();
+        }, 50);
+      };
+
+      img.onerror = () => {
+        // Handle error by showing placeholder
+        image.style.display = "block";
+        image.src =
+          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxNHB4IiBmaWxsPSIjOTk5Ij5FcnJvcjwvdGV4dD48L3N2Zz4=";
+
+        if (skeleton && skeleton.classList.contains("image-skeleton")) {
+          skeleton.style.display = "none";
+        }
+
+        loadingCount--;
+        processLoadingQueue();
+      };
+
+      img.src = image.dataset.src;
+    }
+  }
+
+  function reinitializeLazyLoading() {
+    // Create new observer for newly visible images
+    const imageObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const lazyImage = entry.target;
+            const skeleton = lazyImage.previousElementSibling;
+
+            // Add to loading queue
+            loadingQueue.push({ image: lazyImage, skeleton: skeleton });
+            imageObserver.unobserve(lazyImage);
+
+            // Process queue
+            processLoadingQueue();
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "50px",
+        threshold: 0.1,
+      },
+    );
+
+    // Observe all lazy images that are visible and not loaded
+    const lazyImages = document.querySelectorAll(".lazy-image");
+    lazyImages.forEach((image) => {
+      const item = image.closest(".gallery-item");
+      if (item && item.style.display !== "none" && !image.src) {
+        const skeleton = image.previousElementSibling;
+        loadingQueue.push({ image: image, skeleton: skeleton });
+      }
+    });
+
+    // Process queue for newly visible images
+    processLoadingQueue();
+  }
+
   function layoutMasonryGrid() {
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    
-    galleryItems.forEach(item => {
-      const img = item.querySelector('img');
-      if (img.complete) {
+    const galleryItems = document.querySelectorAll(".gallery-item");
+
+    galleryItems.forEach((item) => {
+      const img = item.querySelector("img");
+      const videoPlayerContainer = item.querySelector(
+        ".video-player-container",
+      );
+
+      // For video items, check if video player is shown
+      if (
+        videoPlayerContainer &&
+        videoPlayerContainer.style.display === "block"
+      ) {
+        setGridRowEndForVideo(item, videoPlayerContainer);
+      } else if (img && img.complete) {
         setGridRowEnd(item, img);
-      } else {
+      } else if (img) {
         img.onload = () => setGridRowEnd(item, img);
       }
     });
   }
-  
+
   function setGridRowEnd(item, img) {
     const gap = 4;
     const rowHeight = 10;
     const rowSpan = Math.ceil((img.offsetHeight + gap) / (rowHeight + gap));
     item.style.gridRowEnd = `span ${rowSpan}`;
   }
-  
+
+  function setGridRowEndForVideo(item, videoContainer) {
+    const gap = 4;
+    const rowHeight = 10;
+    const containerHeight = videoContainer.offsetHeight;
+    const rowSpan = Math.ceil((containerHeight + gap) / (rowHeight + gap));
+    item.style.gridRowEnd = `span ${rowSpan}`;
+  }
+
   function sortGallery(sortBy) {
-    const galleryContainer = document.getElementById('gallery');
-    const items = Array.from(document.querySelectorAll('.gallery-item'));
-    
+    const galleryContainer = document.getElementById("gallery");
+    const items = Array.from(document.querySelectorAll(".gallery-item"));
+
     items.sort((a, b) => {
       switch (sortBy) {
-        case 'custom':
-          return parseInt(a.getAttribute('data-index')) - parseInt(b.getAttribute('data-index'));
-        case 'date-desc':
-          return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
-        case 'date-asc':
-          return new Date(a.getAttribute('data-date')) - new Date(b.getAttribute('data-date'));
-        case 'title-asc':
-          return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'));
-        case 'title-desc':
-          return b.getAttribute('data-title').localeCompare(a.getAttribute('data-title'));
-        case 'category':
-          const categoryA = a.getAttribute('data-category');
-          const categoryB = b.getAttribute('data-category');
+        case "custom":
+          return (
+            parseInt(a.getAttribute("data-index")) -
+            parseInt(b.getAttribute("data-index"))
+          );
+        case "date-desc":
+          return (
+            new Date(b.getAttribute("data-date")) -
+            new Date(a.getAttribute("data-date"))
+          );
+        case "date-asc":
+          return (
+            new Date(a.getAttribute("data-date")) -
+            new Date(b.getAttribute("data-date"))
+          );
+        case "title-asc":
+          return a
+            .getAttribute("data-title")
+            .localeCompare(b.getAttribute("data-title"));
+        case "title-desc":
+          return b
+            .getAttribute("data-title")
+            .localeCompare(a.getAttribute("data-title"));
+        case "category":
+          const categoryA = a.getAttribute("data-category");
+          const categoryB = b.getAttribute("data-category");
           if (categoryA === categoryB) {
             // Secondary sort by date if categories are the same
-            return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+            return (
+              new Date(b.getAttribute("data-date")) -
+              new Date(a.getAttribute("data-date"))
+            );
           }
           return categoryA.localeCompare(categoryB);
         default:
           return 0;
       }
     });
-    
+
     // Clear container and re-append sorted items
-    galleryContainer.innerHTML = '';
-    items.forEach(item => {
+    galleryContainer.innerHTML = "";
+    items.forEach((item) => {
       galleryContainer.appendChild(item);
     });
-    
+
     currentSort = sortBy;
-    
+
     // Re-apply current filter after sorting
     filterGallery(currentFilter);
-    
+
     // Re-layout masonry grid after sorting
-    setTimeout(() => layoutMasonryGrid(), 100);
+    setTimeout(() => {
+      reinitializeLazyLoading();
+      layoutMasonryGrid();
+    }, 100);
   }
-  
+
   function filterGallery(selectedTags) {
     currentFilter = selectedTags;
-    
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    
-    galleryItems.forEach(item => {
-      const itemTags = item.getAttribute('data-tags').split(',');
-      
+
+    const galleryItems = document.querySelectorAll(".gallery-item");
+
+    galleryItems.forEach((item) => {
+      const itemTags = item.getAttribute("data-tags").split(",");
+
       if (selectedTags.length === 0) {
-        item.style.display = 'block';
+        item.style.display = "block";
       } else {
         // Check if item has ALL selected tags (AND condition)
-        const hasAllTags = selectedTags.every(tag => itemTags.includes(tag));
-        item.style.display = hasAllTags ? 'block' : 'none';
+        const hasAllTags = selectedTags.every((tag) => itemTags.includes(tag));
+        item.style.display = hasAllTags ? "block" : "none";
       }
     });
-    
-    // Re-layout masonry grid after filtering
-    setTimeout(() => layoutMasonryGrid(), 100);
+
+    // Re-initialize lazy loading for newly visible items
+    setTimeout(() => {
+      reinitializeLazyLoading();
+      layoutMasonryGrid();
+    }, 100);
   }
-  
-  document.addEventListener('DOMContentLoaded', () => {
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Initialize lazy loading with Intersection Observer
+    initializeLazyLoading();
+
     // Initialize with default sort
     sortGallery(currentSort);
-    
+
     // Initialize masonry layout
     setTimeout(() => layoutMasonryGrid(), 100);
-    
+
+    // Debug: Check if images are loaded
+    console.log("DOM loaded, initializing gallery...");
+    console.log(
+      "Found lazy images:",
+      document.querySelectorAll(".lazy-image").length,
+    );
+
     // Multi-tag filter functionality
-    const filterTags = document.getElementById('filter-tags');
-    const filterDropdown = document.getElementById('filter-dropdown');
-    const filterOptions = document.querySelectorAll('.filter-option');
-    
+    const filterTags = document.getElementById("filter-tags");
+    const filterDropdown = document.getElementById("filter-dropdown");
+    const filterOptions = document.querySelectorAll(".filter-option");
+
     // Toggle dropdown
     if (filterTags) {
-      filterTags.addEventListener('click', () => {
-        filterDropdown.classList.toggle('open');
+      filterTags.addEventListener("click", () => {
+        filterDropdown.classList.toggle("open");
       });
     }
-    
+
     // Handle tag selection
-    filterOptions.forEach(option => {
-      option.addEventListener('click', (e) => {
+    filterOptions.forEach((option) => {
+      option.addEventListener("click", (e) => {
         e.stopPropagation();
-        const value = e.target.getAttribute('data-value');
-        
-        if (value === 'all') {
+        const value = e.target.getAttribute("data-value");
+
+        if (value === "all") {
           selectedTags = [];
           updateFilterDisplay();
           filterGallery([]);
         } else {
           if (selectedTags.includes(value)) {
-            selectedTags = selectedTags.filter(tag => tag !== value);
+            selectedTags = selectedTags.filter((tag) => tag !== value);
           } else {
             selectedTags.push(value);
           }
           updateFilterDisplay();
           filterGallery(selectedTags);
         }
-        
+
         // Keep dropdown open for multiple selections
         // Don't close dropdown automatically
       });
     });
-    
+
     // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!filterTags.contains(e.target) && !filterDropdown.contains(e.target)) {
-        filterDropdown.classList.remove('open');
+    document.addEventListener("click", (e) => {
+      if (
+        !filterTags.contains(e.target) &&
+        !filterDropdown.contains(e.target)
+      ) {
+        filterDropdown.classList.remove("open");
       }
     });
-    
+
     // Add change handler to sort select
-    const sortSelect = document.getElementById('sort-select');
+    const sortSelect = document.getElementById("sort-select");
     if (sortSelect) {
-      sortSelect.addEventListener('change', (e) => {
+      sortSelect.addEventListener("change", (e) => {
         sortGallery(e.target.value);
       });
     }
-    
-    // Add click handlers to gallery images (delegated event)
-    const gallery = document.getElementById('gallery');
-    gallery.addEventListener('click', (e) => {
-      if (e.target.tagName === 'IMG') {
-        const img = e.target;
-        const src = img.getAttribute('data-src') || img.getAttribute('src');
-        const alt = img.getAttribute('data-alt') || img.getAttribute('alt');
-        const title = img.getAttribute('data-title') || img.getAttribute('title');
-        
-        openImageModal(src, alt, title);
+
+    // Add click handlers to gallery items (delegated event)
+    const gallery = document.getElementById("gallery");
+    gallery.addEventListener("click", (e) => {
+      let target = e.target;
+
+      // Find the closest img element or container
+      if (
+        target.tagName === "IMG" ||
+        target.closest(".gallery-item-container")
+      ) {
+        if (target.tagName !== "IMG") {
+          target = target
+            .closest(".gallery-item-container")
+            .querySelector("img");
+        }
+
+        const src =
+          target.getAttribute("data-src") || target.getAttribute("src");
+        const alt =
+          target.getAttribute("data-alt") || target.getAttribute("alt");
+        const title =
+          target.getAttribute("data-title") || target.getAttribute("title");
+        const type = target.getAttribute("data-type");
+        const videoId = target.getAttribute("data-video-id");
+
+        if (type === "video" && videoId) {
+          toggleInlineVideo(target.closest(".gallery-item"));
+        } else {
+          openImageModal(src, alt, title);
+        }
       }
     });
-    
+
     // Image modal functionality
-    const imageModal = document.getElementById('image-modal');
-    const imageModalImg = document.getElementById('image-modal-img');
-    const imageModalClose = document.getElementById('image-modal-close');
-    const imageModalOverlay = document.getElementById('image-modal-overlay');
-    
+    const imageModal = document.getElementById("image-modal");
+    const imageModalImg = document.getElementById("image-modal-img");
+    const imageModalClose = document.getElementById("image-modal-close");
+    const imageModalOverlay = document.getElementById("image-modal-overlay");
+
     // Close modal button
     if (imageModalClose) {
-      imageModalClose.addEventListener('click', closeImageModal);
+      imageModalClose.addEventListener("click", closeImageModal);
     }
-    
+
     // Close modal when clicking overlay or outside image
     if (imageModal) {
-      imageModal.addEventListener('click', (e) => {
+      imageModal.addEventListener("click", (e) => {
         // Close if clicking on the modal background (not on the image or close button)
         if (e.target === imageModal || e.target === imageModalOverlay) {
           closeImageModal();
         }
       });
     }
-    
+
+    // Video modal functionality
+    const videoModal = document.getElementById("video-modal");
+    const videoModalClose = document.getElementById("video-modal-close");
+    const videoModalOverlay = document.getElementById("video-modal-overlay");
+
+    // Close video modal button
+    if (videoModalClose) {
+      videoModalClose.addEventListener("click", closeVideoModal);
+    }
+
+    // Close video modal when clicking overlay
+    if (videoModal) {
+      videoModal.addEventListener("click", (e) => {
+        if (e.target === videoModal || e.target === videoModalOverlay) {
+          closeVideoModal();
+        }
+      });
+    }
+
     // Close modal with escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && imageModal && imageModal.classList.contains('open')) {
-        closeImageModal();
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (imageModal && imageModal.classList.contains("open")) {
+          closeImageModal();
+        }
+        if (videoModal && videoModal.classList.contains("open")) {
+          closeVideoModal();
+        }
       }
     });
+
+    // Initialize inline mode by default
+    isInlineMode = true;
   });
-  
+
   function openImageModal(src, alt, title) {
-    const imageModal = document.getElementById('image-modal');
-    const imageModalImg = document.getElementById('image-modal-img');
-    
+    const imageModal = document.getElementById("image-modal");
+    const imageModalImg = document.getElementById("image-modal-img");
+
     if (imageModal && imageModalImg) {
       imageModalImg.src = src;
-      imageModalImg.alt = alt || title || '';
-      imageModal.classList.add('open');
-      document.body.style.overflow = 'hidden';
+      imageModalImg.alt = alt || title || "";
+      imageModal.classList.add("open");
+      document.body.style.overflow = "hidden";
     }
   }
-  
+
   function closeImageModal() {
-    const imageModal = document.getElementById('image-modal');
-    
+    const imageModal = document.getElementById("image-modal");
+
     if (imageModal) {
-      imageModal.classList.remove('open');
-      document.body.style.overflow = '';
+      imageModal.classList.remove("open");
+      document.body.style.overflow = "";
     }
   }
-  
+
+  function openVideoModal(videoId, title) {
+    const videoModal = document.getElementById("video-modal");
+    const videoModalIframe = document.getElementById("video-modal-iframe");
+
+    if (videoModal && videoModalIframe) {
+      videoModalIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
+      videoModal.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  function closeVideoModal() {
+    const videoModal = document.getElementById("video-modal");
+    const videoModalIframe = document.getElementById("video-modal-iframe");
+
+    if (videoModal && videoModalIframe) {
+      videoModalIframe.src = "";
+      videoModal.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+  }
+
+  function toggleInlineVideo(galleryItem) {
+    const videoContent = galleryItem.querySelector(".video-content");
+    const thumbnail = videoContent.querySelector(".video-thumbnail");
+    const playerContainer = videoContent.querySelector(
+      ".video-player-container",
+    );
+    const overlay = videoContent.querySelector(".video-overlay");
+    const iframe = playerContainer.querySelector("iframe");
+    const videoId = thumbnail.getAttribute("data-video-id");
+
+    if (thumbnail.style.display === "none") {
+      // Switch back to thumbnail
+      thumbnail.style.display = "block";
+      playerContainer.style.display = "none";
+      overlay.style.display = "flex";
+      iframe.src = "";
+
+      // Reset grid row span
+      galleryItem.style.gridRowEnd = "auto";
+    } else {
+      // Switch to video player
+      thumbnail.style.display = "none";
+      playerContainer.style.display = "block";
+      overlay.style.display = "none";
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
+    }
+
+    // Re-layout masonry grid after video toggle with delay for proper height calculation
+    setTimeout(() => {
+      layoutMasonryGrid();
+    }, 200);
+  }
+
   // Update filter display
   function updateFilterDisplay() {
-    const filterTags = document.getElementById('filter-tags');
-    const placeholder = filterTags.querySelector('.filter-placeholder');
-    const filterOptions = document.querySelectorAll('.filter-option');
-    
+    const filterTags = document.getElementById("filter-tags");
+    const placeholder = filterTags.querySelector(".filter-placeholder");
+    const filterOptions = document.querySelectorAll(".filter-option");
+
     // Update dropdown options to show selected state
-    filterOptions.forEach(option => {
-      const value = option.getAttribute('data-value');
-      if (value === 'all') {
+    filterOptions.forEach((option) => {
+      const value = option.getAttribute("data-value");
+      if (value === "all") {
         // 'all' option should be selected when no specific tags are selected
         if (selectedTags.length === 0) {
-          option.classList.add('selected');
+          option.classList.add("selected");
         } else {
-          option.classList.remove('selected');
+          option.classList.remove("selected");
         }
       } else {
         if (selectedTags.includes(value)) {
-          option.classList.add('selected');
+          option.classList.add("selected");
         } else {
-          option.classList.remove('selected');
+          option.classList.remove("selected");
         }
       }
     });
-    
+
     if (selectedTags.length === 0) {
       if (placeholder) {
-        placeholder.style.display = 'block';
+        placeholder.style.display = "block";
       }
       // Remove existing tag elements
-      const existingTags = filterTags.querySelectorAll('.selected-tag');
-      existingTags.forEach(tag => tag.remove());
+      const existingTags = filterTags.querySelectorAll(".selected-tag");
+      existingTags.forEach((tag) => tag.remove());
     } else {
       if (placeholder) {
-        placeholder.style.display = 'none';
+        placeholder.style.display = "none";
       }
-      
+
       // Remove existing tag elements
-      const existingTags = filterTags.querySelectorAll('.selected-tag');
-      existingTags.forEach(tag => tag.remove());
-      
+      const existingTags = filterTags.querySelectorAll(".selected-tag");
+      existingTags.forEach((tag) => tag.remove());
+
       // Add selected tags
-      selectedTags.forEach(tag => {
-        const tagElement = document.createElement('span');
-        tagElement.className = 'selected-tag';
+      selectedTags.forEach((tag) => {
+        const tagElement = document.createElement("span");
+        tagElement.className = "selected-tag";
         tagElement.innerHTML = `${tag} <button class="remove-tag" data-tag="${tag}">×</button>`;
         filterTags.appendChild(tagElement);
-        
+
         // Add remove functionality
-        const removeBtn = tagElement.querySelector('.remove-tag');
-        removeBtn.addEventListener('click', (e) => {
+        const removeBtn = tagElement.querySelector(".remove-tag");
+        removeBtn.addEventListener("click", (e) => {
           e.stopPropagation();
-          const tagToRemove = e.target.getAttribute('data-tag');
-          selectedTags = selectedTags.filter(t => t !== tagToRemove);
+          const tagToRemove = e.target.getAttribute("data-tag");
+          selectedTags = selectedTags.filter((t) => t !== tagToRemove);
           updateFilterDisplay();
           filterGallery(selectedTags);
         });
       });
     }
   }
-  
+
   // Re-layout on window resize
-  window.addEventListener('resize', () => {
+  window.addEventListener("resize", () => {
     setTimeout(() => layoutMasonryGrid(), 100);
   });
-  
-  // Make openImageModal globally available for backwards compatibility
+
+  // Make functions globally available
   (window as any).openImageModal = openImageModal;
+  (window as any).openVideoModal = openVideoModal;
 </script>
