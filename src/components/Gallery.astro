@@ -622,7 +622,7 @@ const allTags = Object.keys(tagCounts).sort(
     const videoModalIframe = document.getElementById("video-modal-iframe");
 
     if (videoModal && videoModalIframe) {
-      videoModalIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0`;
+      videoModalIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
       videoModal.classList.add("open");
       document.body.style.overflow = "hidden";
     }
@@ -663,7 +663,7 @@ const allTags = Object.keys(tagCounts).sort(
       thumbnail.style.display = "none";
       playerContainer.style.display = "block";
       overlay.style.display = "none";
-      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0`;
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
     }
 
     // Re-layout masonry grid after video toggle with delay for proper height calculation
