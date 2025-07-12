@@ -43,7 +43,7 @@ import "../styles/global.css";
 		</div>
 
 		<script>
-			// Loading screen logic
+			// Loading screen logic with image loading detection
 			document.addEventListener('DOMContentLoaded', () => {
 				const loadingScreen = document.getElementById('loading-screen');
 				const mainContent = document.getElementById('main-content');
@@ -54,32 +54,111 @@ import "../styles/global.css";
 					localStorage.setItem('theme', 'light');
 					document.documentElement.setAttribute('data-theme', 'light');
 				}
-				
-				// Note: Using single transparent GIF that works with all themes
+
+				let totalImages = 0;
+				let loadedImages = 0;
+				let loadingStartTime = Date.now();
+				let hasHiddenLoading = false;
+				const LOADING_THRESHOLD = 0.7; // 70% threshold
+				const MIN_LOADING_TIME = 1000; // Minimum 1 second display
+				const MAX_LOADING_TIME = 6000; // Maximum 6 seconds display
 
 				function hideLoadingScreen() {
-					if (loadingScreen && mainContent) {
-						// Fade out loading screen
-						loadingScreen.style.transition = 'opacity 0.5s ease-out';
-						loadingScreen.style.opacity = '0';
+					if (hasHiddenLoading || !loadingScreen || !mainContent) return;
+					
+					hasHiddenLoading = true;
+					console.log(`Hiding loading screen. Progress: ${Math.round((loadedImages / totalImages) * 100)}%`);
+					
+					// Fade out loading screen
+					loadingScreen.style.transition = 'opacity 0.5s ease-out';
+					loadingScreen.style.opacity = '0';
+					
+					setTimeout(() => {
+						loadingScreen.style.display = 'none';
+						mainContent.classList.remove('hidden');
+						
+						// Fade in main content
+						mainContent.style.opacity = '0';
+						mainContent.style.transition = 'opacity 0.5s ease-in';
 						
 						setTimeout(() => {
-							loadingScreen.style.display = 'none';
-							mainContent.classList.remove('hidden');
-							
-							// Fade in main content
-							mainContent.style.opacity = '0';
-							mainContent.style.transition = 'opacity 0.5s ease-in';
-							
-							setTimeout(() => {
-								mainContent.style.opacity = '1';
-							}, 50);
-						}, 500);
+							mainContent.style.opacity = '1';
+						}, 50);
+					}, 500);
+				}
+
+				function checkImageLoadingProgress() {
+					const progress = totalImages > 0 ? loadedImages / totalImages : 0;
+					const elapsedTime = Date.now() - loadingStartTime;
+					
+					console.log(`Image loading progress: ${loadedImages}/${totalImages} (${Math.round(progress * 100)}%)`);
+					
+					// Hide loading screen if:
+					// 1. All images loaded (100%)
+					// 2. 70% loaded AND minimum time elapsed
+					// 3. Maximum time reached
+					if (progress >= 1.0 || 
+						(progress >= LOADING_THRESHOLD && elapsedTime >= MIN_LOADING_TIME) ||
+						elapsedTime >= MAX_LOADING_TIME) {
+						hideLoadingScreen();
 					}
 				}
 
-				// Hide loading screen after 6 seconds
-				setTimeout(hideLoadingScreen, 6000);
+				function setupImageLoading() {
+					// Wait for main content to be available
+					setTimeout(() => {
+						const images = document.querySelectorAll('#main-content img[src]');
+						totalImages = images.length;
+						
+						console.log(`Found ${totalImages} images to monitor`);
+						
+						if (totalImages === 0) {
+							// No images to load, hide immediately after minimum time
+							setTimeout(hideLoadingScreen, MIN_LOADING_TIME);
+							return;
+						}
+
+						// Monitor each image loading in initial display order
+						images.forEach((img, index) => {
+							if (img.complete && img.naturalWidth > 0) {
+								// Image already loaded
+								loadedImages++;
+							} else {
+								// Set up load event listener
+								const loadHandler = () => {
+									loadedImages++;
+									checkImageLoadingProgress();
+									img.removeEventListener('load', loadHandler);
+									img.removeEventListener('error', errorHandler);
+								};
+								
+								const errorHandler = () => {
+									loadedImages++; // Count failed loads as "loaded" to prevent hanging
+									checkImageLoadingProgress();
+									img.removeEventListener('load', loadHandler);
+									img.removeEventListener('error', errorHandler);
+								};
+								
+								img.addEventListener('load', loadHandler);
+								img.addEventListener('error', errorHandler);
+							}
+						});
+
+						// Initial check in case some images are already loaded
+						checkImageLoadingProgress();
+					}, 100); // Small delay to ensure DOM is fully ready
+				}
+
+				// Setup image loading monitoring
+				setupImageLoading();
+
+				// Fallback: Hide loading screen after maximum time
+				setTimeout(() => {
+					if (!hasHiddenLoading) {
+						console.log('Maximum loading time reached, forcing hide');
+						hideLoadingScreen();
+					}
+				}, MAX_LOADING_TIME);
 			});
 		</script>
 	</body>
