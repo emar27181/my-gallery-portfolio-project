@@ -919,9 +919,23 @@ body {
 
 /* Mobile responsiveness for loading screen */
 @media (max-width: 768px) {
+  .loading-screen {
+    /* Ensure proper centering on mobile */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Account for mobile viewport height issues */
+    height: calc(100vh - 70px);
+    min-height: calc(100vh - 70px);
+    /* Shift content slightly up */
+    padding-bottom: 10vh;
+  }
+  
   .loading-gif {
     max-width: 45vw;
     max-height: 35vh;
+    /* Ensure centering */
+    margin: auto;
   }
 }
 
