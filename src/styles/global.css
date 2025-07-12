@@ -891,6 +891,40 @@ body {
   }
 }
 
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-gif {
+  max-width: 40vw;
+  max-height: 40vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.main-content.hidden {
+  display: none;
+}
+
+/* Mobile responsiveness for loading screen */
+@media (max-width: 768px) {
+  .loading-gif {
+    max-width: 45vw;
+    max-height: 35vh;
+  }
+}
+
 /* Image Skeleton Loading */
 .image-skeleton {
   width: 100%;

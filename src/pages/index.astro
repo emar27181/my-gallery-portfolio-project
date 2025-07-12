@@ -4,7 +4,7 @@ import NavBar from "../components/NavBar.astro";
 import "../styles/global.css";
 ---
 
-<html lang="en">
+<html lang="en" data-theme="light">
 	<head>
 		<meta charset="utf-8" />
 		<link
@@ -21,12 +21,66 @@ import "../styles/global.css";
 		<title>emar27181 Gallery</title>
 	</head>
 	<body>
-		<div id="top"></div>
-		<NavBar />
-		<div class="container" style="padding: 2rem 0;">
-			<main>
-				<Gallery />
-			</main>
+		<!-- Loading Screen -->
+		<div id="loading-screen" class="loading-screen">
+			<img 
+				id="loading-gif" 
+				src="/images/mov-sign-unscreen.gif" 
+				alt="Loading..." 
+				class="loading-gif"
+			>
 		</div>
+
+		<!-- Main Content -->
+		<div id="main-content" class="main-content hidden">
+			<div id="top"></div>
+			<NavBar />
+			<div class="container" style="padding: 2rem 0;">
+				<main>
+					<Gallery />
+				</main>
+			</div>
+		</div>
+
+		<script>
+			// Loading screen logic
+			document.addEventListener('DOMContentLoaded', () => {
+				const loadingScreen = document.getElementById('loading-screen');
+				const mainContent = document.getElementById('main-content');
+				const loadingGif = document.getElementById('loading-gif');
+
+				// Initialize theme to light if not set
+				if (!localStorage.getItem('theme')) {
+					localStorage.setItem('theme', 'light');
+					document.documentElement.setAttribute('data-theme', 'light');
+				}
+				
+				// Note: Using single transparent GIF that works with all themes
+
+				function hideLoadingScreen() {
+					if (loadingScreen && mainContent) {
+						// Fade out loading screen
+						loadingScreen.style.transition = 'opacity 0.5s ease-out';
+						loadingScreen.style.opacity = '0';
+						
+						setTimeout(() => {
+							loadingScreen.style.display = 'none';
+							mainContent.classList.remove('hidden');
+							
+							// Fade in main content
+							mainContent.style.opacity = '0';
+							mainContent.style.transition = 'opacity 0.5s ease-in';
+							
+							setTimeout(() => {
+								mainContent.style.opacity = '1';
+							}, 50);
+						}, 500);
+					}
+				}
+
+				// Hide loading screen after 6 seconds
+				setTimeout(hideLoadingScreen, 6000);
+			});
+		</script>
 	</body>
 </html>
