@@ -281,8 +281,8 @@ body {
   gap: 4px;
   align-items: start;
   max-width: none;
-  margin: 0 auto;
-  padding: 0 1rem;
+  margin: 0;
+  padding: 0 4px;
 }
 
 @media (max-width: 1024px) {
