@@ -192,6 +192,14 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
+    src: '/images/image_manga_horks_2.jpg',
+    alt: 'Horks Fan Art 2',
+    title: 'Horks Character 2',
+    tags: ['マンガ'],
+    date: '2024-11-08',
+    type: 'image'
+  },
+  {
     src: '/images/image_manga_illust_mizuhara.jpg',
     alt: 'Mizuhara Illustration',
     title: 'Mizuhara Character',
@@ -443,6 +451,22 @@ export const images: ImageData[] = [
     title: 'Y-Lab Brand Logo',
     tags: ['ロゴ', 'イラスト'],
     date: '2024-09-29',
+    type: 'image'
+  },
+  {
+    src: '/images/image_logo_shandy_t-shirt_head.jpg',
+    alt: 'Shandy T-shirt Design Head',
+    title: 'Shandy T-shirt Head Design',
+    tags: ['ロゴ', 'イラスト'],
+    date: '2024-09-28',
+    type: 'image'
+  },
+  {
+    src: '/images/image_logo_shandy_t-shirt_tail.jpg',
+    alt: 'Shandy T-shirt Design Tail',
+    title: 'Shandy T-shirt Tail Design',
+    tags: ['ロゴ', 'イラスト'],
+    date: '2024-09-27',
     type: 'image'
   },
   {
