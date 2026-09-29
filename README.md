@@ -17,6 +17,19 @@ emar27181のアート作品を展示するギャラリーポートフォリオ�
 - **ダーク/ライトテーマ**: テーマ切り替えボタンでモード変更
 - **日本語UI**: 完全日本語対応のユーザーインターフェース
 
+## ➕ 作品の追加
+
+`src/data/image.ts` の `images` に 1 件足します。配列の順序が「カスタム順」です。
+
+```ts
+// 画像: src/assets/gallery/ にファイルを置き、ファイル名を書く（縮小・WebP 化はビルド時に自動）
+{ type: 'image', src: 'my_work.jpg', alt: '…', title: '…', tags: ['イラスト'], date: '2026-01-01' },
+// 動画: YouTube の動画 ID
+{ type: 'video', src: 'https://img.youtube.com/vi/<ID>/maxresdefault.jpg', videoId: '<ID>', alt: '…', title: '…', tags: ['動画'], date: '2026-01-01' },
+// Web サイト: iframe で埋め込み、その場で操作できる（埋め込みを許可しているサイトのみ）
+{ type: 'site', url: 'https://example.netlify.app/', alt: '…', title: '…', tags: ['サイト'], date: '2026-01-01' },
+```
+
 ## 🎨 カテゴリー
 
 - **猫** - 猫のイラスト・写真
