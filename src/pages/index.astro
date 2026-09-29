@@ -1,6 +1,7 @@
 ---
 import Gallery from "../components/Gallery.astro";
 import NavBar from "../components/NavBar.astro";
+import { THEME_STORAGE_KEY } from "../lib/theme";
 import "../styles/global.css";
 ---
 
@@ -19,6 +20,12 @@ import "../styles/global.css";
 			content="uyjBT9z6vOnpxn6lM6YnxbI6R4jLSDIAboC8zo1slhM"
 		/>
 		<title>emar27181 Gallery</title>
+		<!-- 描画前に保存済みテーマを当て、ライト→ダークのちらつきを防ぐ -->
+		<script is:inline define:vars={{ key: THEME_STORAGE_KEY }}>
+			try {
+				if (localStorage.getItem(key) === "dark") document.documentElement.dataset.theme = "dark";
+			} catch {}
+		</script>
 	</head>
 	<body>
 		<div id="top"></div>
