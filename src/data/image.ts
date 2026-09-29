@@ -507,7 +507,108 @@ export const images: ImageData[] = [
     type: 'image'
   },
 
-  // Web Sites（出典: https://emar27181-portfolio.netlify.app/ の制作物。日付は各リポジトリの最終更新日）
+  // YouTube Videos
+  {
+    src: 'https://img.youtube.com/vi/oos2PYWiRGM/maxresdefault.jpg',
+    alt: 'YouTube Video 1',
+    title: 'YouTube Video 1',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-08',
+    type: 'video',
+    videoId: 'oos2PYWiRGM'
+  },
+  {
+    src: 'https://img.youtube.com/vi/ERb40ovB060/maxresdefault.jpg',
+    alt: 'YouTube Video 2',
+    title: 'YouTube Video 2',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-07',
+    type: 'video',
+    videoId: 'ERb40ovB060'
+  },
+  {
+    src: 'https://img.youtube.com/vi/KTwFA1jQgFY/maxresdefault.jpg',
+    alt: 'YouTube Video 3',
+    title: 'YouTube Video 3',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-06',
+    type: 'video',
+    videoId: 'KTwFA1jQgFY'
+  },
+  {
+    src: 'https://img.youtube.com/vi/1-tDSvjpxn4/maxresdefault.jpg',
+    alt: 'YouTube Video 4',
+    title: 'YouTube Video 4',
+    tags: ['動画', '猫', 'イラスト', 'オリジナル'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: '1-tDSvjpxn4'
+  },
+  {
+    src: 'https://img.youtube.com/vi/pqynYQGtxUM/maxresdefault.jpg',
+    alt: 'YouTube Video 5',
+    title: 'YouTube Video 5',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: 'pqynYQGtxUM'
+  },
+  {
+    src: 'https://img.youtube.com/vi/j3tKqZ3v0A0/maxresdefault.jpg',
+    alt: 'YouTube Video 6',
+    title: 'YouTube Video 6',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: 'j3tKqZ3v0A0'
+  },
+  {
+    src: 'https://img.youtube.com/vi/MPVyQnYQ6wo/maxresdefault.jpg',
+    alt: 'YouTube Video 7',
+    title: 'YouTube Video 7',
+    tags: ['動画', 'VALORANT'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: 'MPVyQnYQ6wo'
+  },
+  {
+    src: 'https://img.youtube.com/vi/xGOPNPI7R18/maxresdefault.jpg',
+    alt: 'YouTube Video 8',
+    title: 'YouTube Video 8',
+    tags: ['動画', 'スノボ'],
+    date: '2025-01-08',
+    type: 'video',
+    videoId: 'xGOPNPI7R18'
+  },
+  {
+    src: 'https://img.youtube.com/vi/geEyOgN0SxU/maxresdefault.jpg',
+    alt: 'YouTube Video 9',
+    title: 'YouTube Video 9',
+    tags: ['動画', 'スノボ'],
+    date: '2025-01-09',
+    type: 'video',
+    videoId: 'geEyOgN0SxU'
+  },
+  {
+    src: 'https://img.youtube.com/vi/V_hx-ft8w88/maxresdefault.jpg',
+    alt: 'YouTube Video 10',
+    title: 'YouTube Video 10',
+    tags: ['動画', 'VALORANT'],
+    date: '2025-01-10',
+    type: 'video',
+    videoId: 'V_hx-ft8w88'
+  },
+  {
+    src: 'https://img.youtube.com/vi/5IET-4mL9pA/maxresdefault.jpg',
+    alt: 'YouTube Video 11',
+    title: 'YouTube Video 11',
+    tags: ['動画', 'VALORANT'],
+    date: '2025-01-11',
+    type: 'video',
+    videoId: '5IET-4mL9pA'
+  },
+
+  // Web Sites（試作の展示のため末尾に置く。出典: https://emar27181-portfolio.netlify.app/ の制作物。日付は各リポジトリの最終更新日）
   {
     url: 'https://emar27181-portfolio.netlify.app/',
     alt: '経歴などをまとめたポートフォリオサイトです．',
@@ -611,106 +712,5 @@ export const images: ImageData[] = [
     tags: ['サイト', 'オリジナル'],
     date: '2026-01-16',
     type: 'site'
-  },
-
-  // YouTube Videos
-  {
-    src: 'https://img.youtube.com/vi/oos2PYWiRGM/maxresdefault.jpg',
-    alt: 'YouTube Video 1',
-    title: 'YouTube Video 1',
-    tags: ['動画', 'VALORANT'],
-    date: '2024-12-08',
-    type: 'video',
-    videoId: 'oos2PYWiRGM'
-  },
-  {
-    src: 'https://img.youtube.com/vi/ERb40ovB060/maxresdefault.jpg',
-    alt: 'YouTube Video 2',
-    title: 'YouTube Video 2',
-    tags: ['動画', 'VALORANT'],
-    date: '2024-12-07',
-    type: 'video',
-    videoId: 'ERb40ovB060'
-  },
-  {
-    src: 'https://img.youtube.com/vi/KTwFA1jQgFY/maxresdefault.jpg',
-    alt: 'YouTube Video 3',
-    title: 'YouTube Video 3',
-    tags: ['動画', 'VALORANT'],
-    date: '2024-12-06',
-    type: 'video',
-    videoId: 'KTwFA1jQgFY'
-  },
-  {
-    src: 'https://img.youtube.com/vi/1-tDSvjpxn4/maxresdefault.jpg',
-    alt: 'YouTube Video 4',
-    title: 'YouTube Video 4',
-    tags: ['動画', '猫', 'イラスト', 'オリジナル'],
-    date: '2024-12-05',
-    type: 'video',
-    videoId: '1-tDSvjpxn4'
-  },
-  {
-    src: 'https://img.youtube.com/vi/pqynYQGtxUM/maxresdefault.jpg',
-    alt: 'YouTube Video 5',
-    title: 'YouTube Video 5',
-    tags: ['動画', 'VALORANT'],
-    date: '2024-12-05',
-    type: 'video',
-    videoId: 'pqynYQGtxUM'
-  },
-  {
-    src: 'https://img.youtube.com/vi/j3tKqZ3v0A0/maxresdefault.jpg',
-    alt: 'YouTube Video 6',
-    title: 'YouTube Video 6',
-    tags: ['動画', 'VALORANT'],
-    date: '2024-12-05',
-    type: 'video',
-    videoId: 'j3tKqZ3v0A0'
-  },
-  {
-    src: 'https://img.youtube.com/vi/MPVyQnYQ6wo/maxresdefault.jpg',
-    alt: 'YouTube Video 7',
-    title: 'YouTube Video 7',
-    tags: ['動画', 'VALORANT'],
-    date: '2024-12-05',
-    type: 'video',
-    videoId: 'MPVyQnYQ6wo'
-  },
-  {
-    src: 'https://img.youtube.com/vi/xGOPNPI7R18/maxresdefault.jpg',
-    alt: 'YouTube Video 8',
-    title: 'YouTube Video 8',
-    tags: ['動画', 'スノボ'],
-    date: '2025-01-08',
-    type: 'video',
-    videoId: 'xGOPNPI7R18'
-  },
-  {
-    src: 'https://img.youtube.com/vi/geEyOgN0SxU/maxresdefault.jpg',
-    alt: 'YouTube Video 9',
-    title: 'YouTube Video 9',
-    tags: ['動画', 'スノボ'],
-    date: '2025-01-09',
-    type: 'video',
-    videoId: 'geEyOgN0SxU'
-  },
-  {
-    src: 'https://img.youtube.com/vi/V_hx-ft8w88/maxresdefault.jpg',
-    alt: 'YouTube Video 10',
-    title: 'YouTube Video 10',
-    tags: ['動画', 'VALORANT'],
-    date: '2025-01-10',
-    type: 'video',
-    videoId: 'V_hx-ft8w88'
-  },
-  {
-    src: 'https://img.youtube.com/vi/5IET-4mL9pA/maxresdefault.jpg',
-    alt: 'YouTube Video 11',
-    title: 'YouTube Video 11',
-    tags: ['動画', 'VALORANT'],
-    date: '2025-01-11',
-    type: 'video',
-    videoId: '5IET-4mL9pA'
   },
 ];
