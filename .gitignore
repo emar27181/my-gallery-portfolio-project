@@ -28,3 +28,7 @@ pnpm-debug.log*
 
 # Claude settings
 .claude/settings.local.json
+
+# Windows metadata / editor temp files
+*:Zone.Identifier
+*~RF*.TMP
