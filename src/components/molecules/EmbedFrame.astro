@@ -5,24 +5,29 @@
 // 「終える」ボタン・外側のクリック・Escape で操作を終える
 // （埋め込み先にフォーカスがあると Escape はそちらに届くため、ボタンでも終えられるようにする）。
 // 全画面ボタンを押すと root から "embed-expand"（detail: { url, title }）を送る。何を全画面で見せるかは呼び出し側が決める。
+// 読み込みの重さを隠すため、ページは画面に近づいてから読み込み（操作を始めたときも読み込む）、
+// 届くまでは画面写真（poster）か、無ければタイトルを見せる。読み込みが済んだらページをフェードインする。
 import Button from "../atoms/Button.astro";
 import IconButton from "../atoms/IconButton.astro";
 import CoverButton from "../atoms/CoverButton.astro";
 import LinkButton from "../atoms/LinkButton.astro";
+import type { HTMLAttributes } from "astro/types";
 
-interface Props {
+interface Props extends HTMLAttributes<"div"> {
   url: string;
   title: string;
   activateLabel: string;
   deactivateLabel: string;
   openLabel: string;
   expandLabel: string;
+  /** 読み込み中に見せる画面写真（<img> の属性） */
+  poster?: HTMLAttributes<"img">;
 }
 
-const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel } = Astro.props;
+const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel, poster, ...rest } = Astro.props;
 ---
 
-<div class="embed" data-embed data-url={url} data-title={title}>
+<div class="embed" data-embed data-url={url} data-title={title} {...rest}>
   <div class="embed__toolbar">
     <span class="embed__title">{title}</span>
     <Button size="sm" shape="pill" data-embed-deactivate hidden>{deactivateLabel}</Button>
@@ -30,11 +35,11 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel } = A
     <IconButton icon="expand" size="sm" label={expandLabel} data-embed-expand />
   </div>
   <div class="embed__viewport">
+    {poster ? <img class="embed__poster" {...poster} data-embed-poster /> : <span class="embed__placeholder">{title}</span>}
     <iframe
       class="embed__frame"
-      src={url}
+      data-src={url}
       title={title}
-      loading="lazy"
       tabindex="-1"
       sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
     ></iframe>
@@ -76,13 +81,40 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel } = A
     flex: 1;
     min-height: 0;
   }
+  /* 画面写真はページの上端（ナビゲーション側）を合わせて敷く */
+  .embed__poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  .embed__placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: var(--space-16);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-bold);
+    text-align: center;
+  }
   .embed__frame {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
     border: none;
     background-color: var(--color-surface);
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--easing-standard);
     pointer-events: none;
+  }
+  .embed__frame.is-loaded {
+    opacity: 1;
   }
   .embed.is-active .embed__frame {
     pointer-events: auto;
@@ -95,6 +127,28 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel } = A
 <script>
   const embeds = [...document.querySelectorAll<HTMLElement>("[data-embed]")];
 
+  /** 画面に近づいた枠からページを読み込む（先読みの距離は画面の高さの半分） */
+  const PRELOAD_MARGIN = "50% 0px";
+
+  const load = (embed: HTMLElement) => {
+    const frame = embed.querySelector<HTMLIFrameElement>("iframe")!;
+    if (frame.src || !frame.dataset.src) return;
+    frame.addEventListener("load", () => frame.classList.add("is-loaded"), { once: true });
+    frame.src = frame.dataset.src;
+  };
+
+  const observer = new IntersectionObserver(
+    (records) => {
+      for (const record of records) {
+        if (!record.isIntersecting) continue;
+        load(record.target as HTMLElement);
+        observer.unobserve(record.target);
+      }
+    },
+    { rootMargin: PRELOAD_MARGIN },
+  );
+  for (const embed of embeds) observer.observe(embed);
+
   const setActive = (active: HTMLElement | null) => {
     for (const embed of embeds) {
       const on = embed === active;
@@ -102,6 +156,7 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel } = A
       embed.querySelector<HTMLElement>("[data-embed-deactivate]")!.hidden = !on;
       const frame = embed.querySelector("iframe")!;
       if (on) {
+        load(embed);
         frame.removeAttribute("tabindex");
         frame.focus();
       } else {

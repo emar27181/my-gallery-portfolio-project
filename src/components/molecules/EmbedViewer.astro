@@ -1,6 +1,7 @@
 ---
 // 外部のページを画面いっぱいに見せ、左右の矢印で前後のページに切り替える（molecule）。
-// document に "embed-viewer-open"（detail: { id, items: { url, title }[], index }）を送ると開く。
+// document に "embed-viewer-open"（detail: { id, items: { url, title, poster? }[], index }）を送ると開く。
+// ページが届くまでは画面写真（poster）を見せ、読み込みが済んだらページをフェードインする。
 // 上端に「全画面を終える」と「新しいタブで開く」、下端（親指の届く位置）に前後の矢印と位置を置く。
 // 閉じるボタン・Escape・端末の「戻る」で閉じる（開くときに履歴を 1 つ積む）。
 import IconButton from "../atoms/IconButton.astro";
@@ -34,12 +35,15 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
     <span class="viewer__title" id={`${id}-title`} data-viewer-title></span>
     <LinkButton href="#" external size="sm" shape="pill" data-viewer-open>{openLabel}</LinkButton>
   </div>
-  <iframe
-    class="viewer__frame"
-    data-viewer-frame
-    title=""
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-  ></iframe>
+  <div class="viewer__stage">
+    <img class="viewer__poster" data-viewer-poster alt="" hidden />
+    <iframe
+      class="viewer__frame"
+      data-viewer-frame
+      title=""
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+    ></iframe>
+  </div>
   <div class="viewer__bar viewer__bar--nav">
     <IconButton icon="chevronLeft" label={prevLabel} data-viewer-prev />
     <span class="viewer__position" data-viewer-position aria-live="polite"></span>
@@ -86,12 +90,31 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
     color: var(--color-text-muted);
     font-size: var(--font-size-body);
   }
-  .viewer__frame {
+  .viewer__stage {
+    position: relative;
     flex: 1;
-    width: 100%;
     min-height: 0;
+  }
+  .viewer__poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  .viewer__frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     border: none;
     background-color: var(--color-surface);
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--easing-standard);
+  }
+  .viewer__frame.is-loaded {
+    opacity: 1;
   }
 </style>
 
@@ -99,6 +122,7 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
   interface ViewerItem {
     url: string;
     title: string;
+    poster?: string;
   }
   interface ViewerOpenDetail {
     id: string;
@@ -108,6 +132,7 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
 
   for (const viewer of document.querySelectorAll<HTMLElement>("[data-embed-viewer]")) {
     let frame = viewer.querySelector<HTMLIFrameElement>("[data-viewer-frame]")!;
+    const poster = viewer.querySelector<HTMLImageElement>("[data-viewer-poster]")!;
     const title = viewer.querySelector<HTMLElement>("[data-viewer-title]")!;
     const position = viewer.querySelector<HTMLElement>("[data-viewer-position]")!;
     const openLink = viewer.querySelector<HTMLAnchorElement>("[data-viewer-open]")!;
@@ -122,8 +147,11 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
     const loadFrame = (url: string, title: string) => {
       const fresh = frame.cloneNode(false) as HTMLIFrameElement;
       fresh.title = title;
-      if (url) fresh.src = url;
-      else fresh.removeAttribute("src");
+      fresh.classList.remove("is-loaded");
+      if (url) {
+        fresh.addEventListener("load", () => fresh.classList.add("is-loaded"), { once: true });
+        fresh.src = url;
+      } else fresh.removeAttribute("src");
       frame.replaceWith(fresh);
       frame = fresh;
     };
@@ -132,6 +160,9 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
       index = Math.min(Math.max(i, 0), items.length - 1);
       const item = items[index];
       loadFrame(item.url, item.title);
+      poster.hidden = !item.poster;
+      if (item.poster) poster.src = item.poster;
+      else poster.removeAttribute("src");
       title.textContent = item.title;
       openLink.href = item.url;
       position.textContent = (viewer.dataset.positionLabel ?? "")

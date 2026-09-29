@@ -187,6 +187,7 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
   const item = page.locator(`.gallery-item[data-index="${site.index}"]`);
   const embed = item.locator('[data-embed]');
   const frame = item.locator('iframe');
+  await item.scrollIntoViewIfNeeded();
   await expect(frame).toHaveAttribute('src', site.url);
   await expect(item.locator('[data-embed-open]')).toHaveAttribute('href', site.url);
   await expect(item.locator('[data-embed-open]')).toHaveAttribute('target', '_blank');
@@ -224,6 +225,51 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
   await expect(embed).not.toHaveClass(/is-active/);
 });
 
+test('Web サイトは画面に近づくまで読み込まず、届くまでは画面写真かタイトルを見せる', async ({ page }) => {
+  const site = data.find((item) => item.type === 'site' && item.poster);
+  const bare = data.find((item) => item.type === 'site' && !item.poster);
+  test.skip(site?.type !== 'site', '画面写真つきの Web サイトの作品が無い');
+  if (site?.type !== 'site') return;
+
+  // サイトの応答を止めておき、読み込み中の見た目を確かめる
+  let requested = false;
+  let respond = () => {};
+  const responded = new Promise<void>((resolve) => (respond = resolve));
+  await page.route(site.url, async (route) => {
+    requested = true;
+    await responded;
+    await route.fulfill({ contentType: 'text/html; charset=utf-8', body: SITE_STUB });
+  });
+
+  await openGallery(page);
+  const item = page.locator(`.gallery-item[data-index="${site.index}"]`);
+  const frame = item.locator('iframe');
+  const poster = item.locator('[data-embed-poster]');
+
+  // 末尾にあるので、開いた直後はまだ読み込まない
+  await expect(frame).not.toHaveAttribute('src');
+  expect(requested).toBe(false);
+
+  // 近づくと読み込みを始め、届くまでは画面写真を見せる（ページは透明）
+  await item.scrollIntoViewIfNeeded();
+  await expect(frame).toHaveAttribute('src', site.url);
+  await expect(poster).toBeVisible();
+  await expect.poll(() => poster.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  await expect(frame).toHaveCSS('opacity', '0');
+
+  // 届いたらページを見せる
+  respond();
+  await expect(frame).toHaveClass(/is-loaded/);
+  await expect(frame).toHaveCSS('opacity', '1');
+
+  // 画面写真が無いサイトはタイトルを見せる
+  if (bare?.type === 'site') {
+    const bareItem = page.locator(`.gallery-item[data-index="${bare.index}"]`);
+    await bareItem.scrollIntoViewIfNeeded();
+    await expect(bareItem.locator('.embed__placeholder')).toHaveText(bare.title);
+  }
+});
+
 test('Web サイトの枠は、スマホでは縦長・それ以外では横長', async ({ page }, testInfo) => {
   const site = data.find((item) => item.type === 'site');
   test.skip(!site, 'Web サイトの作品が無い');
@@ -253,6 +299,8 @@ test('Web サイトは全画面で見られ、左右の矢印で切り替え、�
   expect(Math.round(box.width)).toBe(size.width);
   expect(Math.round(box.height)).toBe(size.height);
   await expect(frame).toHaveAttribute('src', first.url);
+  await expect(viewer.locator('[data-viewer-poster]')).toBeVisible({ visible: Boolean(first.poster) });
+  await expect(frame).toHaveClass(/is-loaded/);
   await expect(viewer.locator('[data-viewer-title]')).toHaveText(first.title);
   await expect(viewer.locator('[data-viewer-position]')).toHaveText(`1 / ${sites.length}`);
   await expect(viewer.locator('[data-viewer-prev]')).toBeDisabled();
