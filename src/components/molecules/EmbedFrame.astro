@@ -31,7 +31,7 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel, post
   <div class="embed__toolbar">
     <span class="embed__title">{title}</span>
     <Button size="sm" shape="pill" data-embed-deactivate hidden>{deactivateLabel}</Button>
-    <LinkButton href={url} external size="sm" shape="pill" data-embed-open>{openLabel}</LinkButton>
+    <LinkButton href={url} external externalMark={false} size="sm" shape="pill" data-embed-open>{openLabel}</LinkButton>
     <IconButton icon="expand" size="sm" label={expandLabel} data-embed-expand />
   </div>
   <div class="embed__viewport">

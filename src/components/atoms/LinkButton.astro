@@ -1,5 +1,6 @@
 ---
-// ボタンの見た目をしたリンク（atom）。external なら新しいタブで開き、外部リンクの印を付ける。
+// ボタンの見た目をしたリンク（atom）。external なら新しいタブで開き、外部リンクの印を付ける
+// （文言が「新しいタブで開く」のように行き先を言っているときは externalMark={false} で印を消す）。
 import type { HTMLAttributes } from "astro/types";
 import type { ButtonStyleProps } from "./Button.astro";
 import Icon from "./Icon.astro";
@@ -9,11 +10,14 @@ type Props = Omit<ButtonStyleProps, "square"> &
   HTMLAttributes<"a"> & {
     href: string;
     external?: boolean;
+    /** 外部リンクの印を付けるか（既定は external と同じ） */
+    externalMark?: boolean;
   };
 
 const {
   href,
   external = false,
+  externalMark = external,
   variant = "outline",
   size = "md",
   shape = "control",
@@ -38,5 +42,5 @@ const {
   {...rest}
 >
   <slot />
-  {external && <Icon name="external" size="sm" />}
+  {externalMark && <Icon name="external" size="sm" />}
 </a>

@@ -33,7 +33,7 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
   <div class="viewer__bar">
     <IconButton icon="close" variant="ghost" label={closeLabel} data-viewer-close />
     <span class="viewer__title" id={`${id}-title`} data-viewer-title></span>
-    <LinkButton href="#" external size="sm" shape="pill" data-viewer-open>{openLabel}</LinkButton>
+    <LinkButton href="#" external externalMark={false} size="sm" shape="pill" data-viewer-open>{openLabel}</LinkButton>
   </div>
   <div class="viewer__stage">
     <img class="viewer__poster" data-viewer-poster alt="" hidden />

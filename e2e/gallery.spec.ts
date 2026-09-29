@@ -191,6 +191,8 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
   await expect(frame).toHaveAttribute('src', site.url);
   await expect(item.locator('[data-embed-open]')).toHaveAttribute('href', site.url);
   await expect(item.locator('[data-embed-open]')).toHaveAttribute('target', '_blank');
+  // 文言が「新しいタブで開く」と言っているので、外部リンクの印は付けない
+  await expect(item.locator('[data-embed-open] svg')).toHaveCount(0);
 
   // 1列ぶんより大きく取る（モバイル 2 列では全幅）
   const [itemWidth, gridWidth, columns] = await item.evaluate((el) => {
