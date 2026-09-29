@@ -142,6 +142,12 @@ primary はライトで `#3b82f6` → `#2563eb`、ダークの on-primary は白
 
 | トークン | 値 | 用途 |
 | :--- | :--- | :--- |
+| `--opacity-hover` | `0.8` | 文字・ロゴのホバー |
+| `--opacity-hover-media` | `0.9` | 作品のホバー（CLAUDE.md） |
+| `--opacity-disabled` | `0.4` | 押せない操作部品（外形は変えず薄くする） |
+
+| トークン | 値 | 用途 |
+| :--- | :--- | :--- |
 | `--shadow-sm` | `0 2px 4px var(--color-shadow)` | ナビゲーションバー |
 | `--shadow-md` | `0 4px 12px var(--color-shadow)` | ドロップダウン・写真の上のボタン |
 | `--shadow-lg` | `0 20px 25px -5px var(--color-shadow-strong)` | パネル・拡大表示 |

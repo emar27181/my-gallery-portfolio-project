@@ -85,6 +85,10 @@ describe('ハードコーディングしない', () => {
     expect(violations(styleFiles, cssOf, colorLiteral)).toEqual({});
   });
 
+  it('不透明度（opacity の数値）はトークンから取り、直接書かない（0 と 1 は除く）', () => {
+    expect(violations(styleFiles, cssOf, /opacity:\s*(0?\.\d+|0\.\d+)/)).toEqual({});
+  });
+
   it('画面幅の切り替え（@media の幅）は書かない。列数は src/lib/gallery-grid.ts から生成する', () => {
     expect(violations(styleFiles, cssOf, /@media[^{]*\b(min|max)-width/)).toEqual({});
   });

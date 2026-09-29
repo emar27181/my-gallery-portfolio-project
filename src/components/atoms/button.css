@@ -96,3 +96,9 @@
 .button--block > svg:last-child:not(:first-child) {
   margin-inline-start: auto;
 }
+
+/* 押せない状態は薄くする（外形は変えない） */
+.button:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}

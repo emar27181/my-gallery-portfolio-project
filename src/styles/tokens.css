@@ -90,6 +90,11 @@
   --layout-control-width: 180px; /* フィルタと並び替えの幅（揃える） */
   --layout-drawer-width: 300px;
 
+  /* ---- 不透明度 ---- */
+  --opacity-hover: 0.8; /* 文字・ロゴのホバー */
+  --opacity-hover-media: 0.9; /* 作品のホバー（CLAUDE.md） */
+  --opacity-disabled: 0.4; /* 押せない操作部品 */
+
   /* ---- 影・重なり・動き ---- */
   --shadow-sm: 0 2px 4px var(--color-shadow);
   --shadow-md: 0 4px 12px var(--color-shadow);
