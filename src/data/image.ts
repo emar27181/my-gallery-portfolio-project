@@ -30,6 +30,16 @@ export interface SiteWork extends WorkBase {
 export type ImageData = ImageWork | VideoWork | SiteWork;
 
 export const images: ImageData[] = [
+  // Web Sites
+  {
+    url: 'https://emar27181-resume.netlify.app/',
+    alt: 'emar27181 のポートフォリオサイト',
+    title: 'Portfolio Site',
+    tags: ['サイト', 'オリジナル'],
+    date: '2025-01-01',
+    type: 'site'
+  },
+
   // Cat Illustrations
   {
     src: 'image_cat_ann1.jpg',
