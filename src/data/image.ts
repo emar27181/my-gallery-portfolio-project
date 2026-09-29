@@ -1,4 +1,5 @@
 export interface ImageData {
+  /** 画像: src/assets/gallery/ 内のファイル名。動画: サムネイルの URL */
   src: string;
   alt: string;
   title: string;
@@ -11,7 +12,7 @@ export interface ImageData {
 export const images: ImageData[] = [
   // Cat Illustrations
   {
-    src: '/images/image_cat_ann1.jpg',
+    src: 'image_cat_ann1.jpg',
     alt: 'Cat Ann Illustration 1',
     title: 'Ann the Cat 1',
     tags: ['猫', 'イラスト'],
@@ -19,7 +20,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_cat_ann2.jpg',
+    src: 'image_cat_ann2.jpg',
     alt: 'Cat Ann Illustration 2',
     title: 'Ann the Cat 2',
     tags: ['猫', 'イラスト'],
@@ -27,7 +28,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_cat_ann3.jpg',
+    src: 'image_cat_ann3.jpg',
     alt: 'Cat Ann Illustration 3',
     title: 'Ann the Cat 3',
     tags: ['猫', 'イラスト'],
@@ -35,7 +36,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_cat_ann6.jpg',
+    src: 'image_cat_ann6.jpg',
     alt: 'Cat Ann Illustration 6',
     title: 'Ann the Cat 6',
     tags: ['猫', 'イラスト'],
@@ -43,7 +44,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_cat_ann4.jpg',
+    src: 'image_cat_ann4.jpg',
     alt: 'Cat Ann Illustration 4',
     title: 'Ann the Cat 4',
     tags: ['猫', 'イラスト'],
@@ -51,7 +52,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_cat_ann5.jpg',
+    src: 'image_cat_ann5.jpg',
     alt: 'Cat Ann Illustration 5',
     title: 'Ann the Cat 5',
     tags: ['猫', 'イラスト', 'オリジナル'],
@@ -60,7 +61,7 @@ export const images: ImageData[] = [
   },
 
   {
-    src: '/images/image_cat_mona1.jpg',
+    src: 'image_cat_mona1.jpg',
     alt: 'Cat Mona Illustration',
     title: 'Mona the Cat',
     tags: ['猫', 'イラスト'],
@@ -70,7 +71,7 @@ export const images: ImageData[] = [
 
   // Character Illustrations
   {
-    src: '/images/image_girl.jpg',
+    src: 'image_girl.jpg',
     alt: 'Girl Character Illustration',
     title: 'Girl Character',
     tags: ['イラスト', 'オリジナル'],
@@ -78,7 +79,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_girl_kisapiyo.jpg',
+    src: 'image_girl_kisapiyo.jpg',
     alt: 'Kisapiyo Girl Illustration',
     title: 'Kisapiyo Girl',
     tags: ['イラスト'],
@@ -86,7 +87,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_dragon.jpg',
+    src: 'image_illust_dragon.jpg',
     alt: 'Dragon Illustration',
     title: 'Dragon Fantasy',
     tags: ['イラスト', 'オリジナル'],
@@ -94,7 +95,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_sea.jpg',
+    src: 'image_illust_sea.jpg',
     alt: 'Sea Illustration',
     title: 'Sea Scene',
     tags: ['イラスト', 'オリジナル'],
@@ -102,7 +103,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_splatoon.png',
+    src: 'image_illust_splatoon.png',
     alt: 'Splatoon Illustration',
     title: 'Splatoon Character',
     tags: ['イラスト'],
@@ -110,7 +111,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_girl2.jpg',
+    src: 'image_illust_girl2.jpg',
     alt: 'Girl Character 2',
     title: 'Girl Character 2',
     tags: ['イラスト'],
@@ -118,7 +119,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_girl3.jpg',
+    src: 'image_illust_girl3.jpg',
     alt: 'Girl Character 3',
     title: 'Girl Character 3',
     tags: ['イラスト'],
@@ -126,7 +127,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_girl4.jpg',
+    src: 'image_illust_girl4.jpg',
     alt: 'Girl Character 4',
     title: 'Girl Character 4',
     tags: ['イラスト'],
@@ -134,7 +135,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_girl5.jpg',
+    src: 'image_illust_girl5.jpg',
     alt: 'Girl Character 5',
     title: 'Girl Character 5',
     tags: ['イラスト'],
@@ -142,7 +143,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_girl6.jpg',
+    src: 'image_illust_girl6.jpg',
     alt: 'Girl Character 6',
     title: 'Girl Character 6',
     tags: ['イラスト'],
@@ -150,7 +151,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_girl_miku.png',
+    src: 'image_illust_girl_miku.png',
     alt: 'Hatsune Miku Illustration',
     title: 'Hatsune Miku',
     tags: ['イラスト', 'マンガ'],
@@ -158,7 +159,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_illust_girl_raden.jpg',
+    src: 'image_illust_girl_raden.jpg',
     alt: 'Raden Girl Illustration',
     title: 'Raden Girl',
     tags: ['イラスト'],
@@ -168,7 +169,7 @@ export const images: ImageData[] = [
 
   // Manga/Anime Fan Art
   {
-    src: '/images/image_manga_deku.jpg',
+    src: 'image_manga_deku.jpg',
     alt: 'Deku Fan Art',
     title: 'Deku from My Hero Academia',
     tags: ['マンガ'],
@@ -176,7 +177,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_gojo.jpg',
+    src: 'image_manga_gojo.jpg',
     alt: 'Gojo Fan Art',
     title: 'Gojo from Jujutsu Kaisen',
     tags: ['マンガ'],
@@ -184,7 +185,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_horks.jpg',
+    src: 'image_manga_horks.jpg',
     alt: 'Horks Fan Art',
     title: 'Horks Character',
     tags: ['マンガ'],
@@ -192,7 +193,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_horks_2.jpg',
+    src: 'image_manga_horks_2.jpg',
     alt: 'Horks Fan Art 2',
     title: 'Horks Character 2',
     tags: ['マンガ'],
@@ -200,7 +201,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_illust_mizuhara.jpg',
+    src: 'image_manga_illust_mizuhara.jpg',
     alt: 'Mizuhara Illustration',
     title: 'Mizuhara Character',
     tags: ['マンガ', 'イラスト'],
@@ -208,7 +209,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_illust_ruka.jpg',
+    src: 'image_manga_illust_ruka.jpg',
     alt: 'Ruka Illustration',
     title: 'Ruka Character',
     tags: ['マンガ', 'イラスト'],
@@ -216,7 +217,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_illust_sterpratinum.jpg',
+    src: 'image_manga_illust_sterpratinum.jpg',
     alt: 'Star Platinum Illustration',
     title: 'Star Platinum Character',
     tags: ['マンガ', 'イラスト'],
@@ -224,7 +225,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_illust_takagi.jpg',
+    src: 'image_manga_illust_takagi.jpg',
     alt: 'Takagi Illustration',
     title: 'Takagi Character',
     tags: ['マンガ', 'イラスト'],
@@ -232,7 +233,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_illust_tamaki.jpg',
+    src: 'image_manga_illust_tamaki.jpg',
     alt: 'Tamaki Illustration',
     title: 'Tamaki Character',
     tags: ['マンガ', 'イラスト'],
@@ -240,7 +241,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_illust_zeno.jpg',
+    src: 'image_manga_illust_zeno.jpg',
     alt: 'Zeno Illustration',
     title: 'Zeno Character',
     tags: ['マンガ', 'イラスト'],
@@ -248,7 +249,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_itadori.jpg',
+    src: 'image_manga_itadori.jpg',
     alt: 'Itadori Fan Art',
     title: 'Itadori from Jujutsu Kaisen',
     tags: ['マンガ'],
@@ -256,7 +257,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_nagi.jpg',
+    src: 'image_manga_nagi.jpg',
     alt: 'Nagi Fan Art',
     title: 'Nagi Character',
     tags: ['マンガ'],
@@ -264,7 +265,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_manga_shigaraki.jpg',
+    src: 'image_manga_shigaraki.jpg',
     alt: 'Shigaraki Fan Art',
     title: 'Shigaraki from My Hero Academia',
     tags: ['マンガ'],
@@ -272,7 +273,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_icon_astra.jpg',
+    src: 'image_icon_astra.jpg',
     alt: 'Astra Icon',
     title: 'Astra Character Icon',
     tags: ['イラスト', 'VALORANT', 'オリジナル'],
@@ -280,7 +281,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_icon_omen.png',
+    src: 'image_icon_omen.png',
     alt: 'Omen Icon',
     title: 'Omen Character Icon',
     tags: ['イラスト', 'VALORANT', '猫', 'オリジナル'],
@@ -290,7 +291,7 @@ export const images: ImageData[] = [
 
   // Hand Studies
   {
-    src: '/images/image_hand1.jpg',
+    src: 'image_hand1.jpg',
     alt: 'Hand Study 1',
     title: 'Hand Study Practice 1',
     tags: ['イラスト'],
@@ -298,7 +299,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_hand2.jpg',
+    src: 'image_hand2.jpg',
     alt: 'Hand Study 2',
     title: 'Hand Study Practice 2',
     tags: ['イラスト'],
@@ -306,7 +307,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_hand3.jpg',
+    src: 'image_hand3.jpg',
     alt: 'Hand Study 3',
     title: 'Hand Study Practice 3',
     tags: ['イラスト'],
@@ -314,7 +315,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_hand4.jpg',
+    src: 'image_hand4.jpg',
     alt: 'Hand Study 4',
     title: 'Hand Study Practice 4',
     tags: ['イラスト'],
@@ -322,7 +323,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_hand5.jpg',
+    src: 'image_hand5.jpg',
     alt: 'Hand Study 5',
     title: 'Hand Study Practice 5',
     tags: ['イラスト'],
@@ -330,7 +331,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_hand6.jpg',
+    src: 'image_hand6.jpg',
     alt: 'Hand Study 6',
     title: 'Hand Study Practice 6',
     tags: ['イラスト'],
@@ -338,7 +339,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_hand7.jpg',
+    src: 'image_hand7.jpg',
     alt: 'Hand Study 7',
     title: 'Hand Study Practice 7',
     tags: ['イラスト'],
@@ -348,7 +349,7 @@ export const images: ImageData[] = [
 
   // Photography
   {
-    src: '/images/image_photo_cat_nora.jpg',
+    src: 'image_photo_cat_nora.jpg',
     alt: 'Cat Nora Photo',
     title: 'Nora the Cat',
     tags: ['猫', '写真'],
@@ -356,7 +357,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_misc4.jpg',
+    src: 'image_photo_misc4.jpg',
     alt: 'Misc Photo 4',
     title: 'Misc Photo 4',
     tags: ['写真'],
@@ -364,7 +365,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_misc6.jpg',
+    src: 'image_photo_misc6.jpg',
     alt: 'Misc Photo 6',
     title: 'Misc Photo 6',
     tags: ['写真'],
@@ -372,7 +373,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_shoes.jpg',
+    src: 'image_photo_shoes.jpg',
     alt: 'Shoes Photography',
     title: 'Shoe Collection',
     tags: ['写真'],
@@ -380,7 +381,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_sky1.jpg',
+    src: 'image_photo_sky1.jpg',
     alt: 'Sky Photo 1',
     title: 'Beautiful Sky 1',
     tags: ['空', '写真'],
@@ -388,7 +389,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_sky2.jpg',
+    src: 'image_photo_sky2.jpg',
     alt: 'Sky Photo 2',
     title: 'Beautiful Sky 2',
     tags: ['空', '写真'],
@@ -396,7 +397,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_sky3.jpg',
+    src: 'image_photo_sky3.jpg',
     alt: 'Sky Photo 3',
     title: 'Beautiful Sky 3',
     tags: ['空', '写真'],
@@ -404,7 +405,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_sky4.jpg',
+    src: 'image_photo_sky4.jpg',
     alt: 'Sky Photo 4',
     title: 'Beautiful Sky 4',
     tags: ['空', '写真'],
@@ -412,7 +413,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_sky5.jpg',
+    src: 'image_photo_sky5.jpg',
     alt: 'Sky Photo 5',
     title: 'Beautiful Sky 5',
     tags: ['空', '写真'],
@@ -420,7 +421,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_sky6.jpg',
+    src: 'image_photo_sky6.jpg',
     alt: 'Sky Photo 6',
     title: 'Beautiful Sky 6',
     tags: ['空', '写真'],
@@ -428,7 +429,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_photo_sky7.jpg',
+    src: 'image_photo_sky7.jpg',
     alt: 'Sky Photo 7',
     title: 'Beautiful Sky 7',
     tags: ['空', '写真'],
@@ -438,7 +439,7 @@ export const images: ImageData[] = [
 
   // Logos and Generated Art
   {
-    src: '/images/image_logo_ylab.jpg',
+    src: 'image_logo_ylab.jpg',
     alt: 'Y-Lab Logo',
     title: 'Y-Lab Brand Logo',
     tags: ['ロゴ', 'イラスト', 'オリジナル'],
@@ -446,7 +447,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_logo_shandy.jpg',
+    src: 'image_logo_shandy.jpg',
     alt: 'Shandy Logo',
     title: 'Shandy Brand Logo',
     tags: ['ロゴ', 'イラスト', 'オリジナル'],
@@ -454,7 +455,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_logo_shandy_t-shirt_head.jpg',
+    src: 'image_logo_shandy_t-shirt_head.jpg',
     alt: 'Shandy T-shirt Design Head',
     title: 'Shandy T-shirt Head Design',
     tags: ['ロゴ', 'イラスト', 'オリジナル'],
@@ -462,7 +463,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_logo_shandy_t-shirt_tail.jpg',
+    src: 'image_logo_shandy_t-shirt_tail.jpg',
     alt: 'Shandy T-shirt Design Tail',
     title: 'Shandy T-shirt Tail Design',
     tags: ['ロゴ', 'イラスト', 'オリジナル'],
@@ -470,7 +471,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_gen1.jpg',
+    src: 'image_gen1.jpg',
     alt: 'Generated Art 1',
     title: 'AI Generated Art 1',
     tags: ['ジェネラティブアート'],
@@ -478,7 +479,7 @@ export const images: ImageData[] = [
     type: 'image'
   },
   {
-    src: '/images/image_gen2.jpg',
+    src: 'image_gen2.jpg',
     alt: 'Generated Art 2',
     title: 'AI Generated Art 2',
     tags: ['ジェネラティブアート'],

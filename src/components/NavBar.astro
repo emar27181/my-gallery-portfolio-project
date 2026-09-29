@@ -1,5 +1,7 @@
 ---
+import { getBrandImages } from "../lib/brand-images";
 
+const { navLogo } = await getBrandImages();
 ---
 
 <nav class="navbar">
@@ -8,7 +10,7 @@
     <div class="navbar-brand">
       <h1 class="navbar-title">
         <a href="#top" class="navbar-title-link">
-          <img src="/favicon/ema_sign_logo_black.png" alt="emar27181 logo" class="navbar-favicon" id="navbar-favicon">
+          <img src={navLogo.light} data-src-light={navLogo.light} data-src-dark={navLogo.dark} width="96" height="78" alt="emar27181 logo" class="navbar-favicon" id="navbar-favicon">
           emar27181 Gallery
         </a>
       </h1>
@@ -100,128 +102,44 @@
 </div>
 
 <script>
-  function updateFavicon(theme) {
-    const navbarFavicon = document.getElementById("navbar-favicon");
-    
-    if (navbarFavicon) {
-      if (theme === "dark") {
-        navbarFavicon.src = "/favicon/ema_sign_logo_white.png";
-      } else {
-        navbarFavicon.src = "/favicon/ema_sign_logo_black.png";
-      }
+  import { applyTheme, currentTheme, readSavedTheme, saveTheme, type Theme } from "../lib/theme";
+
+  const favicon = document.getElementById("navbar-favicon") as HTMLImageElement | null;
+  const sunIcon = document.getElementById("navbar-sun-icon");
+  const moonIcon = document.getElementById("navbar-moon-icon");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  function showTheme(theme: Theme) {
+    applyTheme(theme);
+    sunIcon?.classList.toggle("hidden", theme === "dark");
+    moonIcon?.classList.toggle("hidden", theme !== "dark");
+    if (favicon) {
+      const src = theme === "dark" ? favicon.dataset.srcDark : favicon.dataset.srcLight;
+      if (src) favicon.src = src;
     }
   }
 
-  function initNavbarTheme() {
-    // Get saved theme or default to light
-    const savedTheme = localStorage.getItem("theme") || "light";
-
-    // Apply theme to document
-    document.documentElement.setAttribute("data-theme", savedTheme);
-
-    // Update button icons and favicon
-    updateNavbarThemeIcons(savedTheme);
+  function setMobileMenuOpen(open: boolean) {
+    mobileMenu?.classList.toggle("open", open);
+    document.body.style.overflow = open ? "hidden" : "";
   }
 
-  function updateNavbarThemeIcons(theme) {
-    const sunIcon = document.getElementById("navbar-sun-icon");
-    const moonIcon = document.getElementById("navbar-moon-icon");
+  showTheme(readSavedTheme());
 
-    if (sunIcon && moonIcon) {
-      if (theme === "dark") {
-        sunIcon.classList.add("hidden");
-        moonIcon.classList.remove("hidden");
-      } else {
-        sunIcon.classList.remove("hidden");
-        moonIcon.classList.add("hidden");
-      }
-    }
-    
-    // Update favicon based on theme
-    updateFavicon(theme);
-  }
-
-  function toggleNavbarTheme() {
-    const currentTheme =
-      document.documentElement.getAttribute("data-theme") || "light";
-    const newTheme = currentTheme === "light" ? "dark" : "light";
-
-    // Apply new theme
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-
-    // Update icons
-    updateNavbarThemeIcons(newTheme);
-  }
-
-  // Initialize theme when page loads
-  document.addEventListener("DOMContentLoaded", () => {
-    initNavbarTheme();
-
-    // Add click event to toggle button
-    const toggleButton = document.getElementById("navbar-theme-toggle");
-    if (toggleButton) {
-      toggleButton.addEventListener("click", toggleNavbarTheme);
-    }
+  document.getElementById("navbar-theme-toggle")?.addEventListener("click", () => {
+    const next: Theme = currentTheme() === "dark" ? "light" : "dark";
+    saveTheme(next);
+    showTheme(next);
   });
 
-  // Initialize immediately if DOM is already ready
-  if (document.readyState !== "loading") {
-    initNavbarTheme();
-  }
-
-  // Mobile menu functionality
-  function toggleMobileMenu() {
-    const mobileMenu = document.getElementById("mobile-menu");
-    if (mobileMenu) {
-      const isOpen = mobileMenu.classList.contains("open");
-      if (isOpen) {
-        mobileMenu.classList.remove("open");
-        document.body.style.overflow = "";
-      } else {
-        mobileMenu.classList.add("open");
-        document.body.style.overflow = "hidden";
-      }
-    }
-  }
-
-  function closeMobileMenu() {
-    const mobileMenu = document.getElementById("mobile-menu");
-    if (mobileMenu) {
-      mobileMenu.classList.remove("open");
-      document.body.style.overflow = "";
-    }
-  }
-
-  // Initialize mobile menu when page loads
-  document.addEventListener("DOMContentLoaded", () => {
-    // Hamburger menu button
-    const hamburgerButton = document.getElementById("hamburger-menu");
-    if (hamburgerButton) {
-      hamburgerButton.addEventListener("click", toggleMobileMenu);
-    }
-
-    // Close button
-    const closeButton = document.getElementById("mobile-menu-close");
-    if (closeButton) {
-      closeButton.addEventListener("click", closeMobileMenu);
-    }
-
-    // Close menu when clicking outside
-    const mobileMenu = document.getElementById("mobile-menu");
-    if (mobileMenu) {
-      mobileMenu.addEventListener("click", (e) => {
-        if (e.target === mobileMenu) {
-          closeMobileMenu();
-        }
-      });
-    }
-
-    // Close menu on escape key
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        closeMobileMenu();
-      }
-    });
+  document.getElementById("hamburger-menu")?.addEventListener("click", () => {
+    setMobileMenuOpen(!mobileMenu?.classList.contains("open"));
+  });
+  document.getElementById("mobile-menu-close")?.addEventListener("click", () => setMobileMenuOpen(false));
+  mobileMenu?.addEventListener("click", (e) => {
+    if (e.target === mobileMenu) setMobileMenuOpen(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setMobileMenuOpen(false);
   });
 </script>
