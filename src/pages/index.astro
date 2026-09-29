@@ -2,7 +2,9 @@
 import Gallery from "../components/organisms/Gallery.astro";
 import LoadingScreen from "../components/organisms/LoadingScreen.astro";
 import NavBar from "../components/organisms/NavBar.astro";
+import { appIconBackground } from "../lib/app-icons";
 import { getBrandImages } from "../lib/brand-images";
+import { SITE_NAME } from "../lib/site";
 import { THEME_STORAGE_KEY } from "../lib/theme";
 import "../styles/global.css";
 
@@ -14,10 +16,14 @@ const MAIN_ID = "main-content";
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/png" href={tabIcon} />
+    <!-- PWA（ホーム画面に追加）。アイコンは src/lib/app-icons.ts でサインから作る -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="theme-color" content={appIconBackground()} />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="google-site-verification" content="uyjBT9z6vOnpxn6lM6YnxbI6R4jLSDIAboC8zo1slhM" />
-    <title>emar27181 Gallery</title>
+    <title>{SITE_NAME}</title>
     <!-- 描画前に保存済みテーマを当て、ライト→ダークのちらつきを防ぐ -->
     <script is:inline define:vars={{ key: THEME_STORAGE_KEY }}>
       try {

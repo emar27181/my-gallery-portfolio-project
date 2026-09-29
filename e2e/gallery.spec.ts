@@ -282,3 +282,21 @@ test('Web サイトは全画面で見られ、左右の矢印で切り替え、�
   await expect(viewer).toBeHidden();
   await expect(page.locator('#gallery')).toBeVisible();
 });
+
+test('PWA: マニフェストとサインのアイコンを配信する', async ({ page, request }) => {
+  await page.goto('/');
+  const href = await page.locator('link[rel="manifest"]').getAttribute('href');
+  const manifest = await (await request.get(href!)).json();
+  expect(manifest).toMatchObject({ name: 'emar27181 Gallery', start_url: '/', display: 'standalone' });
+  expect(manifest.icons.map((icon: { sizes: string }) => icon.sizes)).toEqual(
+    expect.arrayContaining(['192x192', '512x512']),
+  );
+  expect(manifest.icons.some((icon: { purpose: string }) => icon.purpose === 'maskable')).toBe(true);
+
+  const apple = await page.locator('link[rel="apple-touch-icon"]').getAttribute('href');
+  for (const src of [...manifest.icons.map((icon: { src: string }) => icon.src), apple]) {
+    const response = await request.get(src);
+    expect(response.ok(), src).toBe(true);
+    expect(response.headers()['content-type'], src).toContain('image/png');
+  }
+});
