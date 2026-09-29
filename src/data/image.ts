@@ -30,16 +30,6 @@ export interface SiteWork extends WorkBase {
 export type ImageData = ImageWork | VideoWork | SiteWork;
 
 export const images: ImageData[] = [
-  // Web Sites
-  {
-    url: 'https://emar27181-resume.netlify.app/',
-    alt: 'emar27181 のポートフォリオサイト',
-    title: 'Portfolio Site',
-    tags: ['サイト', 'オリジナル'],
-    date: '2025-01-01',
-    type: 'site'
-  },
-
   // Cat Illustrations
   {
     src: 'image_cat_ann1.jpg',
@@ -515,6 +505,112 @@ export const images: ImageData[] = [
     tags: ['ジェネラティブアート'],
     date: '2024-09-24',
     type: 'image'
+  },
+
+  // Web Sites（出典: https://emar27181-portfolio.netlify.app/ の制作物。日付は各リポジトリの最終更新日）
+  {
+    url: 'https://emar27181-portfolio.netlify.app/',
+    alt: '経歴などをまとめたポートフォリオサイトです．',
+    title: 'ポートフォリオ',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-16',
+    type: 'site'
+  },
+  {
+    url: 'https://flex-railway-map.netlify.app/',
+    alt: '情報が多すぎる路線図を必要な路線だけに絞って見やすく表示できるサービスです．',
+    title: 'Flex Railway Map',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-29',
+    type: 'site'
+  },
+  {
+    url: 'https://memorio3.netlify.app/',
+    alt: '日々の出来事を記録し、振り返るための個人用ログです．',
+    title: 'Memorio',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-29',
+    type: 'site'
+  },
+  {
+    url: 'https://music-atlas.netlify.app/',
+    alt: '聴いている音楽の統計をまとめたサイトです．カラオケ向きの曲の分析や、聴いている曲の分布をプロットで確認できます．',
+    title: 'Music Atlas',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-28',
+    type: 'site'
+  },
+  {
+    url: 'https://waste-tax.netlify.app/onboarding',
+    alt: '研修で作成したサイトを普段から利用できるように模倣・再構成したサイトです．',
+    title: 'TAKUS',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-28',
+    type: 'site'
+  },
+  {
+    url: 'https://throw-frow-darts.netlify.app/',
+    alt: '自宅でのダーツの記録を、音とデザインでゲームのように楽しく記録できるアプリです．',
+    title: 'ThrowFlowDarts',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-08-11',
+    type: 'site'
+  },
+  {
+    url: 'https://way-point-map.netlify.app/',
+    alt: 'ゴルフ場をマップ上で1球あたりの単価などで比較できるサイトです．フィルタリングやヒートマップにも対応しています．',
+    title: 'Way Point Map',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-07-20',
+    type: 'site'
+  },
+  {
+    url: 'https://window-brain.netlify.app/',
+    alt: '使っていないモニターに時計・BGM・天気などのウィジェットを自由に配置できるサイトです．',
+    title: 'Window Brain',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-07-05',
+    type: 'site'
+  },
+  {
+    url: 'https://nodoame27181.netlify.app/',
+    alt: 'ゲームアカウントに関する情報やプレイ実績をまとめたポートフォリオサイトです．',
+    title: 'ゲーム用ポートフォリオ',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-07-05',
+    type: 'site'
+  },
+  {
+    url: 'https://valorant-point-viewer.netlify.app/',
+    alt: 'VALORANT の各マップの定点動画をマップ上で確認できるサイトです．',
+    title: 'VALORANT Point Viewer',
+    tags: ['サイト', 'VALORANT', 'オリジナル'],
+    date: '2026-05-17',
+    type: 'site'
+  },
+  {
+    url: 'https://card-pocket.netlify.app/',
+    alt: '持ち運びの面倒な会員証をデジタルで管理するサービスのデモサイトです．',
+    title: 'Card Pocket（デモ）',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-03-19',
+    type: 'site'
+  },
+  {
+    url: 'https://color-recommend.netlify.app/',
+    alt: '研究内容であるイラスト制作における色の推薦のデモです．',
+    title: '色相・トーン推薦アプリ',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-02-07',
+    type: 'site'
+  },
+  {
+    url: 'https://mahjong-yaku-visualizer.netlify.app/',
+    alt: '麻雀の役を視覚的に確認できるサイトです．',
+    title: '麻雀役ビジュアライザー',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-01-16',
+    type: 'site'
   },
 
   // YouTube Videos
