@@ -63,6 +63,7 @@ emar27181のアート作品を展示するギャラリーポートフォリオ�
 | `npm test` | ユニットテスト（Vitest、`src/**/*.test.ts`） |
 | `npm run test:e2e` | E2E テスト（Playwright、`e2e/`）。先に `npm run build` が必要 |
 | `npm run verify` | 上記すべて（型チェック → ユニット → ビルド → E2E）。コミット前に実行 |
+| `npm run measure:styles -- <ラベル>` | 実描画の文字サイズ・角丸・余白・色・操作部品の高さを集計し `reports/` に出す（`npm run preview` を起動した状態で） |
 | `netlify deploy --prod` | Netlifyに本番デプロイ |
 
 E2E テストの初回は `npx playwright install chromium` でブラウザを入れてください。
@@ -94,8 +95,9 @@ CI（型チェック・テスト・ビルド・E2E）は GitHub Actions、公開
 │   │   ├── gallery/          # 作品画像の原本（ビルド時に縮小・WebP 化）
 │   │   └── brand/            # ロゴ・ローディングアニメーションの原本
 │   ├── components/
-│   │   ├── Gallery.astro     # ギャラリー（フィルタ・並び替え・モーダル）
-│   │   └── NavBar.astro      # ナビゲーションバー
+│   │   ├── atoms/            # トークンだけを知る部品（Button, Select, Chip, Icon, Tile …）
+│   │   ├── molecules/        # atoms の組み合わせ（MultiSelect, Drawer, Lightbox, EmbedFrame …）
+│   │   └── organisms/        # サイト固有（NavBar, Gallery, LoadingScreen）
 │   ├── data/
 │   │   └── image.ts          # 作品データ定義
 │   ├── lib/
@@ -108,8 +110,11 @@ CI（型チェック・テスト・ビルド・E2E）は GitHub Actions、公開
 │   ├── pages/
 │   │   └── index.astro       # メインページ（ローディング画面）
 │   └── styles/
-│       └── global.css        # グローバルスタイル
+│       ├── tokens.css        # デザイントークン（値の唯一の定義元）
+│       ├── global.css        # リセットなど最小限
+│       └── design-guards.test.ts  # 規約のガード
 ├── ARCHITECTURE.md           # 構成と責務
+├── DESIGN.md                 # デザイン規格
 ├── CHANGELOG.md              # 変更履歴
 ├── CLAUDE.md                 # 開発ルール・仕様書
 └── package.json
@@ -117,15 +122,7 @@ CI（型チェック・テスト・ビルド・E2E）は GitHub Actions、公開
 
 ## 🎨 デザインシステム
 
-### ライトテーマ
-- 背景: `#f9fafb` / `#ffffff`
-- テキスト: `#111827` / `#6b7280`
-- アクセント: `#3b82f6`
-
-### ダークテーマ
-- 背景: `#111827` / `#1f2937`
-- テキスト: `#f9fafb` / `#d1d5db`
-- アクセント: `#60a5fa`
+`DESIGN.md` を参照（値は `src/styles/tokens.css`）。
 
 ## 📝 ライセンス
 
