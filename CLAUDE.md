@@ -31,9 +31,9 @@
   - UIの表示形式や，固定値など以降の変更しないように決まったもの
 
 ### 6. デプロイ
-- **CD**：CI の `verify` が通ると `deploy` ジョブが Netlify に出す。PR はプレビュー（URL を PR にコメント）、
-  `main` への push（＝マージ）は本番。設定と必要な Secrets は README「デプロイ（CD）」を参照
-- PR のプレビュー URL は、PR に付くコメント（対象コミットのハッシュ付き）から取って報告する
+- **CD**：Netlify のリポジトリ連携。PR ごとにデプロイプレビュー、`main` への push（＝マージ）で本番に出る（README「デプロイ（CD）」）
+- PR のプレビュー URL は netlify[bot] のコメント（`Deploy Preview` と `Latest commit`）から取り、
+  対象コミットが最新の push と一致し、ビルドが完了（ready）していることを確かめてから報告する
 - ユーザーが「デプロイして」と言った場合の手動デプロイは `npm run build && netlify deploy --prod`
   （ビルド設定は `netlify.toml`）。デプロイ完了後にURLを確認し、動作を報告する
 - 本番URL: https://emar27181-gallery-portfolio.netlify.app
