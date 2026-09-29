@@ -10,7 +10,8 @@
     "check": "astro check",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "verify": "npm run check && npm test && npm run build && npm run test:e2e"
+    "verify": "npm run check && npm test && npm run build && npm run test:e2e",
+    "measure:styles": "node scripts/measure-styles.mjs"
   },
   "dependencies": {
     "astro": "^5.10.2"

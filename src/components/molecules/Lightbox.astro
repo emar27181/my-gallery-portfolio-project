@@ -1,0 +1,89 @@
+---
+// 画像を画面いっぱいに見せる（molecule）。document に "lightbox-open"
+// （detail: { id, src, alt }）を送ると開く。背景のクリック・閉じるボタン・Escape で閉じる。
+import IconButton from "../atoms/IconButton.astro";
+
+interface Props {
+  id: string;
+  closeLabel: string;
+}
+
+const { id, closeLabel } = Astro.props;
+---
+
+<div class="lightbox" id={id} data-lightbox role="dialog" aria-modal="true">
+  <img class="lightbox__img" data-lightbox-img src="" alt="" />
+  <div class="lightbox__close">
+    <IconButton icon="close" label={closeLabel} data-lightbox-close />
+  </div>
+</div>
+
+<style>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16);
+    background-color: var(--color-scrim-strong);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--duration-base) var(--easing-standard),
+      visibility var(--duration-base) var(--easing-standard);
+  }
+  .lightbox.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+  .lightbox__img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-lg);
+  }
+  /* どの画面幅でも右上に固定する（スマホでも押しやすい位置） */
+  .lightbox__close {
+    position: fixed;
+    top: var(--space-16);
+    right: var(--space-16);
+  }
+</style>
+
+<script>
+  interface LightboxOpenDetail {
+    id: string;
+    src: string;
+    alt: string;
+  }
+
+  const setOpen = (lightbox: HTMLElement, open: boolean) => {
+    lightbox.classList.toggle("is-open", open);
+    document.body.style.overflow = open ? "hidden" : "";
+  };
+
+  document.addEventListener("lightbox-open", (e) => {
+    const { id, src, alt } = (e as CustomEvent<LightboxOpenDetail>).detail;
+    const lightbox = document.getElementById(id);
+    const img = lightbox?.querySelector<HTMLImageElement>("[data-lightbox-img]");
+    if (!lightbox || !img) return;
+    img.src = src;
+    img.alt = alt;
+    setOpen(lightbox, true);
+  });
+
+  for (const lightbox of document.querySelectorAll<HTMLElement>("[data-lightbox]")) {
+    lightbox.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target === lightbox || target.closest("[data-lightbox-close]")) setOpen(lightbox, false);
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    for (const lightbox of document.querySelectorAll<HTMLElement>("[data-lightbox].is-open")) setOpen(lightbox, false);
+  });
+</script>

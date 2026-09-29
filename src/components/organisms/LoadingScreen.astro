@@ -1,0 +1,97 @@
+---
+// ローディング画面（organism）: サインのアニメーションを見せ、ギャラリーの初期表示の準備
+// （gallery:ready）を待って閉じる。閉じたら data-loading-target の要素を見せる。
+import { getBrandImages } from "../../lib/brand-images";
+
+interface Props {
+  /** 閉じた後に見せる要素の id */
+  target: string;
+}
+
+const { target } = Astro.props;
+const { loading } = await getBrandImages();
+---
+
+<div id="loading-screen" class="loading" data-loading-target={target}>
+  <img
+    class="loading__animation"
+    src={loading.src}
+    width={loading.width}
+    height={loading.height}
+    alt="Loading..."
+    fetchpriority="high"
+  />
+</div>
+
+<style>
+  .loading {
+    position: fixed;
+    top: var(--layout-navbar-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-loading);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg);
+    transition: opacity var(--duration-slow) var(--easing-standard);
+  }
+  .loading.is-leaving {
+    opacity: 0;
+  }
+  .loading__animation {
+    width: auto;
+    height: auto;
+    max-width: 40vw;
+    max-height: 40vh;
+    object-fit: contain;
+  }
+  /* 読み込み中も visibility で隠すだけにしてレイアウトさせる（display: none だと画像が遅延読み込みされない） */
+  :global([data-loading-hidden]) {
+    visibility: hidden;
+    opacity: 0;
+  }
+  :global(.is-revealing) {
+    transition: opacity var(--duration-slow) var(--easing-standard);
+  }
+</style>
+
+<script>
+  import { GALLERY_READY_EVENT } from "../../lib/gallery-grid";
+
+  const MIN_LOADING_TIME = 1000; // 最低表示時間（ms）。サインのアニメーションを見せるため
+  const MAX_LOADING_TIME = 6000; // これを過ぎたら必ず閉じる（ms）
+
+  const screen = document.getElementById("loading-screen")!;
+  const content = document.getElementById(screen.dataset.loadingTarget ?? "");
+  const startedAt = Date.now();
+  let closed = false;
+
+  /** CSS の transition（トークンの時間）が終わったら呼ぶ。動きを減らす設定で時間が 0 なら即座に呼ぶ */
+  const afterTransition = (el: HTMLElement, done: () => void) => {
+    if (parseFloat(getComputedStyle(el).transitionDuration) === 0) return done();
+    el.addEventListener("transitionend", done, { once: true });
+  };
+
+  function close() {
+    if (closed) return;
+    closed = true;
+    screen.classList.add("is-leaving");
+    afterTransition(screen, () => {
+      screen.hidden = true;
+      if (!content) return;
+      content.classList.add("is-revealing");
+      content.removeAttribute("data-loading-hidden");
+    });
+  }
+
+  function onGalleryReady() {
+    // 最低表示時間に満たなければ、満ちた時点で閉じる
+    setTimeout(close, Math.max(0, MIN_LOADING_TIME - (Date.now() - startedAt)));
+  }
+
+  if (document.getElementById("gallery")?.dataset.ready) onGalleryReady();
+  else document.addEventListener(GALLERY_READY_EVENT, onGalleryReady, { once: true });
+  setTimeout(close, MAX_LOADING_TIME);
+</script>

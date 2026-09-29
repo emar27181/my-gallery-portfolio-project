@@ -1,0 +1,328 @@
+---
+// ギャラリー（organism）: 作品データ・絞り込み・並び替え・配置を知る。
+// 見た目の部品は atoms / molecules を組み合わせ、文言（日本語）はここで渡す。
+import CoverButton from "../atoms/CoverButton.astro";
+import Select from "../atoms/Select.astro";
+import Tile from "../atoms/Tile.astro";
+import EmbedFrame from "../molecules/EmbedFrame.astro";
+import EmbedViewer from "../molecules/EmbedViewer.astro";
+import Field from "../molecules/Field.astro";
+import Lightbox from "../molecules/Lightbox.astro";
+import MultiSelect from "../molecules/MultiSelect.astro";
+import VideoEmbed from "../molecules/VideoEmbed.astro";
+import { DEFAULT_SORT, SORT_OPTIONS, tagsByUsage } from "../../lib/gallery";
+import { GALLERY_BREAKPOINTS, SITE_FRAME_NARROW, galleryGridCss, gallerySizes } from "../../lib/gallery-grid";
+import { getGalleryEntries } from "../../lib/gallery-images";
+
+const entries = await getGalleryEntries();
+const tagOptions = tagsByUsage(entries).map((tag) => ({ value: tag, label: tag }));
+// HTML を読んだ時点で取りに行く枚数（最大列数 = 最初の1行ぶん）。残りはスクリプトが画面に入る分を判断する
+const EAGER_COUNT = Math.max(...GALLERY_BREAKPOINTS.map((bp) => bp.columns));
+const LIGHTBOX_ID = "image-lightbox";
+const VIEWER_ID = "site-viewer";
+
+const youtubeEmbed = (videoId: string) =>
+  `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
+---
+
+<style is:global set:html={galleryGridCss(".gallery-grid")}></style>
+
+<section class="gallery">
+  <div class="gallery__controls">
+    <Field label="フィルタ:">
+      <MultiSelect
+        id="tag-filter"
+        options={tagOptions}
+        placeholder="タグを選択"
+        allLabel="全て"
+        removeLabel="{label} を解除"
+      />
+    </Field>
+    <Field label="並び替え:" for="sort-select">
+      <Select id="sort-select" options={SORT_OPTIONS} value={DEFAULT_SORT} />
+    </Field>
+  </div>
+
+  <div id="gallery" class="gallery-grid" data-lightbox-id={LIGHTBOX_ID} data-viewer-id={VIEWER_ID}>
+    {
+      entries.map((entry) => {
+        const { index, title, alt, date, tags, type, width, height, span, thumb, full, color } = entry;
+        const img = thumb && {
+          src: thumb.src,
+          srcset: thumb.srcset,
+          sizes: gallerySizes(span),
+          width,
+          height,
+          alt,
+          title,
+          loading: index < EAGER_COUNT ? ("eager" as const) : ("lazy" as const),
+          decoding: "async" as const,
+        };
+        return (
+          <div
+            class="gallery-item"
+            data-index={index}
+            data-title={title}
+            data-date={date}
+            data-tags={tags.join(",")}
+            data-type={type}
+            data-aspect={height / width}
+            data-aspect-narrow={type === "site" ? SITE_FRAME_NARROW.height / SITE_FRAME_NARROW.width : undefined}
+            data-span={span}
+            style={{ "--item-span": span }}
+          >
+            <Tile aspect={`${width} / ${height}`} color={color}>
+              {entry.type === "site" ? (
+                <EmbedFrame
+                  url={entry.url}
+                  title={title}
+                  activateLabel="クリックで操作"
+                  deactivateLabel="操作を終える"
+                  openLabel="新しいタブで開く"
+                  expandLabel="全画面で見る"
+                />
+              ) : entry.type === "video" ? (
+                <VideoEmbed embedUrl={youtubeEmbed(entry.videoId)} title={title} playLabel="再生" thumbnail={img ?? {}} />
+              ) : (
+                <>
+                  <img {...img} />
+                  <CoverButton label={`${title} を拡大`} data-lightbox-trigger data-full={full} data-alt={alt} />
+                </>
+              )}
+            </Tile>
+          </div>
+        );
+      })
+    }
+  </div>
+</section>
+
+<Lightbox id={LIGHTBOX_ID} closeLabel="閉じる" />
+<EmbedViewer
+  id={VIEWER_ID}
+  closeLabel="全画面を終える"
+  prevLabel="前のサイト"
+  nextLabel="次のサイト"
+  openLabel="新しいタブで開く"
+  positionLabel="{current} / {total}"
+/>
+
+<style>
+  .gallery {
+    padding: var(--space-24) 0 var(--space-16);
+  }
+  /* 狭い画面では折り返す（media query を使わず、幅は Field のトークンで揃える） */
+  .gallery__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-12) var(--space-24);
+    margin: 0 var(--space-16) var(--space-12);
+  }
+
+  /*
+   * 列数（--gallery-columns）と間隔（--gallery-gap）は src/lib/gallery-grid.ts から生成する。
+   * スクリプトが配置を計算するまでは通常のグリッドで並べ、計算後（.is-masonry）は
+   * 各アイテムを絶対配置で「いちばん短い列」に詰める。
+   */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--gallery-columns), 1fr);
+    gap: var(--gallery-gap);
+    align-items: start;
+    margin: 0 var(--gallery-gap);
+  }
+  .gallery-grid.is-masonry {
+    display: block;
+    position: relative;
+  }
+  .gallery-item {
+    display: block;
+    width: 100%;
+    grid-column: span min(var(--item-span), var(--gallery-columns));
+  }
+  .is-masonry .gallery-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .is-masonry .gallery-item > :global(.tile) {
+    height: 100%;
+  }
+  /* 並び替え・絞り込み・画面幅の変更で位置が動くときだけ動かす（初回配置は動かさない） */
+  .is-masonry.is-animated .gallery-item {
+    transition:
+      transform var(--duration-base) var(--easing-standard),
+      width var(--duration-base) var(--easing-standard),
+      height var(--duration-base) var(--easing-standard);
+  }
+  .gallery-item :global(img) {
+    transition: opacity var(--duration-fast) var(--easing-standard);
+  }
+  /* 読み込み完了までは透明（代表色が見える）にし、届いたらフェードインする（スクリプト有効時のみ） */
+  .is-masonry .gallery-item :global(img:not(.is-loaded)) {
+    opacity: 0;
+  }
+  .gallery-item:hover :global(img.is-loaded) {
+    opacity: var(--opacity-hover-media);
+  }
+</style>
+
+<script>
+  import { DEFAULT_SORT, isSortKey, matchesAllTags, sortItems, type SortKey, type SortableItem } from "../../lib/gallery";
+  import { GALLERY_READY_EVENT, isNarrowLayout } from "../../lib/gallery-grid";
+  import { layoutMasonry, type Placement } from "../../lib/masonry";
+
+  interface Entry extends SortableItem {
+    el: HTMLElement;
+    /** Web サイトは画像を持たない */
+    img: HTMLImageElement | null;
+    /** 高さ / 幅 */
+    aspect: number;
+    /** スマホ（列数が最少）での 高さ / 幅。無ければ aspect を使う */
+    aspectNarrow?: number;
+    span: number;
+  }
+
+  const grid = document.getElementById("gallery")!;
+  const sortSelect = document.getElementById("sort-select") as HTMLSelectElement;
+  const tagFilter = document.getElementById("tag-filter")!;
+
+  const entries: Entry[] = [...grid.querySelectorAll<HTMLElement>(".gallery-item")].map((el) => ({
+    el,
+    img: el.querySelector("img"),
+    index: Number(el.dataset.index),
+    title: el.dataset.title ?? "",
+    date: el.dataset.date ?? "",
+    tags: (el.dataset.tags ?? "").split(",").filter(Boolean),
+    aspect: Number(el.dataset.aspect),
+    aspectNarrow: el.dataset.aspectNarrow ? Number(el.dataset.aspectNarrow) : undefined,
+    span: Number(el.dataset.span),
+  }));
+
+  /** 直近の layout() で表示した順（全画面表示の前後の切り替えに使う） */
+  let lastShown: Entry[] = [];
+
+  // 表示状態はここだけに持ち、変更後は必ず layout() で DOM に反映する
+  const state: { selectedTags: string[]; sort: SortKey } = {
+    selectedTags: [],
+    sort: DEFAULT_SORT,
+  };
+
+  // --- 配置 -----------------------------------------------------------------------
+  // 列数と間隔は CSS 変数（src/lib/gallery-grid.ts から生成）が定義元
+  const gridVar = (name: string) => parseFloat(getComputedStyle(grid).getPropertyValue(name));
+
+  /** 表示するアイテムを並び順どおりに最短列へ詰め、各アイテムの位置を返す */
+  function layout(): { shown: Entry[]; placements: Placement[] } {
+    const shown = sortItems(entries, state.sort).filter((e) => matchesAllTags(e.tags, state.selectedTags));
+    const shownSet = new Set(shown);
+    const columns = gridVar("--gallery-columns");
+    const narrow = isNarrowLayout(columns);
+    const { placements, height } = layoutMasonry(
+      shown.map((e) => ({ span: e.span, aspect: (narrow && e.aspectNarrow) || e.aspect })),
+      { containerWidth: grid.clientWidth, columns, gap: gridVar("--gallery-gap") },
+    );
+    lastShown = shown;
+
+    for (const entry of entries) entry.el.hidden = !shownSet.has(entry);
+    shown.forEach(({ el }, i) => {
+      const { x, y, width, height } = placements[i];
+      el.style.transform = `translate(${x}px, ${y}px)`;
+      el.style.width = `${width}px`;
+      el.style.height = `${height}px`;
+    });
+    grid.style.height = `${height}px`;
+    grid.classList.add("is-masonry");
+    return { shown, placements };
+  }
+
+  // --- 画像の読み込み -------------------------------------------------------------
+  // 読み込み済みの画像だけを表示し（それまでは代表色）、届いたものからフェードインする
+  const markLoaded = (img: HTMLImageElement) => img.classList.add("is-loaded");
+  grid.addEventListener(
+    "load",
+    (e) => {
+      if (e.target instanceof HTMLImageElement) markLoaded(e.target);
+    },
+    true,
+  );
+  for (const { img } of entries) if (img?.complete && img.naturalWidth > 0) markLoaded(img);
+
+  /**
+   * 初期表示に入る画像を最優先で読み込み、デコードまで済ませる。
+   * ローディング画面はこれを待って閉じるので、幕が上がった時点で画面内は描画済みになる
+   */
+  async function prepareFirstView({ shown, placements }: ReturnType<typeof layout>) {
+    const visibleBottom = window.innerHeight - grid.getBoundingClientRect().top;
+    // Web サイト（iframe）は待たない。埋め込み先の応答に初期表示が左右されないようにする
+    const critical = shown
+      .filter((_, i) => placements[i].y < visibleBottom)
+      .flatMap((e) => (e.img ? [e.img] : []));
+    for (const img of critical) {
+      img.loading = "eager";
+      img.fetchPriority = "high";
+    }
+    await Promise.all(
+      critical.map((img) =>
+        img.decode().then(
+          () => markLoaded(img),
+          () => undefined, // 失敗しても待ち続けない（代表色のまま表示する）
+        ),
+      ),
+    );
+    grid.dataset.ready = "true";
+    document.dispatchEvent(new Event(GALLERY_READY_EVENT));
+  }
+
+  // --- 操作 -----------------------------------------------------------------------
+  tagFilter.addEventListener("multiselect-change", (e) => {
+    state.selectedTags = (e as CustomEvent<{ values: string[] }>).detail.values;
+    layout();
+  });
+
+  sortSelect.addEventListener("change", () => {
+    if (isSortKey(sortSelect.value)) {
+      state.sort = sortSelect.value;
+      layout();
+    }
+  });
+
+  // 画像を押したら拡大表示（Lightbox molecule に開くよう伝える）
+  grid.addEventListener("click", (e) => {
+    const trigger = (e.target as HTMLElement).closest<HTMLElement>("[data-lightbox-trigger]");
+    if (!trigger) return;
+    document.dispatchEvent(
+      new CustomEvent("lightbox-open", {
+        detail: { id: grid.dataset.lightboxId, src: trigger.dataset.full ?? "", alt: trigger.dataset.alt ?? "" },
+      }),
+    );
+  });
+
+  // Web サイトの全画面表示: いま表示中のサイトを並び順どおりに前後で切り替えられるようにする
+  grid.addEventListener("embed-expand", (e) => {
+    const sites = lastShown.filter((entry) => entry.el.dataset.type === "site");
+    const items = sites.map((entry) => {
+      const embed = entry.el.querySelector<HTMLElement>("[data-embed]")!;
+      return { url: embed.dataset.url ?? "", title: embed.dataset.title ?? "" };
+    });
+    const { url } = (e as CustomEvent<{ url: string }>).detail;
+    document.dispatchEvent(
+      new CustomEvent("embed-viewer-open", {
+        detail: { id: grid.dataset.viewerId, items, index: Math.max(0, items.findIndex((item) => item.url === url)) },
+      }),
+    );
+  });
+
+  // 幅が変わったら詰め直す（高さの変化は自分で設定したものなので無視する）
+  let lastWidth = grid.clientWidth;
+  new ResizeObserver(() => {
+    if (grid.clientWidth === lastWidth) return;
+    lastWidth = grid.clientWidth;
+    layout();
+  }).observe(grid);
+
+  prepareFirstView(layout());
+  // 初回配置の後からアニメーションを有効にする
+  requestAnimationFrame(() => requestAnimationFrame(() => grid.classList.add("is-animated")));
+</script>

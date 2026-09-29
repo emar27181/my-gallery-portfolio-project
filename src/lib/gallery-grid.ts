@@ -1,11 +1,28 @@
 // ギャラリーの列数・間隔の定義元。
 // CSS（列数の CSS 変数）と画像の sizes 属性はここから生成し、配置スクリプトは CSS 変数を読む。
 
-/** アイテム間と左右の余白（px）。CLAUDE.md「画像間隔は4pxの統一スペーシング」 */
-export const GALLERY_GAP = 4;
+/**
+ * アイテム間と左右の余白。値はトークン（src/styles/tokens.css）から取る。
+ * CLAUDE.md「画像間隔は4pxの統一スペーシング」
+ */
+export const GALLERY_GAP_TOKEN = '--space-4';
 
 /** 動画が使う列数（列数が少なければ列数に切り詰める） */
 export const VIDEO_SPAN = 2;
+
+/** Web サイトが使う列数。中で操作できるよう大きく取る（タブレット・モバイルでは全幅） */
+export const SITE_SPAN = 3;
+
+/** Web サイトの枠の縦横比（幅 16 : 高さ 10、一般的なノート PC の画面に近い） */
+export const SITE_FRAME = { width: 1600, height: 1000 } as const;
+
+/** 列数がいちばん少ない画面（スマホ）での Web サイトの枠。縦長（9 : 16）にしてスマホ向けの表示で見せる */
+export const SITE_FRAME_NARROW = { width: 900, height: 1600 } as const;
+
+/** 列数がいちばん少ない段階（スマホ）か */
+export function isNarrowLayout(columns: number): boolean {
+  return columns <= GALLERY_BREAKPOINTS[0].columns;
+}
 
 /** 画面幅ごとの列数。maxWidth の昇順。CLAUDE.md「デスクトップ5列、タブレット3列、モバイル2列」 */
 export const GALLERY_BREAKPOINTS = [
@@ -30,7 +47,7 @@ export function gallerySizes(span = 1): string {
 export function galleryGridCss(selector: string): string {
   const [widest, ...narrower] = [...GALLERY_BREAKPOINTS].reverse();
   return [
-    `${selector}{--gallery-columns:${widest.columns};--gallery-gap:${GALLERY_GAP}px}`,
+    `${selector}{--gallery-columns:${widest.columns};--gallery-gap:var(${GALLERY_GAP_TOKEN})}`,
     ...narrower.map((bp) => `@media (max-width:${bp.maxWidth}px){${selector}{--gallery-columns:${bp.columns}}}`),
   ].join('\n');
 }

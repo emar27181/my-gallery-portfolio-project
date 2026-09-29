@@ -5,8 +5,8 @@ import path from 'node:path';
 import type { ImageMetadata } from 'astro';
 import { getImage } from 'astro:assets';
 import sharp from 'sharp';
-import { images, type ImageData } from '../data/image';
-import { VIDEO_SPAN } from './gallery-grid';
+import { images, type ImageData, type ImageWork, type VideoWork } from '../data/image';
+import { SITE_FRAME, SITE_SPAN, VIDEO_SPAN } from './gallery-grid';
 
 const ASSET_DIR = 'src/assets/gallery';
 const files = import.meta.glob<ImageMetadata>('../assets/gallery/*', { eager: true, import: 'default' });
@@ -20,19 +20,21 @@ const FORMAT = 'webp';
 /** YouTube サムネイル（mqdefault 320x180 / maxresdefault 1280x720、どちらも 16:9） */
 const YOUTUBE_THUMB = { width: 1280, height: 720 };
 
-export interface GalleryEntry extends ImageData {
+/** 作品データに、表示に必要な寸法・縮小画像などを足したもの */
+export type GalleryEntry = ImageData & {
   /** image.ts 上の位置（カスタム順） */
   index: number;
   width: number;
   height: number;
   /** 何列ぶんの幅を使うか */
   span: number;
-  thumb: { src: string; srcset: string };
+  /** 一覧用の画像（Web サイトは iframe なので無し） */
+  thumb?: { src: string; srcset: string };
   /** モーダルで表示する大きい画像 */
-  full: string;
+  full?: string;
   /** 読み込み前に敷く代表色（#rrggbb）。不明なら undefined */
   color?: string;
-}
+};
 
 /**
  * 寸法と代表色を原本ファイルから読む。
@@ -46,7 +48,7 @@ async function inspect(file: string): Promise<{ width: number; height: number; c
   return { width, height, color };
 }
 
-async function prepareImage(image: ImageData, index: number): Promise<GalleryEntry> {
+async function prepareImage(image: ImageWork, index: number): Promise<GalleryEntry> {
   const meta = files[`../assets/gallery/${image.src}`];
   if (!meta) throw new Error(`src/data/image.ts: ${ASSET_DIR}/${image.src} が見つかりません`);
 
@@ -69,7 +71,7 @@ async function prepareImage(image: ImageData, index: number): Promise<GalleryEnt
   };
 }
 
-function prepareVideo(video: ImageData, index: number): GalleryEntry {
+function prepareVideo(video: VideoWork, index: number): GalleryEntry {
   const base = `https://img.youtube.com/vi/${video.videoId}`;
   return {
     ...video,
@@ -81,8 +83,17 @@ function prepareVideo(video: ImageData, index: number): GalleryEntry {
   };
 }
 
+function prepare(item: ImageData, index: number): GalleryEntry | Promise<GalleryEntry> {
+  switch (item.type) {
+    case 'image':
+      return prepareImage(item, index);
+    case 'video':
+      return prepareVideo(item, index);
+    case 'site':
+      return { ...item, index, ...SITE_FRAME, span: SITE_SPAN };
+  }
+}
+
 export async function getGalleryEntries(): Promise<GalleryEntry[]> {
-  return Promise.all(
-    images.map((item, index) => (item.type === 'video' ? prepareVideo(item, index) : prepareImage(item, index))),
-  );
+  return Promise.all(images.map(prepare));
 }

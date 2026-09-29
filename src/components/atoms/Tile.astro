@@ -1,0 +1,35 @@
+---
+// 作品を入れる枠（atom）。縦横比と、中身が届くまで敷く色だけを受け取る。
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"div"> & {
+  /** "幅 / 高さ" */
+  aspect: string;
+  /** 読み込み前の代表色。無ければ placeholder 色 */
+  color?: string;
+};
+
+const { aspect, color, class: className, style, ...rest } = Astro.props;
+---
+
+<div class:list={["tile", className]} style={{ "--tile-aspect": aspect, "--tile-color": color }} {...rest}>
+  <slot />
+</div>
+
+<style>
+  .tile {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: var(--tile-aspect);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background-color: var(--tile-color, var(--color-placeholder));
+  }
+  .tile > :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

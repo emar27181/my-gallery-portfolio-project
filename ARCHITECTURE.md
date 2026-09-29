@@ -7,13 +7,16 @@ Astro による静的サイト（1ページ）。ビルド時に作品データ�
 
 | 場所 | 責務 | 依存してよいもの |
 | :--- | :--- | :--- |
-| `src/data/` | 作品データ（`image.ts`）。配列の順序がそのまま「カスタム順」 | なし |
+| `src/data/` | 作品データ（`image.ts`）。画像・動画・Web サイトの判別共用体。配列の順序がそのまま「カスタム順」 | なし |
 | `src/assets/gallery/` | 作品画像の原本。ビルド時に縮小・WebP 化され、原本は配信されない | なし |
 | `src/assets/brand/` | ロゴ・ローディングアニメーションの原本（同上） | なし |
 | `src/lib/` | UI を持たない規則。DOM に触れないものはユニットテストの対象。`*-images.ts` はビルド専用 | `src/data/`, `src/assets/` |
-| `src/components/` | 画面部品。マークアップとその部品の操作スクリプト | `src/lib/`, `src/data/` |
+| `src/components/atoms/` | トークンだけを知る部品（ボタン・選択欄・チップ・アイコン・タイル） | `src/styles/tokens.css` |
+| `src/components/molecules/` | atoms の組み合わせと、その開閉・選択などの動き | atoms |
+| `src/components/organisms/` | サイトの概念（作品・タグ・並び順）と実データ・日本語の文言 | molecules, atoms, `src/lib/`, `src/data/` |
 | `src/pages/` | ページの組み立て、ローディング画面 | `src/components/`, `src/lib/` |
-| `src/styles/global.css` | すべてのスタイルと CSS 変数（テーマ色、ギャラリーの行単位・間隔） | なし |
+| `src/styles/tokens.css` | デザイントークンの唯一の定義元（色・文字・余白・角丸・寸法・影・動き、ライト/ダーク） | なし |
+| `src/styles/global.css` | リセット・body・`[hidden]`・フォーカスの輪だけ。部品の見た目は各コンポーネントの `<style>` | tokens.css |
 | `e2e/` | 実ブラウザでの振る舞いの検証 | `src/data/`, `src/lib/`（期待値の計算に使う） |
 
 ## 規則の置き場所（一元管理）
@@ -21,6 +24,7 @@ Astro による静的サイト（1ページ）。ビルド時に作品データ�
 - **並び替え・絞り込み** … `src/lib/gallery.ts`。選択肢とラベル（`SORT_OPTIONS`）、比較関数、AND 検索、
   タグの使用数順を定義する。`Gallery.astro` のマークアップ（選択肢の生成）とスクリプト（再描画）、
   E2E テスト（期待値）が同じ関数を使う。
+- **見た目の値** … `src/styles/tokens.css`（規格は `DESIGN.md`）。`src/styles/design-guards.test.ts` が直書きを検出する。
 - **テーマ** … `src/lib/theme.ts`。保存キーと既定値を持つ。`<head>` の描画前スクリプトも
   `define:vars` でここからキーを受け取る。
 - **列数・間隔・動画の列幅** … `src/lib/gallery-grid.ts`。ここから CSS 変数（`--gallery-columns` /
@@ -49,6 +53,14 @@ Astro による静的サイト（1ページ）。ビルド時に作品データ�
   待たずに位置が確定し、読み込み後に位置が動くことはない。各アイテムは `transform` で絶対配置する。
   1列幅のアイテムは置いた順に上端が下がっていくため、読み順は並び替え順と一致する。
   2列幅の動画は揃う位置まで下がることがある。
+- **部品間の連絡** はカスタムイベントで行う。`MultiSelect` は選択が変わると `multiselect-change` を送り、
+  `Gallery` は画像が押されると `lightbox-open` を送って `Lightbox` を開く。`EmbedFrame`（Web サイト）と
+  `VideoEmbed`（動画）は自分の操作（操作開始・終了、再生）を自分で扱う。
+  `EmbedFrame` の全画面ボタンは `embed-expand` を送り、`Gallery` が表示中のサイトを並び順どおりに集めて
+  `embed-viewer-open` で `EmbedViewer` を開く（前後の切り替えは絞り込み・並び替えの結果に従う）。
+  `EmbedViewer` は切り替えのたびに iframe を差し替える（src の書き換えはブラウザの履歴に積まれ、「戻る」が iframe の中で消費されるため）。
+- **Web サイトの枠の縦横比** は、スマホ（列数が最少）では `SITE_FRAME_NARROW`（縦長）、それ以外は `SITE_FRAME` を
+  `layout()` が画面幅に応じて選ぶ。
 - **絞り込み** は `hidden` 属性で行う（`[hidden] { display: none !important }`）。
 - **画面幅の変更** は `ResizeObserver` でギャラリーの幅を監視し、幅が変わったときだけ詰め直す。
 - **スクリプト前の表示** … 配置計算前（`.is-masonry` が付く前）は通常の CSS Grid で並ぶ。

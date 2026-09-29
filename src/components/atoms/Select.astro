@@ -1,0 +1,58 @@
+---
+// 選択欄（atom）。選択肢と文言は props で受け取る。文字は 16px 固定（iOS の自動拡大を防ぐ）。
+import type { HTMLAttributes } from "astro/types";
+import Icon from "./Icon.astro";
+
+type Props = HTMLAttributes<"select"> & {
+  options: readonly { value: string; label: string }[];
+  value?: string;
+};
+
+const { options, value, class: className, ...rest } = Astro.props;
+---
+
+<span class:list={["select", className]}>
+  <select class="select__control" {...rest}>
+    {
+      options.map((option) => (
+        <option value={option.value} selected={option.value === value}>
+          {option.label}
+        </option>
+      ))
+    }
+  </select>
+  <Icon name="chevronDown" size="sm" class="select__chevron" />
+</span>
+
+<style>
+  .select {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+  }
+  .select__control {
+    width: 100%;
+    min-height: var(--control-height-md);
+    padding: 0 var(--space-40) 0 var(--space-16);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-control);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: var(--font-size-title);
+    appearance: none;
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--easing-standard);
+  }
+  .select__control:hover {
+    border-color: var(--color-primary);
+  }
+  .select :global(.select__chevron) {
+    position: absolute;
+    top: 50%;
+    right: var(--space-16);
+    color: var(--color-text-muted);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+</style>

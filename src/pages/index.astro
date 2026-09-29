@@ -1,102 +1,36 @@
 ---
-import Gallery from "../components/Gallery.astro";
-import NavBar from "../components/NavBar.astro";
+import Gallery from "../components/organisms/Gallery.astro";
+import LoadingScreen from "../components/organisms/LoadingScreen.astro";
+import NavBar from "../components/organisms/NavBar.astro";
 import { getBrandImages } from "../lib/brand-images";
 import { THEME_STORAGE_KEY } from "../lib/theme";
 import "../styles/global.css";
 
-const { tabIcon, loading } = await getBrandImages();
+const { tabIcon } = await getBrandImages();
+const MAIN_ID = "main-content";
 ---
 
-<html lang="en" data-theme="light">
-	<head>
-		<meta charset="utf-8" />
-		<link
-			rel="icon"
-			type="image/png"
-			href={tabIcon}
-		/>
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<meta
-			name="google-site-verification"
-			content="uyjBT9z6vOnpxn6lM6YnxbI6R4jLSDIAboC8zo1slhM"
-		/>
-		<title>emar27181 Gallery</title>
-		<!-- 描画前に保存済みテーマを当て、ライト→ダークのちらつきを防ぐ -->
-		<script is:inline define:vars={{ key: THEME_STORAGE_KEY }}>
-			try {
-				if (localStorage.getItem(key) === "dark") document.documentElement.dataset.theme = "dark";
-			} catch {}
-		</script>
-	</head>
-	<body>
-		<div id="top"></div>
-		<NavBar />
-		
-		<!-- Loading Screen -->
-		<div id="loading-screen" class="loading-screen">
-			<img
-				id="loading-gif"
-				src={loading.src}
-				width={loading.width}
-				height={loading.height}
-				alt="Loading..."
-				class="loading-gif"
-				fetchpriority="high"
-			>
-		</div>
-
-		<!-- Main Content -->
-		<div id="main-content" class="main-content hidden">
-			<div class="container" style="padding: 2rem 0;">
-				<main>
-					<Gallery />
-				</main>
-			</div>
-		</div>
-
-		<script>
-			import { GALLERY_READY_EVENT } from '../lib/gallery-grid';
-
-			// ローディング画面: ギャラリーが初期表示の画像を描画できる状態になったら閉じる
-			const MIN_LOADING_TIME = 1000; // 最低表示時間（ms）
-			const MAX_LOADING_TIME = 6000; // これを過ぎたら必ず閉じる（ms）
-
-			const loadingScreen = document.getElementById('loading-screen')!;
-			const mainContent = document.getElementById('main-content')!;
-			const startedAt = Date.now();
-			let hidden = false;
-
-			function hideLoadingScreen() {
-				if (hidden) return;
-				hidden = true;
-
-				loadingScreen.style.transition = 'opacity 0.5s ease-out';
-				loadingScreen.style.opacity = '0';
-
-				setTimeout(() => {
-					loadingScreen.style.display = 'none';
-					mainContent.classList.remove('hidden');
-					mainContent.style.opacity = '0';
-					mainContent.style.transition = 'opacity 0.5s ease-in';
-					setTimeout(() => {
-						mainContent.style.opacity = '1';
-					}, 50);
-				}, 500);
-			}
-
-			function onGalleryReady() {
-				// 最低表示時間に満たなければ、満ちた時点で閉じる
-				setTimeout(hideLoadingScreen, Math.max(0, MIN_LOADING_TIME - (Date.now() - startedAt)));
-			}
-
-			if (document.getElementById('gallery')?.dataset.ready) {
-				onGalleryReady();
-			} else {
-				document.addEventListener(GALLERY_READY_EVENT, onGalleryReady, { once: true });
-			}
-			setTimeout(hideLoadingScreen, MAX_LOADING_TIME);
-		</script>
-	</body>
+<html lang="ja" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href={tabIcon} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="google-site-verification" content="uyjBT9z6vOnpxn6lM6YnxbI6R4jLSDIAboC8zo1slhM" />
+    <title>emar27181 Gallery</title>
+    <!-- 描画前に保存済みテーマを当て、ライト→ダークのちらつきを防ぐ -->
+    <script is:inline define:vars={{ key: THEME_STORAGE_KEY }}>
+      try {
+        if (localStorage.getItem(key) === "dark") document.documentElement.dataset.theme = "dark";
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <div id="top"></div>
+    <NavBar />
+    <LoadingScreen target={MAIN_ID} />
+    <main id={MAIN_ID} data-loading-hidden>
+      <Gallery />
+    </main>
+  </body>
 </html>

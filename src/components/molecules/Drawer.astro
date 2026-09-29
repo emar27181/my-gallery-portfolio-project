@@ -1,0 +1,95 @@
+---
+// 横から出るパネル（molecule）。開くボタンには data-drawer-open={id} を付ける。
+// 背景のクリック・閉じるボタン・Escape で閉じる。文言は props で受け取る。
+import IconButton from "../atoms/IconButton.astro";
+
+interface Props {
+  id: string;
+  title: string;
+  closeLabel: string;
+}
+
+const { id, title, closeLabel } = Astro.props;
+---
+
+<div class="drawer" id={id} data-drawer>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby={`${id}-title`}>
+    <div class="drawer__header">
+      <h2 class="drawer__title" id={`${id}-title`}>{title}</h2>
+      <IconButton icon="close" variant="ghost" label={closeLabel} data-drawer-close />
+    </div>
+    <div class="drawer__body"><slot /></div>
+  </div>
+</div>
+
+<style>
+  .drawer {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-drawer);
+    background-color: var(--color-scrim);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--duration-base) var(--easing-standard),
+      visibility var(--duration-base) var(--easing-standard);
+  }
+  .drawer.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+  .drawer__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: min(var(--layout-drawer-width), 80vw);
+    height: 100%;
+    overflow-y: auto;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%);
+    transition: transform var(--duration-base) var(--easing-standard);
+  }
+  .drawer.is-open .drawer__panel {
+    transform: translateX(0);
+  }
+  .drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-16);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+  .drawer__title {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-bold);
+  }
+  .drawer__body {
+    padding: var(--space-8);
+  }
+</style>
+
+<script>
+  const setOpen = (drawer: HTMLElement, open: boolean) => {
+    drawer.classList.toggle("is-open", open);
+    document.body.style.overflow = open ? "hidden" : "";
+  };
+
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    const opener = target.closest<HTMLElement>("[data-drawer-open]");
+    if (opener) {
+      const drawer = document.getElementById(opener.dataset.drawerOpen ?? "");
+      if (drawer) setOpen(drawer, !drawer.classList.contains("is-open"));
+      return;
+    }
+    const drawer = target.closest<HTMLElement>("[data-drawer]");
+    if (drawer && (target === drawer || target.closest("[data-drawer-close]"))) setOpen(drawer, false);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    for (const drawer of document.querySelectorAll<HTMLElement>("[data-drawer].is-open")) setOpen(drawer, false);
+  });
+</script>

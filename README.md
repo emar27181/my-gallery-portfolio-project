@@ -17,6 +17,19 @@ emar27181のアート作品を展示するギャラリーポートフォリオ�
 - **ダーク/ライトテーマ**: テーマ切り替えボタンでモード変更
 - **日本語UI**: 完全日本語対応のユーザーインターフェース
 
+## ➕ 作品の追加
+
+`src/data/image.ts` の `images` に 1 件足します。配列の順序が「カスタム順」です。
+
+```ts
+// 画像: src/assets/gallery/ にファイルを置き、ファイル名を書く（縮小・WebP 化はビルド時に自動）
+{ type: 'image', src: 'my_work.jpg', alt: '…', title: '…', tags: ['イラスト'], date: '2026-01-01' },
+// 動画: YouTube の動画 ID
+{ type: 'video', src: 'https://img.youtube.com/vi/<ID>/maxresdefault.jpg', videoId: '<ID>', alt: '…', title: '…', tags: ['動画'], date: '2026-01-01' },
+// Web サイト: iframe で埋め込み、その場で操作できる（埋め込みを許可しているサイトのみ）
+{ type: 'site', url: 'https://example.netlify.app/', alt: '…', title: '…', tags: ['サイト'], date: '2026-01-01' },
+```
+
 ## 🎨 カテゴリー
 
 - **猫** - 猫のイラスト・写真
@@ -50,12 +63,25 @@ emar27181のアート作品を展示するギャラリーポートフォリオ�
 | `npm test` | ユニットテスト（Vitest、`src/**/*.test.ts`） |
 | `npm run test:e2e` | E2E テスト（Playwright、`e2e/`）。先に `npm run build` が必要 |
 | `npm run verify` | 上記すべて（型チェック → ユニット → ビルド → E2E）。コミット前に実行 |
+| `npm run measure:styles -- <ラベル>` | 実描画の文字サイズ・角丸・余白・色・操作部品の高さを集計し `reports/` に出す（`npm run preview` を起動した状態で） |
 | `netlify deploy --prod` | Netlifyに本番デプロイ |
 
 E2E テストの初回は `npx playwright install chromium` でブラウザを入れてください。
 失敗時のトレースは `test-results/`、HTML レポートは `playwright-report/` に出力されます（どちらもコミットしない）。
 
 CI（`.github/workflows/ci.yml`）は push / PR ごとに `verify` と同じ手順を実行します。
+
+## 🚢 デプロイ（CD）
+
+Netlify のリポジトリ連携で自動デプロイします（ビルド設定は `netlify.toml`）。
+
+| きっかけ | 出し先 |
+| :--- | :--- |
+| Pull Request | デプロイプレビュー `https://deploy-preview-<番号>--emar27181-gallery-portfolio.netlify.app`。URL と対象コミットは netlify[bot] が PR にコメントする |
+| `main` への push（PR のマージ） | 本番 https://emar27181-gallery-portfolio.netlify.app |
+
+CI（型チェック・テスト・ビルド・E2E）は GitHub Actions、公開は Netlify が担当します。
+マージは CI が通り、プレビューを確認してから行います。
 
 ## 📁 プロジェクト構造
 
@@ -69,8 +95,9 @@ CI（`.github/workflows/ci.yml`）は push / PR ごとに `verify` と同じ手�
 │   │   ├── gallery/          # 作品画像の原本（ビルド時に縮小・WebP 化）
 │   │   └── brand/            # ロゴ・ローディングアニメーションの原本
 │   ├── components/
-│   │   ├── Gallery.astro     # ギャラリー（フィルタ・並び替え・モーダル）
-│   │   └── NavBar.astro      # ナビゲーションバー
+│   │   ├── atoms/            # トークンだけを知る部品（Button, Select, Chip, Icon, Tile …）
+│   │   ├── molecules/        # atoms の組み合わせ（MultiSelect, Drawer, Lightbox, EmbedFrame …）
+│   │   └── organisms/        # サイト固有（NavBar, Gallery, LoadingScreen）
 │   ├── data/
 │   │   └── image.ts          # 作品データ定義
 │   ├── lib/
@@ -83,8 +110,11 @@ CI（`.github/workflows/ci.yml`）は push / PR ごとに `verify` と同じ手�
 │   ├── pages/
 │   │   └── index.astro       # メインページ（ローディング画面）
 │   └── styles/
-│       └── global.css        # グローバルスタイル
+│       ├── tokens.css        # デザイントークン（値の唯一の定義元）
+│       ├── global.css        # リセットなど最小限
+│       └── design-guards.test.ts  # 規約のガード
 ├── ARCHITECTURE.md           # 構成と責務
+├── DESIGN.md                 # デザイン規格
 ├── CHANGELOG.md              # 変更履歴
 ├── CLAUDE.md                 # 開発ルール・仕様書
 └── package.json
@@ -92,15 +122,7 @@ CI（`.github/workflows/ci.yml`）は push / PR ごとに `verify` と同じ手�
 
 ## 🎨 デザインシステム
 
-### ライトテーマ
-- 背景: `#f9fafb` / `#ffffff`
-- テキスト: `#111827` / `#6b7280`
-- アクセント: `#3b82f6`
-
-### ダークテーマ
-- 背景: `#111827` / `#1f2937`
-- テキスト: `#f9fafb` / `#d1d5db`
-- アクセント: `#60a5fa`
+`DESIGN.md` を参照（値は `src/styles/tokens.css`）。
 
 ## 📝 ライセンス
 

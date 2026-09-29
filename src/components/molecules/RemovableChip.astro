@@ -1,0 +1,17 @@
+---
+// 外せるチップ（molecule）: Chip と、外す IconButton の組み合わせ。
+import Chip from "../atoms/Chip.astro";
+import IconButton from "../atoms/IconButton.astro";
+
+interface Props {
+  label: string;
+  removeLabel: string;
+}
+
+const { label, removeLabel } = Astro.props;
+---
+
+<Chip selected data-chip>
+  <span data-chip-label>{label}</span>
+  <IconButton icon="close" size="sm" variant="ghost" label={removeLabel} data-chip-remove />
+</Chip>
