@@ -1,0 +1,120 @@
+---
+// 外部のページを iframe でその場に見せる（molecule）。
+// 上端の帯に見出しと操作ボタンを置き、ページの上には重ねない（埋め込み先のナビゲーションを隠さない）。
+// 操作を始めるまではページに入力を渡さない（周りのスクロールを奪わない）。
+// 「終える」ボタン・外側のクリック・Escape で操作を終える
+// （埋め込み先にフォーカスがあると Escape はそちらに届くため、ボタンでも終えられるようにする）。
+import Button from "../atoms/Button.astro";
+import CoverButton from "../atoms/CoverButton.astro";
+import LinkButton from "../atoms/LinkButton.astro";
+
+interface Props {
+  url: string;
+  title: string;
+  activateLabel: string;
+  deactivateLabel: string;
+  openLabel: string;
+}
+
+const { url, title, activateLabel, deactivateLabel, openLabel } = Astro.props;
+---
+
+<div class="embed" data-embed>
+  <div class="embed__toolbar">
+    <span class="embed__title">{title}</span>
+    <Button size="sm" shape="pill" data-embed-deactivate hidden>{deactivateLabel}</Button>
+    <LinkButton href={url} external size="sm" shape="pill" data-embed-open>{openLabel}</LinkButton>
+  </div>
+  <div class="embed__viewport">
+    <iframe
+      class="embed__frame"
+      src={url}
+      title={title}
+      loading="lazy"
+      tabindex="-1"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+    ></iframe>
+    <CoverButton label={`${title}: ${activateLabel}`} data-embed-activate>{activateLabel}</CoverButton>
+  </div>
+</div>
+
+<style>
+  .embed {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+  .embed.is-active {
+    outline: var(--focus-ring-width) solid var(--color-primary);
+    outline-offset: calc(var(--focus-ring-width) * -1);
+  }
+  .embed__toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    flex-shrink: 0;
+    padding: var(--space-6) var(--space-8);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+  }
+  .embed__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-bold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .embed__viewport {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+  .embed__frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: var(--color-surface);
+    pointer-events: none;
+  }
+  .embed.is-active .embed__frame {
+    pointer-events: auto;
+  }
+  .embed.is-active :global([data-embed-activate]) {
+    display: none;
+  }
+</style>
+
+<script>
+  const embeds = [...document.querySelectorAll<HTMLElement>("[data-embed]")];
+
+  const setActive = (active: HTMLElement | null) => {
+    for (const embed of embeds) {
+      const on = embed === active;
+      embed.classList.toggle("is-active", on);
+      embed.querySelector<HTMLElement>("[data-embed-deactivate]")!.hidden = !on;
+      const frame = embed.querySelector("iframe")!;
+      if (on) {
+        frame.removeAttribute("tabindex");
+        frame.focus();
+      } else {
+        frame.setAttribute("tabindex", "-1");
+      }
+    }
+  };
+
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    const embed = target.closest<HTMLElement>("[data-embed]");
+    if (!embed) return setActive(null);
+    if (target.closest("[data-embed-activate]")) setActive(embed);
+    else if (target.closest("[data-embed-deactivate]")) setActive(null);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setActive(null);
+  });
+</script>

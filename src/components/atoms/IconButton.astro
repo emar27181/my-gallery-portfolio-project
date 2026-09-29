@@ -1,0 +1,20 @@
+---
+// アイコンだけのボタン（atom）。読み上げ用の名前は label で必ず受け取る。
+// 既定は丸（pill）。アイコンを差し替えたいときは slot に入れる。
+import type { HTMLAttributes } from "astro/types";
+import Button, { type ButtonStyleProps } from "./Button.astro";
+import Icon from "./Icon.astro";
+import type { IconName } from "./icons";
+
+type Props = Omit<ButtonStyleProps, "square" | "block"> &
+  HTMLAttributes<"button"> & {
+    label: string;
+    icon?: IconName;
+  };
+
+const { label, icon, size = "md", shape = "pill", variant = "outline", ...rest } = Astro.props;
+---
+
+<Button square size={size} shape={shape} variant={variant} aria-label={label} title={label} {...rest}>
+  <slot>{icon && <Icon name={icon} size={size === "sm" ? "sm" : "md"} />}</slot>
+</Button>

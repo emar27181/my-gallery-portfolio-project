@@ -31,7 +31,7 @@ describe('galleryGridCss', () => {
   it('広い画面を既定にし、狭い画面を media query で上書きする', () => {
     expect(galleryGridCss('.g')).toBe(
       [
-        '.g{--gallery-columns:5;--gallery-gap:4px}',
+        '.g{--gallery-columns:5;--gallery-gap:var(--space-4)}',
         '@media (max-width:1024px){.g{--gallery-columns:3}}',
         '@media (max-width:768px){.g{--gallery-columns:2}}',
       ].join('\n'),

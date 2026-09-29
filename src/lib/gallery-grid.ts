@@ -1,8 +1,11 @@
 // ギャラリーの列数・間隔の定義元。
 // CSS（列数の CSS 変数）と画像の sizes 属性はここから生成し、配置スクリプトは CSS 変数を読む。
 
-/** アイテム間と左右の余白（px）。CLAUDE.md「画像間隔は4pxの統一スペーシング」 */
-export const GALLERY_GAP = 4;
+/**
+ * アイテム間と左右の余白。値はトークン（src/styles/tokens.css）から取る。
+ * CLAUDE.md「画像間隔は4pxの統一スペーシング」
+ */
+export const GALLERY_GAP_TOKEN = '--space-4';
 
 /** 動画が使う列数（列数が少なければ列数に切り詰める） */
 export const VIDEO_SPAN = 2;
@@ -36,7 +39,7 @@ export function gallerySizes(span = 1): string {
 export function galleryGridCss(selector: string): string {
   const [widest, ...narrower] = [...GALLERY_BREAKPOINTS].reverse();
   return [
-    `${selector}{--gallery-columns:${widest.columns};--gallery-gap:${GALLERY_GAP}px}`,
+    `${selector}{--gallery-columns:${widest.columns};--gallery-gap:var(${GALLERY_GAP_TOKEN})}`,
     ...narrower.map((bp) => `@media (max-width:${bp.maxWidth}px){${selector}{--gallery-columns:${bp.columns}}}`),
   ].join('\n');
 }

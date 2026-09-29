@@ -1,0 +1,43 @@
+---
+// ボタン（atom）。文言は slot で受け取る。見た目は button.css。
+import type { HTMLAttributes } from "astro/types";
+import "./button.css";
+
+export interface ButtonStyleProps {
+  variant?: "solid" | "outline" | "ghost" | "media";
+  size?: "md" | "sm";
+  shape?: "control" | "pill";
+  /** アイコンだけを入れる正方形のボタン */
+  square?: boolean;
+  /** 横幅いっぱい・左寄せ（メニューの項目など） */
+  block?: boolean;
+}
+
+type Props = ButtonStyleProps & HTMLAttributes<"button">;
+
+const {
+  variant = "outline",
+  size = "md",
+  shape = "control",
+  square = false,
+  block = false,
+  type = "button",
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<button
+  type={type}
+  class:list={[
+    "button",
+    `button--${variant}`,
+    `button--${size}`,
+    `button--${shape}`,
+    { "button--square": square, "button--block": block },
+    className,
+  ]}
+  {...rest}
+>
+  <slot />
+</button>

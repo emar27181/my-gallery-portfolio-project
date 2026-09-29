@@ -1,0 +1,42 @@
+---
+// ボタンの見た目をしたリンク（atom）。external なら新しいタブで開き、外部リンクの印を付ける。
+import type { HTMLAttributes } from "astro/types";
+import type { ButtonStyleProps } from "./Button.astro";
+import Icon from "./Icon.astro";
+import "./button.css";
+
+type Props = Omit<ButtonStyleProps, "square"> &
+  HTMLAttributes<"a"> & {
+    href: string;
+    external?: boolean;
+  };
+
+const {
+  href,
+  external = false,
+  variant = "outline",
+  size = "md",
+  shape = "control",
+  block = false,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<a
+  href={href}
+  target={external ? "_blank" : undefined}
+  rel={external ? "noopener noreferrer" : undefined}
+  class:list={[
+    "button",
+    `button--${variant}`,
+    `button--${size}`,
+    `button--${shape}`,
+    { "button--block": block },
+    className,
+  ]}
+  {...rest}
+>
+  <slot />
+  {external && <Icon name="external" size="sm" />}
+</a>

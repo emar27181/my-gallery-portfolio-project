@@ -1,0 +1,32 @@
+---
+// 見出し付きの入力枠（molecule）。見出しの文言と、対象の部品の id を受け取る。
+interface Props {
+  label: string;
+  /** 見出しが指す部品の id（ネイティブの入力部品のとき） */
+  for?: string;
+}
+
+const { label, for: htmlFor } = Astro.props;
+const Label = htmlFor ? "label" : "span";
+---
+
+<div class="field">
+  <Label class="field__label" for={htmlFor}>{label}</Label>
+  <div class="field__control"><slot /></div>
+</div>
+
+<style>
+  .field {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+  }
+  .field__label {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-body);
+    white-space: nowrap;
+  }
+  .field__control {
+    width: var(--layout-control-width);
+  }
+</style>

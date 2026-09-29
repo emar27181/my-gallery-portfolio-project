@@ -1,0 +1,187 @@
+---
+// 複数選択のドロップダウン（molecule）。選んだものはチップで並べ、× で個別に外せる。
+// 選択肢と文言はすべて props で受け取り、選択が変わると root に "multiselect-change"
+// （detail.values: 選択中の値の配列）を送る。何を絞り込むかは呼び出し側が決める。
+import Button from "../atoms/Button.astro";
+import Icon from "../atoms/Icon.astro";
+import RemovableChip from "./RemovableChip.astro";
+
+interface Props {
+  id: string;
+  options: readonly { value: string; label: string }[];
+  placeholder: string;
+  /** 全解除の選択肢の文言 */
+  allLabel: string;
+  /** チップの × の読み上げ名。{label} が選択肢の文言に置き換わる */
+  removeLabel: string;
+}
+
+const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
+---
+
+<div class="multiselect" id={id} data-multiselect data-remove-label={removeLabel}>
+  <div
+    class="multiselect__box"
+    data-multiselect-box
+    role="button"
+    tabindex="0"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls={`${id}-menu`}
+  >
+    <span class="multiselect__placeholder" data-multiselect-placeholder>{placeholder}</span>
+    <span class="multiselect__chips" data-multiselect-chips></span>
+    <Icon name="chevronDown" size="sm" class="multiselect__chevron" />
+  </div>
+
+  <div class="multiselect__menu" id={`${id}-menu`} role="listbox" aria-multiselectable="true" data-multiselect-menu hidden>
+    <Button variant="ghost" block role="option" aria-selected="true" data-option="">{allLabel}</Button>
+    {
+      options.map((option) => (
+        <Button variant="ghost" block role="option" aria-selected="false" data-option={option.value}>
+          {option.label}
+        </Button>
+      ))
+    }
+  </div>
+
+  <template data-multiselect-chip>
+    <RemovableChip label="" removeLabel="" />
+  </template>
+</div>
+
+<style>
+  .multiselect {
+    position: relative;
+  }
+  .multiselect__box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: var(--control-height-md);
+    padding: var(--space-8) var(--space-40) var(--space-8) var(--space-16);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-control);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--font-size-title);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--easing-standard);
+  }
+  .multiselect__box:hover {
+    border-color: var(--color-primary);
+  }
+  .multiselect__placeholder {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-regular);
+  }
+  .multiselect__chips {
+    display: contents;
+  }
+  .multiselect__box :global(.multiselect__chevron) {
+    position: absolute;
+    top: calc(var(--control-height-md) / 2);
+    right: var(--space-16);
+    color: var(--color-text-muted);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .multiselect__menu {
+    position: absolute;
+    top: calc(100% + var(--space-4));
+    left: 0;
+    right: 0;
+    z-index: var(--z-dropdown);
+    display: flex;
+    flex-direction: column;
+    max-height: calc(var(--control-height-md) * 6);
+    padding: var(--space-4);
+    overflow-y: auto;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-control);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-md);
+  }
+</style>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-multiselect]")) {
+    const box = root.querySelector<HTMLElement>("[data-multiselect-box]")!;
+    const menu = root.querySelector<HTMLElement>("[data-multiselect-menu]")!;
+    const chips = root.querySelector<HTMLElement>("[data-multiselect-chips]")!;
+    const placeholder = root.querySelector<HTMLElement>("[data-multiselect-placeholder]")!;
+    const template = root.querySelector<HTMLTemplateElement>("template[data-multiselect-chip]")!;
+    const options = [...menu.querySelectorAll<HTMLElement>("[data-option]")];
+    const labelOf = (value: string) =>
+      options.find((o) => o.dataset.option === value)?.textContent?.trim() ?? value;
+
+    let selected: string[] = [];
+
+    const render = () => {
+      for (const option of options) {
+        const value = option.dataset.option ?? "";
+        const isSelected = value === "" ? selected.length === 0 : selected.includes(value);
+        option.setAttribute("aria-selected", String(isSelected));
+      }
+      chips.replaceChildren(
+        ...selected.map((value) => {
+          const chip = (template.content.cloneNode(true) as DocumentFragment).firstElementChild as HTMLElement;
+          chip.querySelector("[data-chip-label]")!.textContent = labelOf(value);
+          const remove = chip.querySelector<HTMLElement>("[data-chip-remove]")!;
+          const name = (root.dataset.removeLabel ?? "").replace("{label}", labelOf(value));
+          remove.dataset.value = value;
+          remove.setAttribute("aria-label", name);
+          remove.title = name;
+          return chip;
+        }),
+      );
+      placeholder.hidden = selected.length > 0;
+    };
+
+    const commit = (next: string[]) => {
+      selected = next;
+      render();
+      root.dispatchEvent(new CustomEvent("multiselect-change", { detail: { values: [...selected] }, bubbles: true }));
+    };
+
+    const setOpen = (open: boolean) => {
+      menu.hidden = !open;
+      box.setAttribute("aria-expanded", String(open));
+    };
+
+    box.addEventListener("click", (e) => {
+      const remove = (e.target as HTMLElement).closest<HTMLElement>("[data-chip-remove]");
+      if (remove) {
+        commit(selected.filter((value) => value !== remove.dataset.value));
+        return;
+      }
+      setOpen(menu.hidden);
+    });
+    box.addEventListener("keydown", (e) => {
+      if (e.target === box && (e.key === "Enter" || e.key === " ")) {
+        e.preventDefault();
+        setOpen(menu.hidden);
+      }
+    });
+
+    // 複数選択できるよう、選んでもメニューは開いたままにする
+    menu.addEventListener("click", (e) => {
+      const option = (e.target as HTMLElement).closest<HTMLElement>("[data-option]");
+      if (!option) return;
+      const value = option.dataset.option ?? "";
+      if (value === "") commit([]);
+      else commit(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!root.contains(e.target as Node)) setOpen(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(false);
+    });
+
+    render();
+  }
+</script>

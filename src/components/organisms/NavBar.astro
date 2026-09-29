@@ -1,0 +1,125 @@
+---
+// ナビゲーションバー（organism）: サイト名・テーマ切り替え・メニュー。
+import IconButton from "../atoms/IconButton.astro";
+import Icon from "../atoms/Icon.astro";
+import LinkButton from "../atoms/LinkButton.astro";
+import Drawer from "../molecules/Drawer.astro";
+import { getBrandImages } from "../../lib/brand-images";
+
+const { navLogo } = await getBrandImages();
+const MENU_ID = "site-menu";
+---
+
+<nav class="navbar">
+  <div class="navbar__content">
+    <h1 class="navbar__title">
+      <a href="#top" class="navbar__brand">
+        <img
+          class="navbar__logo"
+          id="navbar-logo"
+          src={navLogo.light}
+          data-src-light={navLogo.light}
+          data-src-dark={navLogo.dark}
+          width="96"
+          height="78"
+          alt="emar27181 logo"
+        />
+        emar27181 Gallery
+      </a>
+    </h1>
+
+    <div class="navbar__actions">
+      <IconButton label="テーマを切り替える" id="theme-toggle">
+        <Icon name="sun" class="navbar__theme-icon navbar__theme-icon--light" />
+        <Icon name="moon" class="navbar__theme-icon navbar__theme-icon--dark" />
+      </IconButton>
+      <IconButton icon="menu" label="メニューを開く" data-drawer-open={MENU_ID} id="menu-toggle" />
+    </div>
+  </div>
+</nav>
+
+<Drawer id={MENU_ID} title="Menu" closeLabel="メニューを閉じる">
+  <LinkButton href="https://emar27181-portfolio.netlify.app/" external variant="ghost" block>
+    Main Portfolio
+  </LinkButton>
+</Drawer>
+
+<style>
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-navbar);
+    background-color: var(--color-surface);
+    border-bottom: var(--border-width) solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+  .navbar__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--layout-content-max-width);
+    height: var(--layout-navbar-height);
+    margin: 0 auto;
+    padding: 0 var(--space-16);
+  }
+  .navbar__title {
+    font-size: var(--font-size-display);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+  }
+  .navbar__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .navbar__brand:hover {
+    opacity: 0.8;
+  }
+  .navbar__logo {
+    width: var(--icon-size-lg);
+    height: var(--icon-size-lg);
+    object-fit: contain;
+  }
+  .navbar__actions {
+    display: flex;
+    gap: var(--space-8);
+  }
+  /* テーマのアイコンは CSS だけで切り替える（色は意味色のアクセント） */
+  .navbar__actions :global(.navbar__theme-icon--light) {
+    color: var(--color-accent-warm);
+  }
+  .navbar__actions :global(.navbar__theme-icon--dark) {
+    display: none;
+    color: var(--color-accent-cool);
+  }
+  :global([data-theme="dark"]) .navbar__actions :global(.navbar__theme-icon--light) {
+    display: none;
+  }
+  :global([data-theme="dark"]) .navbar__actions :global(.navbar__theme-icon--dark) {
+    display: block;
+  }
+</style>
+
+<script>
+  import { applyTheme, currentTheme, readSavedTheme, saveTheme, type Theme } from "../../lib/theme";
+
+  const logo = document.getElementById("navbar-logo") as HTMLImageElement | null;
+
+  function showTheme(theme: Theme) {
+    applyTheme(theme);
+    const src = theme === "dark" ? logo?.dataset.srcDark : logo?.dataset.srcLight;
+    if (logo && src) logo.src = src;
+  }
+
+  showTheme(readSavedTheme());
+
+  document.getElementById("theme-toggle")?.addEventListener("click", () => {
+    const next: Theme = currentTheme() === "dark" ? "light" : "dark";
+    saveTheme(next);
+    showTheme(next);
+  });
+</script>

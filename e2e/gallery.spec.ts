@@ -53,8 +53,8 @@ async function expectPlacedInOrder(page: Page, expected: typeof data) {
 }
 
 async function selectTag(page: Page, tag: string) {
-  if (!(await page.locator('#filter-dropdown').isVisible())) await page.locator('#filter-tags').click();
-  await page.locator(`.filter-option[data-value="${tag}"]`).click();
+  if (!(await page.locator('[data-multiselect-menu]').isVisible())) await page.locator('[data-multiselect-box]').click();
+  await page.locator(`[data-option="${tag}"]`).click();
 }
 
 test('初期表示はカスタム順で全件', async ({ page }) => {
@@ -78,63 +78,65 @@ test('タグは AND で絞り込み、「全て」で全件に戻る', async ({ 
   const expected = data.filter((item) => matchesAllTags(item.tags, selected));
   expect(expected.length).toBeGreaterThan(0);
   await expectPlacedInOrder(page, expected);
-  await expect(page.locator('.selected-tag')).toHaveCount(2);
+  await expect(page.locator('[data-chip]')).toHaveCount(2);
 
-  await page.locator('.filter-option[data-value=""]').click();
+  await page.locator('[data-option=""]').click();
   await expect(page.locator(SHOWN)).toHaveCount(data.length);
-  await expect(page.locator('.selected-tag')).toHaveCount(0);
+  await expect(page.locator('[data-chip]')).toHaveCount(0);
 });
 
 test('並び替え後に絞り込み・解除しても並び順が保たれる', async ({ page }) => {
   await openGallery(page);
   await page.selectOption('#sort-select', 'title-asc');
   await selectTag(page, '写真');
-  await page.locator('.remove-tag').click();
+  await page.locator('[data-chip-remove]').click();
   await expectPlacedInOrder(page, sortItems(data, 'title-asc'));
 });
 
 test('ドロップダウンは外側クリックで閉じる', async ({ page }) => {
   await openGallery(page);
-  await page.locator('#filter-tags').click();
-  await expect(page.locator('#filter-dropdown')).toBeVisible();
-  await page.locator('.sort-label').click();
-  await expect(page.locator('#filter-dropdown')).toBeHidden();
+  await page.locator('[data-multiselect-box]').click();
+  await expect(page.locator('[data-multiselect-menu]')).toBeVisible();
+  await page.locator('label[for="sort-select"]').click();
+  await expect(page.locator('[data-multiselect-menu]')).toBeHidden();
 });
 
 test('画像クリックでモーダル表示、×と Escape で閉じる', async ({ page }) => {
   await openGallery(page);
   const first = data.find((item) => item.type === 'image')!;
-  const modal = page.locator('#image-modal');
+  const lightbox = page.locator('#image-lightbox');
+  const trigger = page.locator(`.gallery-item[data-index="${first.index}"] [data-lightbox-trigger]`);
 
-  await page.locator(`.gallery-item[data-index="${first.index}"] img`).click();
-  await expect(modal).toHaveClass(/open/);
+  await trigger.click();
+  await expect(lightbox).toHaveClass(/is-open/);
   // 一覧の縮小版ではなく、モーダル用の大きい画像を表示する
-  const full = await page.locator(`.gallery-item[data-index="${first.index}"] img`).getAttribute('data-full');
+  const full = await trigger.getAttribute('data-full');
   expect(full).toMatch(/\.webp$/);
-  await expect(page.locator('#image-modal-img')).toHaveAttribute('src', full!);
-  await page.locator('#image-modal-close').click();
-  await expect(modal).not.toHaveClass(/open/);
+  await expect(lightbox.locator('[data-lightbox-img]')).toHaveAttribute('src', full!);
+  await lightbox.locator('[data-lightbox-close]').click();
+  await expect(lightbox).not.toHaveClass(/is-open/);
 
-  await page.locator(`.gallery-item[data-index="${first.index}"] img`).click();
+  await trigger.click();
   await page.keyboard.press('Escape');
-  await expect(modal).not.toHaveClass(/open/);
+  await expect(lightbox).not.toHaveClass(/is-open/);
 });
 
 test('動画クリックでその場に YouTube プレイヤーを埋め込む', async ({ page }) => {
   await openGallery(page);
   const video = data.find((item) => item.type === 'video')!;
+  if (video.type !== 'video') return;
   const item = page.locator(`.gallery-item[data-index="${video.index}"]`);
 
-  await item.locator('.video-thumbnail').click();
+  await item.locator('[data-video-play]').click();
   await expect(item.locator('iframe')).toBeVisible();
   await expect(item.locator('iframe')).toHaveAttribute('src', new RegExp(`youtube\\.com/embed/${video.videoId}`));
-  await expect(item.locator('.video-thumbnail')).toBeHidden();
+  await expect(item.locator('[data-video-thumbnail]')).toBeHidden();
 });
 
 test('テーマ切り替えは保存され、再読み込み後も維持される', async ({ page }) => {
   await openGallery(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('#navbar-theme-toggle').click();
+  await page.locator('#theme-toggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await openGallery(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -183,10 +185,11 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
 
   await openGallery(page);
   const item = page.locator(`.gallery-item[data-index="${site.index}"]`);
-  const frame = item.locator('iframe.site-frame');
+  const embed = item.locator('[data-embed]');
+  const frame = item.locator('iframe');
   await expect(frame).toHaveAttribute('src', site.url);
-  await expect(item.locator('.site-open')).toHaveAttribute('href', site.url);
-  await expect(item.locator('.site-open')).toHaveAttribute('target', '_blank');
+  await expect(item.locator('[data-embed-open]')).toHaveAttribute('href', site.url);
+  await expect(item.locator('[data-embed-open]')).toHaveAttribute('target', '_blank');
 
   // 1列ぶんより大きく取る（モバイル 2 列では全幅）
   const [itemWidth, gridWidth, columns] = await item.evaluate((el) => {
@@ -201,8 +204,8 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
 
   // 操作前はサイトにクリックが届かない
   await expect(frame).toHaveCSS('pointer-events', 'none');
-  await item.locator('.site-activate').click();
-  await expect(item).toHaveClass(/is-active/);
+  await item.locator('[data-embed-activate]').click();
+  await expect(embed).toHaveClass(/is-active/);
   await expect(frame).toHaveCSS('pointer-events', 'auto');
 
   const button = page.frameLocator(`.gallery-item[data-index="${site.index}"] iframe`).locator('#b');
@@ -210,13 +213,13 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
   await expect(button).toHaveText('押された');
 
   // サイト内を操作した後でも「操作を終える」で抜けられる（Escape はサイト側に届くため）
-  await item.locator('.site-deactivate').click();
-  await expect(item).not.toHaveClass(/is-active/);
+  await item.locator('[data-embed-deactivate]').click();
+  await expect(embed).not.toHaveClass(/is-active/);
   await expect(frame).toHaveCSS('pointer-events', 'none');
 
   // 外側のクリックでも終える
-  await item.locator('.site-activate').click();
-  await expect(item).toHaveClass(/is-active/);
-  await page.locator('.sort-label').click();
-  await expect(item).not.toHaveClass(/is-active/);
+  await item.locator('[data-embed-activate]').click();
+  await expect(embed).toHaveClass(/is-active/);
+  await page.locator('label[for="sort-select"]').click();
+  await expect(embed).not.toHaveClass(/is-active/);
 });

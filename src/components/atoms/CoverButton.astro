@@ -1,0 +1,51 @@
+---
+// 枠いっぱいを覆う透明なボタン（atom）。タイルを押す・動画を再生する・サイトの操作を始める、に使う。
+// slot の中身はホバー（タッチ端末では常時）で中央に出す案内。読み上げ用の名前は label で受け取る。
+import "./button.css";
+
+interface Props {
+  label: string;
+  [attr: `data-${string}`]: string | undefined;
+}
+
+const { label, ...rest } = Astro.props;
+const hasHint = Astro.slots.has("default");
+---
+
+<button type="button" class="cover" aria-label={label} {...rest}>
+  {
+    hasHint && (
+      <span class="cover__hint button button--media button--sm button--pill">
+        <slot />
+      </span>
+    )
+  }
+</button>
+
+<style>
+  .cover {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  .cover__hint {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-fast) var(--easing-standard);
+  }
+  .cover:hover .cover__hint,
+  .cover:focus-visible .cover__hint {
+    opacity: 1;
+  }
+  @media (hover: none) {
+    .cover__hint {
+      opacity: 1;
+    }
+  }
+</style>
