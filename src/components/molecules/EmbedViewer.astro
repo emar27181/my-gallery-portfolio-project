@@ -1,0 +1,178 @@
+---
+// 外部のページを画面いっぱいに見せ、左右の矢印で前後のページに切り替える（molecule）。
+// document に "embed-viewer-open"（detail: { id, items: { url, title }[], index }）を送ると開く。
+// 上端に「全画面を終える」と「新しいタブで開く」、下端（親指の届く位置）に前後の矢印と位置を置く。
+// 閉じるボタン・Escape・端末の「戻る」で閉じる（開くときに履歴を 1 つ積む）。
+import IconButton from "../atoms/IconButton.astro";
+import LinkButton from "../atoms/LinkButton.astro";
+
+interface Props {
+  id: string;
+  closeLabel: string;
+  prevLabel: string;
+  nextLabel: string;
+  openLabel: string;
+  /** 位置の表示。{current} と {total} が置き換わる */
+  positionLabel: string;
+}
+
+const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro.props;
+---
+
+<div
+  class="viewer"
+  id={id}
+  data-embed-viewer
+  data-position-label={positionLabel}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby={`${id}-title`}
+  hidden
+>
+  <div class="viewer__bar">
+    <IconButton icon="close" variant="ghost" label={closeLabel} data-viewer-close />
+    <span class="viewer__title" id={`${id}-title`} data-viewer-title></span>
+    <LinkButton href="#" external size="sm" shape="pill" data-viewer-open>{openLabel}</LinkButton>
+  </div>
+  <iframe
+    class="viewer__frame"
+    data-viewer-frame
+    title=""
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+  ></iframe>
+  <div class="viewer__bar viewer__bar--nav">
+    <IconButton icon="chevronLeft" label={prevLabel} data-viewer-prev />
+    <span class="viewer__position" data-viewer-position aria-live="polite"></span>
+    <IconButton icon="chevronRight" label={nextLabel} data-viewer-next />
+  </div>
+</div>
+
+<style>
+  .viewer {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+  }
+  .viewer__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    flex-shrink: 0;
+    padding: var(--space-4) var(--space-8);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+  .viewer__bar--nav {
+    justify-content: space-between;
+    border-top: var(--border-width) solid var(--color-border);
+    border-bottom: none;
+    /* iPhone の下端（ホームバー）に重ならないようにする */
+    padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  }
+  .viewer__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: var(--font-size-title);
+    font-weight: var(--font-weight-bold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .viewer__position {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-body);
+  }
+  .viewer__frame {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    border: none;
+    background-color: var(--color-surface);
+  }
+</style>
+
+<script>
+  interface ViewerItem {
+    url: string;
+    title: string;
+  }
+  interface ViewerOpenDetail {
+    id: string;
+    items: ViewerItem[];
+    index: number;
+  }
+
+  for (const viewer of document.querySelectorAll<HTMLElement>("[data-embed-viewer]")) {
+    let frame = viewer.querySelector<HTMLIFrameElement>("[data-viewer-frame]")!;
+    const title = viewer.querySelector<HTMLElement>("[data-viewer-title]")!;
+    const position = viewer.querySelector<HTMLElement>("[data-viewer-position]")!;
+    const openLink = viewer.querySelector<HTMLAnchorElement>("[data-viewer-open]")!;
+    const prev = viewer.querySelector<HTMLButtonElement>("[data-viewer-prev]")!;
+    const next = viewer.querySelector<HTMLButtonElement>("[data-viewer-next]")!;
+
+    let items: ViewerItem[] = [];
+    let index = 0;
+
+    // iframe の src を書き換えると、その遷移がブラウザの履歴に積まれ「戻る」が iframe の中で消費される。
+    // 新しい iframe の最初の読み込みは履歴に積まれないため、切り替えのたびに iframe ごと差し替える
+    const loadFrame = (url: string, title: string) => {
+      const fresh = frame.cloneNode(false) as HTMLIFrameElement;
+      fresh.title = title;
+      if (url) fresh.src = url;
+      else fresh.removeAttribute("src");
+      frame.replaceWith(fresh);
+      frame = fresh;
+    };
+
+    const show = (i: number) => {
+      index = Math.min(Math.max(i, 0), items.length - 1);
+      const item = items[index];
+      loadFrame(item.url, item.title);
+      title.textContent = item.title;
+      openLink.href = item.url;
+      position.textContent = (viewer.dataset.positionLabel ?? "")
+        .replace("{current}", String(index + 1))
+        .replace("{total}", String(items.length));
+      prev.disabled = index === 0;
+      next.disabled = index === items.length - 1;
+    };
+
+    const hide = () => {
+      if (viewer.hidden) return;
+      viewer.hidden = true;
+      loadFrame("", "");
+      document.body.style.overflow = "";
+    };
+
+    // 閉じるボタン・Escape は、開くときに積んだ履歴を戻すことで閉じる（端末の「戻る」と同じ経路）
+    const close = () => {
+      if (history.state?.embedViewer === viewer.id) history.back();
+      else hide();
+    };
+
+    document.addEventListener("embed-viewer-open", (e) => {
+      const detail = (e as CustomEvent<ViewerOpenDetail>).detail;
+      if (detail.id !== viewer.id || detail.items.length === 0) return;
+      items = detail.items;
+      show(detail.index);
+      if (viewer.hidden) history.pushState({ embedViewer: viewer.id }, "");
+      viewer.hidden = false;
+      document.body.style.overflow = "hidden";
+    });
+
+    window.addEventListener("popstate", hide);
+    viewer.querySelector("[data-viewer-close]")!.addEventListener("click", close);
+    prev.addEventListener("click", () => show(index - 1));
+    next.addEventListener("click", () => show(index + 1));
+    document.addEventListener("keydown", (e) => {
+      if (viewer.hidden) return;
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") show(index - 1);
+      else if (e.key === "ArrowRight") show(index + 1);
+    });
+  }
+</script>

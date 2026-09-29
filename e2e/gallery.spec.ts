@@ -223,3 +223,62 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
   await page.locator('label[for="sort-select"]').click();
   await expect(embed).not.toHaveClass(/is-active/);
 });
+
+test('Web サイトの枠は、スマホでは縦長・それ以外では横長', async ({ page }, testInfo) => {
+  const site = data.find((item) => item.type === 'site');
+  test.skip(!site, 'Web サイトの作品が無い');
+  await openGallery(page);
+  const box = (await page.locator(`.gallery-item[data-index="${site!.index}"]`).boundingBox())!;
+  if (testInfo.project.name === 'mobile') expect(box.height).toBeGreaterThan(box.width);
+  else expect(box.width).toBeGreaterThan(box.height);
+});
+
+test('Web サイトは全画面で見られ、左右の矢印で切り替え、戻るボタン・Escape・端末の戻るで閉じる', async ({ page }) => {
+  const sites = data.filter((item) => item.type === 'site');
+  test.skip(sites.length < 2, 'Web サイトの作品が 2 件未満');
+  await openGallery(page);
+
+  const viewer = page.locator('[data-embed-viewer]');
+  const frame = viewer.locator('[data-viewer-frame]');
+  const first = sites[0];
+  const second = sites[1];
+  if (first.type !== 'site' || second.type !== 'site') return;
+  const openFirst = () => page.locator(`.gallery-item[data-index="${first.index}"] [data-embed-expand]`).click();
+
+  await openFirst();
+  await expect(viewer).toBeVisible();
+  // 画面いっぱいに出る
+  const box = (await viewer.boundingBox())!;
+  const size = page.viewportSize()!;
+  expect(Math.round(box.width)).toBe(size.width);
+  expect(Math.round(box.height)).toBe(size.height);
+  await expect(frame).toHaveAttribute('src', first.url);
+  await expect(viewer.locator('[data-viewer-title]')).toHaveText(first.title);
+  await expect(viewer.locator('[data-viewer-position]')).toHaveText(`1 / ${sites.length}`);
+  await expect(viewer.locator('[data-viewer-prev]')).toBeDisabled();
+
+  // 右の矢印で次のサイト、左の矢印で戻る
+  await viewer.locator('[data-viewer-next]').click();
+  await expect(frame).toHaveAttribute('src', second.url);
+  await expect(viewer.locator('[data-viewer-position]')).toHaveText(`2 / ${sites.length}`);
+  await expect(viewer.locator('[data-viewer-open]')).toHaveAttribute('href', second.url);
+  await viewer.locator('[data-viewer-prev]').click();
+  await expect(frame).toHaveAttribute('src', first.url);
+
+  // 全画面を終えるボタン
+  await viewer.locator('[data-viewer-close]').click();
+  await expect(viewer).toBeHidden();
+
+  // Escape
+  await openFirst();
+  await expect(viewer).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(viewer).toBeHidden();
+
+  // 端末（ブラウザ）の戻る。ギャラリーからは離れない
+  await openFirst();
+  await expect(viewer).toBeVisible();
+  await page.goBack();
+  await expect(viewer).toBeHidden();
+  await expect(page.locator('#gallery')).toBeVisible();
+});

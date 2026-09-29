@@ -5,12 +5,13 @@ import CoverButton from "../atoms/CoverButton.astro";
 import Select from "../atoms/Select.astro";
 import Tile from "../atoms/Tile.astro";
 import EmbedFrame from "../molecules/EmbedFrame.astro";
+import EmbedViewer from "../molecules/EmbedViewer.astro";
 import Field from "../molecules/Field.astro";
 import Lightbox from "../molecules/Lightbox.astro";
 import MultiSelect from "../molecules/MultiSelect.astro";
 import VideoEmbed from "../molecules/VideoEmbed.astro";
 import { DEFAULT_SORT, SORT_OPTIONS, tagsByUsage } from "../../lib/gallery";
-import { GALLERY_BREAKPOINTS, galleryGridCss, gallerySizes } from "../../lib/gallery-grid";
+import { GALLERY_BREAKPOINTS, SITE_FRAME_NARROW, galleryGridCss, gallerySizes } from "../../lib/gallery-grid";
 import { getGalleryEntries } from "../../lib/gallery-images";
 
 const entries = await getGalleryEntries();
@@ -18,6 +19,7 @@ const tagOptions = tagsByUsage(entries).map((tag) => ({ value: tag, label: tag }
 // HTML を読んだ時点で取りに行く枚数（最大列数 = 最初の1行ぶん）。残りはスクリプトが画面に入る分を判断する
 const EAGER_COUNT = Math.max(...GALLERY_BREAKPOINTS.map((bp) => bp.columns));
 const LIGHTBOX_ID = "image-lightbox";
+const VIEWER_ID = "site-viewer";
 
 const youtubeEmbed = (videoId: string) =>
   `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
@@ -41,7 +43,7 @@ const youtubeEmbed = (videoId: string) =>
     </Field>
   </div>
 
-  <div id="gallery" class="gallery-grid" data-lightbox-id={LIGHTBOX_ID}>
+  <div id="gallery" class="gallery-grid" data-lightbox-id={LIGHTBOX_ID} data-viewer-id={VIEWER_ID}>
     {
       entries.map((entry) => {
         const { index, title, alt, date, tags, type, width, height, span, thumb, full, color } = entry;
@@ -65,6 +67,7 @@ const youtubeEmbed = (videoId: string) =>
             data-tags={tags.join(",")}
             data-type={type}
             data-aspect={height / width}
+            data-aspect-narrow={type === "site" ? SITE_FRAME_NARROW.height / SITE_FRAME_NARROW.width : undefined}
             data-span={span}
             style={{ "--item-span": span }}
           >
@@ -76,6 +79,7 @@ const youtubeEmbed = (videoId: string) =>
                   activateLabel="クリックで操作"
                   deactivateLabel="操作を終える"
                   openLabel="新しいタブで開く"
+                  expandLabel="全画面で見る"
                 />
               ) : entry.type === "video" ? (
                 <VideoEmbed embedUrl={youtubeEmbed(entry.videoId)} title={title} playLabel="再生" thumbnail={img ?? {}} />
@@ -94,6 +98,14 @@ const youtubeEmbed = (videoId: string) =>
 </section>
 
 <Lightbox id={LIGHTBOX_ID} closeLabel="閉じる" />
+<EmbedViewer
+  id={VIEWER_ID}
+  closeLabel="全画面を終える"
+  prevLabel="前のサイト"
+  nextLabel="次のサイト"
+  openLabel="新しいタブで開く"
+  positionLabel="{current} / {total}"
+/>
 
 <style>
   .gallery {
@@ -158,7 +170,7 @@ const youtubeEmbed = (videoId: string) =>
 
 <script>
   import { DEFAULT_SORT, isSortKey, matchesAllTags, sortItems, type SortKey, type SortableItem } from "../../lib/gallery";
-  import { GALLERY_READY_EVENT } from "../../lib/gallery-grid";
+  import { GALLERY_READY_EVENT, isNarrowLayout } from "../../lib/gallery-grid";
   import { layoutMasonry, type Placement } from "../../lib/masonry";
 
   interface Entry extends SortableItem {
@@ -167,6 +179,8 @@ const youtubeEmbed = (videoId: string) =>
     img: HTMLImageElement | null;
     /** 高さ / 幅 */
     aspect: number;
+    /** スマホ（列数が最少）での 高さ / 幅。無ければ aspect を使う */
+    aspectNarrow?: number;
     span: number;
   }
 
@@ -182,8 +196,12 @@ const youtubeEmbed = (videoId: string) =>
     date: el.dataset.date ?? "",
     tags: (el.dataset.tags ?? "").split(",").filter(Boolean),
     aspect: Number(el.dataset.aspect),
+    aspectNarrow: el.dataset.aspectNarrow ? Number(el.dataset.aspectNarrow) : undefined,
     span: Number(el.dataset.span),
   }));
+
+  /** 直近の layout() で表示した順（全画面表示の前後の切り替えに使う） */
+  let lastShown: Entry[] = [];
 
   // 表示状態はここだけに持ち、変更後は必ず layout() で DOM に反映する
   const state: { selectedTags: string[]; sort: SortKey } = {
@@ -199,11 +217,13 @@ const youtubeEmbed = (videoId: string) =>
   function layout(): { shown: Entry[]; placements: Placement[] } {
     const shown = sortItems(entries, state.sort).filter((e) => matchesAllTags(e.tags, state.selectedTags));
     const shownSet = new Set(shown);
-    const { placements, height } = layoutMasonry(shown, {
-      containerWidth: grid.clientWidth,
-      columns: gridVar("--gallery-columns"),
-      gap: gridVar("--gallery-gap"),
-    });
+    const columns = gridVar("--gallery-columns");
+    const narrow = isNarrowLayout(columns);
+    const { placements, height } = layoutMasonry(
+      shown.map((e) => ({ span: e.span, aspect: (narrow && e.aspectNarrow) || e.aspect })),
+      { containerWidth: grid.clientWidth, columns, gap: gridVar("--gallery-gap") },
+    );
+    lastShown = shown;
 
     for (const entry of entries) entry.el.hidden = !shownSet.has(entry);
     shown.forEach(({ el }, i) => {
@@ -275,6 +295,21 @@ const youtubeEmbed = (videoId: string) =>
     document.dispatchEvent(
       new CustomEvent("lightbox-open", {
         detail: { id: grid.dataset.lightboxId, src: trigger.dataset.full ?? "", alt: trigger.dataset.alt ?? "" },
+      }),
+    );
+  });
+
+  // Web サイトの全画面表示: いま表示中のサイトを並び順どおりに前後で切り替えられるようにする
+  grid.addEventListener("embed-expand", (e) => {
+    const sites = lastShown.filter((entry) => entry.el.dataset.type === "site");
+    const items = sites.map((entry) => {
+      const embed = entry.el.querySelector<HTMLElement>("[data-embed]")!;
+      return { url: embed.dataset.url ?? "", title: embed.dataset.title ?? "" };
+    });
+    const { url } = (e as CustomEvent<{ url: string }>).detail;
+    document.dispatchEvent(
+      new CustomEvent("embed-viewer-open", {
+        detail: { id: grid.dataset.viewerId, items, index: Math.max(0, items.findIndex((item) => item.url === url)) },
       }),
     );
   });

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { GALLERY_BREAKPOINTS, columnsFor, galleryGridCss, gallerySizes } from './gallery-grid';
+import {
+  GALLERY_BREAKPOINTS,
+  SITE_FRAME_NARROW,
+  columnsFor,
+  galleryGridCss,
+  gallerySizes,
+  isNarrowLayout,
+} from './gallery-grid';
 
 describe('columnsFor', () => {
   it('CLAUDE.md の列数（モバイル2・タブレット3・デスクトップ5）', () => {
@@ -36,5 +43,17 @@ describe('galleryGridCss', () => {
         '@media (max-width:768px){.g{--gallery-columns:2}}',
       ].join('\n'),
     );
+  });
+});
+
+describe('Web サイトの枠', () => {
+  it('スマホ（最少の列数）だけ縦長の枠にする', () => {
+    expect(isNarrowLayout(columnsFor(390))).toBe(true);
+    expect(isNarrowLayout(columnsFor(900))).toBe(false);
+    expect(isNarrowLayout(columnsFor(1280))).toBe(false);
+  });
+
+  it('スマホ用の枠は縦長', () => {
+    expect(SITE_FRAME_NARROW.height).toBeGreaterThan(SITE_FRAME_NARROW.width);
   });
 });

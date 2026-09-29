@@ -4,7 +4,9 @@
 // 操作を始めるまではページに入力を渡さない（周りのスクロールを奪わない）。
 // 「終える」ボタン・外側のクリック・Escape で操作を終える
 // （埋め込み先にフォーカスがあると Escape はそちらに届くため、ボタンでも終えられるようにする）。
+// 全画面ボタンを押すと root から "embed-expand"（detail: { url, title }）を送る。何を全画面で見せるかは呼び出し側が決める。
 import Button from "../atoms/Button.astro";
+import IconButton from "../atoms/IconButton.astro";
 import CoverButton from "../atoms/CoverButton.astro";
 import LinkButton from "../atoms/LinkButton.astro";
 
@@ -14,16 +16,18 @@ interface Props {
   activateLabel: string;
   deactivateLabel: string;
   openLabel: string;
+  expandLabel: string;
 }
 
-const { url, title, activateLabel, deactivateLabel, openLabel } = Astro.props;
+const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel } = Astro.props;
 ---
 
-<div class="embed" data-embed>
+<div class="embed" data-embed data-url={url} data-title={title}>
   <div class="embed__toolbar">
     <span class="embed__title">{title}</span>
     <Button size="sm" shape="pill" data-embed-deactivate hidden>{deactivateLabel}</Button>
     <LinkButton href={url} external size="sm" shape="pill" data-embed-open>{openLabel}</LinkButton>
+    <IconButton icon="expand" size="sm" label={expandLabel} data-embed-expand />
   </div>
   <div class="embed__viewport">
     <iframe
@@ -110,7 +114,15 @@ const { url, title, activateLabel, deactivateLabel, openLabel } = Astro.props;
     const target = e.target as HTMLElement;
     const embed = target.closest<HTMLElement>("[data-embed]");
     if (!embed) return setActive(null);
-    if (target.closest("[data-embed-activate]")) setActive(embed);
+    if (target.closest("[data-embed-expand]")) {
+      setActive(null);
+      embed.dispatchEvent(
+        new CustomEvent("embed-expand", {
+          detail: { url: embed.dataset.url, title: embed.dataset.title },
+          bubbles: true,
+        }),
+      );
+    } else if (target.closest("[data-embed-activate]")) setActive(embed);
     else if (target.closest("[data-embed-deactivate]")) setActive(null);
   });
 
