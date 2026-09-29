@@ -1,0 +1,7 @@
+# Netlify のビルド設定。手動デプロイ（netlify deploy）と GitHub Actions の CD が共通で使う。
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
