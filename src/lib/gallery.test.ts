@@ -100,9 +100,9 @@ describe('作品データ', () => {
     }
   });
 
-  it('ローカル画像は public/ に実在する', () => {
-    for (const image of images.filter((image) => image.src.startsWith('/'))) {
-      expect(existsSync(`public${image.src}`), image.src).toBe(true);
+  it('画像は src/assets/gallery/ に実在する', () => {
+    for (const image of images.filter((image) => image.type === 'image')) {
+      expect(existsSync(`src/assets/gallery/${image.src}`), image.src).toBe(true);
     }
   });
 });
