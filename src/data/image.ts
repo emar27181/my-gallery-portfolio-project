@@ -25,6 +25,11 @@ export interface SiteWork extends WorkBase {
   type: 'site';
   /** 埋め込む URL（https） */
   url: string;
+  /**
+   * サイトの画面写真（src/assets/sites/ 内のファイル名）。
+   * サイトが読み込まれるまでの間に表示し、何も見えない時間を作らない。無ければタイトルを表示する
+   */
+  poster?: string;
 }
 
 export type ImageData = ImageWork | VideoWork | SiteWork;
@@ -608,9 +613,11 @@ export const images: ImageData[] = [
     videoId: '5IET-4mL9pA'
   },
 
-  // Web Sites（試作の展示のため末尾に置く。出典: https://emar27181-portfolio.netlify.app/ の制作物。日付は各リポジトリの最終更新日）
+  // Web Sites（試作の展示のため末尾に置く。出典: https://emar27181-portfolio.netlify.app/ の制作物。日付は各リポジトリの最終更新日。
+  // poster の画面写真の出典は emar27181/my-homepage-project-Resume の src/assets）
   {
     url: 'https://emar27181-portfolio.netlify.app/',
+    poster: 'emar27181-portfolio.png',
     alt: '経歴などをまとめたポートフォリオサイトです．',
     title: 'ポートフォリオ',
     tags: ['サイト', 'オリジナル'],
@@ -619,6 +626,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://flex-railway-map.netlify.app/',
+    poster: 'flex-railway-map.png',
     alt: '情報が多すぎる路線図を必要な路線だけに絞って見やすく表示できるサービスです．',
     title: 'Flex Railway Map',
     tags: ['サイト', 'オリジナル'],
@@ -635,6 +643,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://music-atlas.netlify.app/',
+    poster: 'music-atlas.jpg',
     alt: '聴いている音楽の統計をまとめたサイトです．カラオケ向きの曲の分析や、聴いている曲の分布をプロットで確認できます．',
     title: 'Music Atlas',
     tags: ['サイト', 'オリジナル'],
@@ -643,6 +652,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://waste-tax.netlify.app/onboarding',
+    poster: 'waste-tax.jpg',
     alt: '研修で作成したサイトを普段から利用できるように模倣・再構成したサイトです．',
     title: 'TAKUS',
     tags: ['サイト', 'オリジナル'],
@@ -651,6 +661,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://throw-frow-darts.netlify.app/',
+    poster: 'throw-frow-darts.jpg',
     alt: '自宅でのダーツの記録を、音とデザインでゲームのように楽しく記録できるアプリです．',
     title: 'ThrowFlowDarts',
     tags: ['サイト', 'オリジナル'],
@@ -659,6 +670,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://way-point-map.netlify.app/',
+    poster: 'way-point-map.jpg',
     alt: 'ゴルフ場をマップ上で1球あたりの単価などで比較できるサイトです．フィルタリングやヒートマップにも対応しています．',
     title: 'Way Point Map',
     tags: ['サイト', 'オリジナル'],
@@ -667,6 +679,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://window-brain.netlify.app/',
+    poster: 'window-brain.jpg',
     alt: '使っていないモニターに時計・BGM・天気などのウィジェットを自由に配置できるサイトです．',
     title: 'Window Brain',
     tags: ['サイト', 'オリジナル'],
@@ -675,6 +688,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://nodoame27181.netlify.app/',
+    poster: 'nodoame27181.png',
     alt: 'ゲームアカウントに関する情報やプレイ実績をまとめたポートフォリオサイトです．',
     title: 'ゲーム用ポートフォリオ',
     tags: ['サイト', 'オリジナル'],
@@ -683,6 +697,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://valorant-point-viewer.netlify.app/',
+    poster: 'valorant-point-viewer.png',
     alt: 'VALORANT の各マップの定点動画をマップ上で確認できるサイトです．',
     title: 'VALORANT Point Viewer',
     tags: ['サイト', 'VALORANT', 'オリジナル'],
@@ -691,6 +706,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://card-pocket.netlify.app/',
+    poster: 'card-pocket.png',
     alt: '持ち運びの面倒な会員証をデジタルで管理するサービスのデモサイトです．',
     title: 'Card Pocket（デモ）',
     tags: ['サイト', 'オリジナル'],
@@ -699,6 +715,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://color-recommend.netlify.app/',
+    poster: 'color-recommend.png',
     alt: '研究内容であるイラスト制作における色の推薦のデモです．',
     title: '色相・トーン推薦アプリ',
     tags: ['サイト', 'オリジナル'],
@@ -707,6 +724,7 @@ export const images: ImageData[] = [
   },
   {
     url: 'https://mahjong-yaku-visualizer.netlify.app/',
+    poster: 'mahjong-yaku-visualizer.png',
     alt: '麻雀の役を視覚的に確認できるサイトです．',
     title: '麻雀役ビジュアライザー',
     tags: ['サイト', 'オリジナル'],
