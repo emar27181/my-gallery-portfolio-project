@@ -30,9 +30,12 @@
 - チャット内の会話，または指示文で決まった要件は随時`CLAUDE.md`に更新する
   - UIの表示形式や，固定値など以降の変更しないように決まったもの
 
-### 6. デプロイコマンド
-- ユーザーが「デプロイして」と言った場合は `netlify deploy --prod` を実行する
-- デプロイ完了後にURLを確認し、動作を報告する
+### 6. デプロイ
+- **CD**：CI の `verify` が通ると `deploy` ジョブが Netlify に出す。PR はプレビュー（URL を PR にコメント）、
+  `main` への push（＝マージ）は本番。設定と必要な Secrets は README「デプロイ（CD）」を参照
+- PR のプレビュー URL は、PR に付くコメント（対象コミットのハッシュ付き）から取って報告する
+- ユーザーが「デプロイして」と言った場合の手動デプロイは `npm run build && netlify deploy --prod`
+  （ビルド設定は `netlify.toml`）。デプロイ完了後にURLを確認し、動作を報告する
 - 本番URL: https://emar27181-gallery-portfolio.netlify.app
 
 ---

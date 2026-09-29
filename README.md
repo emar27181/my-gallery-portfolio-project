@@ -57,6 +57,27 @@ E2E テストの初回は `npx playwright install chromium` でブラウザを�
 
 CI（`.github/workflows/ci.yml`）は push / PR ごとに `verify` と同じ手順を実行します。
 
+## 🚢 デプロイ（CD）
+
+CI の `verify` が通ったビルドだけを、同じワークフローの `deploy` ジョブが Netlify に出します。
+
+| きっかけ | 出し先 |
+| :--- | :--- |
+| Pull Request（同じリポジトリのブランチから） | プレビュー `https://pr-<番号>--<サイト名>.netlify.app`。URL と対象コミットを PR にコメント（push のたびに更新） |
+| `main` への push（PR のマージ） | 本番 https://emar27181-gallery-portfolio.netlify.app |
+
+有効にするには、GitHub の Settings → Secrets and variables → Actions に次の 2 つを登録します。
+未登録の間は `deploy` ジョブは何もせず成功扱いになります（CI は赤くなりません）。
+
+| Secret | 取得場所 |
+| :--- | :--- |
+| `NETLIFY_AUTH_TOKEN` | Netlify の User settings → Applications → Personal access tokens |
+| `NETLIFY_SITE_ID` | Netlify のサイト → Site configuration → Site details → Site ID |
+
+ビルド設定（コマンドと出力先）は `netlify.toml` にあり、手動デプロイ（`netlify deploy --prod`）も同じ設定を使います。
+Netlify 側でリポジトリ連携（Link repository）をすると Netlify でもビルドが走り二重になるため、
+Actions から出す場合は連携しない（またはサイトの Build settings で Builds を Stopped にする）でください。
+
 ## 📁 プロジェクト構造
 
 ```text
