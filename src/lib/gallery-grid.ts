@@ -7,6 +7,12 @@ export const GALLERY_GAP = 4;
 /** 動画が使う列数（列数が少なければ列数に切り詰める） */
 export const VIDEO_SPAN = 2;
 
+/** Web サイトが使う列数。中で操作できるよう大きく取る（タブレット・モバイルでは全幅） */
+export const SITE_SPAN = 3;
+
+/** Web サイトの枠の縦横比（幅 16 : 高さ 10、一般的なノート PC の画面に近い） */
+export const SITE_FRAME = { width: 1600, height: 1000 } as const;
+
 /** 画面幅ごとの列数。maxWidth の昇順。CLAUDE.md「デスクトップ5列、タブレット3列、モバイル2列」 */
 export const GALLERY_BREAKPOINTS = [
   { maxWidth: 768, columns: 2 },

@@ -1,13 +1,33 @@
-export interface ImageData {
-  /** 画像: src/assets/gallery/ 内のファイル名。動画: サムネイルの URL */
-  src: string;
+interface WorkBase {
   alt: string;
   title: string;
   tags: string[];
+  /** YYYY-MM-DD */
   date: string;
-  type: 'image' | 'video';
-  videoId?: string; // YouTube video ID for video type
 }
+
+export interface ImageWork extends WorkBase {
+  type: 'image';
+  /** src/assets/gallery/ 内のファイル名 */
+  src: string;
+}
+
+export interface VideoWork extends WorkBase {
+  type: 'video';
+  /** サムネイルの URL */
+  src: string;
+  /** YouTube の動画 ID */
+  videoId: string;
+}
+
+/** Web サイト。ギャラリー内の iframe でそのまま操作できる */
+export interface SiteWork extends WorkBase {
+  type: 'site';
+  /** 埋め込む URL（https） */
+  url: string;
+}
+
+export type ImageData = ImageWork | VideoWork | SiteWork;
 
 export const images: ImageData[] = [
   // Cat Illustrations

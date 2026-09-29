@@ -5,8 +5,16 @@ import { SORT_OPTIONS, matchesAllTags, sortItems } from '../src/lib/gallery';
 const data = images.map((image, index) => ({ ...image, index }));
 
 // 外部（YouTube サムネイル）への通信に結果を左右されないよう、ローカル画像で代替する
+// 埋め込む Web サイトも、押すと文言が変わるボタンだけの HTML で代替する
+const SITE_STUB = `<!doctype html><meta charset="utf-8"><button id="b" onclick="this.textContent='押された'">押す</button>`;
+
 test.beforeEach(async ({ page }) => {
   await page.route(/img\.youtube\.com/, (route) => route.fulfill({ path: 'src/assets/gallery/image_photo_sky1.jpg' }));
+  for (const work of images) {
+    if (work.type === 'site') {
+      await page.route(work.url, (route) => route.fulfill({ contentType: 'text/html; charset=utf-8', body: SITE_STUB }));
+    }
+  }
 });
 
 const SHOWN = '.gallery-item:not([hidden])';
@@ -166,4 +174,49 @@ test('ローディング画面が閉じた時点で、画面内の画像はす�
   );
   expect(inView.length).toBeGreaterThan(0);
   expect(inView.filter((img) => !img.loaded)).toEqual([]);
+});
+
+test('Web サイトは大きな枠に埋め込まれ、クリックするとその場で操作できる', async ({ page }) => {
+  const site = data.find((item) => item.type === 'site');
+  test.skip(!site, 'Web サイトの作品が無い');
+  if (site?.type !== 'site') return;
+
+  await openGallery(page);
+  const item = page.locator(`.gallery-item[data-index="${site.index}"]`);
+  const frame = item.locator('iframe.site-frame');
+  await expect(frame).toHaveAttribute('src', site.url);
+  await expect(item.locator('.site-open')).toHaveAttribute('href', site.url);
+  await expect(item.locator('.site-open')).toHaveAttribute('target', '_blank');
+
+  // 1列ぶんより大きく取る（モバイル 2 列では全幅）
+  const [itemWidth, gridWidth, columns] = await item.evaluate((el) => {
+    const grid = el.parentElement!;
+    return [
+      el.getBoundingClientRect().width,
+      grid.clientWidth,
+      parseFloat(getComputedStyle(grid).getPropertyValue('--gallery-columns')),
+    ];
+  });
+  expect(itemWidth).toBeGreaterThan(gridWidth / columns);
+
+  // 操作前はサイトにクリックが届かない
+  await expect(frame).toHaveCSS('pointer-events', 'none');
+  await item.locator('.site-activate').click();
+  await expect(item).toHaveClass(/is-active/);
+  await expect(frame).toHaveCSS('pointer-events', 'auto');
+
+  const button = page.frameLocator(`.gallery-item[data-index="${site.index}"] iframe`).locator('#b');
+  await button.click();
+  await expect(button).toHaveText('押された');
+
+  // サイト内を操作した後でも「操作を終える」で抜けられる（Escape はサイト側に届くため）
+  await item.locator('.site-deactivate').click();
+  await expect(item).not.toHaveClass(/is-active/);
+  await expect(frame).toHaveCSS('pointer-events', 'none');
+
+  // 外側のクリックでも終える
+  await item.locator('.site-activate').click();
+  await expect(item).toHaveClass(/is-active/);
+  await page.locator('.sort-label').click();
+  await expect(item).not.toHaveClass(/is-active/);
 });

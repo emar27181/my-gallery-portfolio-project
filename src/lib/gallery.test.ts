@@ -82,27 +82,33 @@ describe('並び替えの選択肢', () => {
 
 describe('作品データ', () => {
   it('日付は YYYY-MM-DD で解釈できる', () => {
-    for (const image of images) {
-      expect(image.date, image.src).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(Number.isNaN(Date.parse(image.date)), image.src).toBe(false);
-    }
-  });
-
-  it('動画には videoId がある', () => {
-    for (const image of images.filter((image) => image.type === 'video')) {
-      expect(image.videoId, image.src).toBeTruthy();
+    for (const work of images) {
+      expect(work.date, work.title).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(Number.isNaN(Date.parse(work.date)), work.title).toBe(false);
     }
   });
 
   it('タグが1つ以上ある（先頭タグをカテゴリとして使う）', () => {
-    for (const image of images) {
-      expect(image.tags.length, image.src).toBeGreaterThan(0);
+    for (const work of images) {
+      expect(work.tags.length, work.title).toBeGreaterThan(0);
+    }
+  });
+
+  it('動画には videoId がある', () => {
+    for (const work of images) {
+      if (work.type === 'video') expect(work.videoId, work.title).toBeTruthy();
     }
   });
 
   it('画像は src/assets/gallery/ に実在する', () => {
-    for (const image of images.filter((image) => image.type === 'image')) {
-      expect(existsSync(`src/assets/gallery/${image.src}`), image.src).toBe(true);
+    for (const work of images) {
+      if (work.type === 'image') expect(existsSync(`src/assets/gallery/${work.src}`), work.src).toBe(true);
     }
+  });
+
+  it('Web サイトの URL は https で、重複しない', () => {
+    const urls = images.flatMap((work) => (work.type === 'site' ? [work.url] : []));
+    for (const url of urls) expect(new URL(url).protocol, url).toBe('https:');
+    expect(new Set(urls).size).toBe(urls.length);
   });
 });

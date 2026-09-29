@@ -293,6 +293,127 @@ body {
   }
 }
 
+/*
+ * Web サイト（iframe）。上端の帯（タイトル・操作ボタン）と、その下のサイト表示領域からなる。
+ * 操作を始めるまでは透明な .site-activate が表示領域にかぶさり、
+ * ギャラリーのスクロールやクリックをサイトに奪わせない。.is-active で外す。
+ */
+.site-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.site-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  padding: 0.375rem 0.5rem;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.site-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.site-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.site-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: var(--bg-secondary);
+  pointer-events: none;
+}
+
+.gallery-item.is-active .site-frame {
+  pointer-events: auto;
+}
+
+.gallery-item.is-active .gallery-item-container {
+  outline: 2px solid var(--border-hover);
+  outline-offset: 2px;
+}
+
+.site-activate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.gallery-item.is-active .site-activate {
+  display: none;
+}
+
+.site-activate-label,
+.site-deactivate,
+.site-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.site-activate-label {
+  box-shadow: 0 2px 6px var(--shadow-color);
+  /* 操作できることはホバーで知らせる（タッチ端末では常に表示） */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.site-activate:hover .site-activate-label,
+.site-activate:focus-visible .site-activate-label {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .site-activate-label {
+    opacity: 1;
+  }
+}
+
+.site-open svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* 操作中だけ出す */
+.site-deactivate {
+  display: none;
+}
+
+.gallery-item.is-active .site-deactivate {
+  display: inline-flex;
+}
+
 /* Video overlay styles */
 .video-overlay {
   position: absolute;
