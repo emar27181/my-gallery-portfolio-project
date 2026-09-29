@@ -1,0 +1,129 @@
+/*
+ * デザイントークン（DESIGN.md が規格、ここが値の唯一の定義元）。
+ * コンポーネントは var(--…) でここから取る。px・色の直書きはこのファイルだけに許す
+ * （src/lib/design-guards.test.ts で機械的に検査する）。
+ */
+
+:root {
+  /* ---- 色: 基底（直接は使わず、下の意味色から参照する） ---- */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-gray-50: #f9fafb;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-blue-400: #60a5fa;
+  --color-blue-600: #2563eb;
+  --color-amber-500: #f59e0b;
+  --color-indigo-500: #6366f1;
+
+  /* ---- 色: 意味（ライト） ---- */
+  --color-bg: var(--color-gray-50);
+  --color-surface: var(--color-white);
+  --color-surface-muted: var(--color-gray-200);
+  --color-surface-hover: var(--color-gray-300);
+  --color-text: var(--color-gray-900);
+  --color-text-muted: var(--color-gray-500);
+  --color-border: var(--color-gray-300);
+  --color-primary: var(--color-blue-600);
+  --color-on-primary: var(--color-white);
+  --color-placeholder: var(--color-gray-300);
+  --color-accent-warm: var(--color-amber-500);
+  --color-accent-cool: var(--color-indigo-500);
+  /* 写真・動画の上に載せる操作部品（テーマによらず明るい地に暗い文字） */
+  --color-media-control: color-mix(in srgb, var(--color-white) 90%, transparent);
+  --color-on-media-control: var(--color-gray-900);
+
+  /* 半透明（alphaBlack 相当）。rgba はここ以外に書かない */
+  --color-shadow: color-mix(in srgb, var(--color-black) 10%, transparent);
+  --color-shadow-strong: color-mix(in srgb, var(--color-black) 40%, transparent);
+  --color-media-overlay: color-mix(in srgb, var(--color-black) 30%, transparent);
+  --color-scrim: color-mix(in srgb, var(--color-black) 50%, transparent);
+  --color-scrim-strong: color-mix(in srgb, var(--color-black) 90%, transparent);
+
+  /* ---- 文字 ---- */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Hiragino Sans',
+    'Noto Sans JP', sans-serif;
+  --font-size-caption: 12px;
+  --font-size-body: 14px;
+  --font-size-title: 16px; /* 入力欄もこの大きさ（iOS Safari の自動拡大を防ぐ） */
+  --font-size-heading: 20px;
+  --font-size-display: 24px;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+  --line-height-tight: 1.25;
+  --line-height-base: 1.5;
+
+  /* ---- 余白 ---- */
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-40: 40px;
+
+  /* ---- 角の丸み（値ではなく役割で選ぶ） ---- */
+  --radius-card: 8px; /* 作品のタイル・モーダルの画像（画面上でいちばん多い部品） */
+  --radius-control: 8px; /* ボタン・入力欄・ドロップダウン */
+  --radius-pill: 9999px; /* チップ・丸いアイコンボタン */
+
+  /* ---- 寸法 ---- */
+  --control-height-md: 44px; /* 指で押す主要な操作（Apple HIG 44pt） */
+  --control-height-sm: 24px; /* 補助操作（WCAG 2.2 AA 2.5.8 の下限） */
+  --icon-size-sm: 16px;
+  --icon-size-md: 20px;
+  --icon-size-lg: 24px;
+  --border-width: 1px;
+  --focus-ring-width: 2px;
+
+  /* ---- レイアウト ---- */
+  --layout-navbar-height: 70px;
+  --layout-content-max-width: 1200px;
+  --layout-control-width: 180px; /* フィルタと並び替えの幅（揃える） */
+  --layout-drawer-width: 300px;
+
+  /* ---- 影・重なり・動き ---- */
+  --shadow-sm: 0 2px 4px var(--color-shadow);
+  --shadow-md: 0 4px 12px var(--color-shadow);
+  --shadow-lg: 0 20px 25px -5px var(--color-shadow-strong);
+  --z-dropdown: 10;
+  --z-navbar: 100;
+  --z-drawer: 200;
+  --z-modal: 300;
+  --z-loading: 1000;
+  --duration-fast: 200ms;
+  --duration-base: 300ms;
+  --duration-slow: 500ms;
+  --easing-standard: ease;
+}
+
+/* ---- 色: 意味（ダーク）。コンポーネント側でテーマ分岐は書かない ---- */
+[data-theme='dark'] {
+  --color-bg: var(--color-gray-900);
+  --color-surface: var(--color-gray-800);
+  --color-surface-muted: var(--color-gray-700);
+  --color-surface-hover: var(--color-gray-600);
+  --color-text: var(--color-gray-50);
+  --color-text-muted: var(--color-gray-300);
+  --color-border: var(--color-gray-700);
+  --color-primary: var(--color-blue-400);
+  --color-on-primary: var(--color-gray-900);
+  --color-placeholder: var(--color-gray-700);
+  --color-shadow: color-mix(in srgb, var(--color-black) 30%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}
