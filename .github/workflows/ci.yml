@@ -7,8 +7,7 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}
-  # PR は新しい push で古い実行を止める。main（本番デプロイ）は途中で止めない
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: true
 
 jobs:
   verify:
@@ -33,13 +32,6 @@ jobs:
       - name: ビルド
         run: npm run build
 
-      - name: ビルド結果を deploy ジョブへ渡す
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
-          retention-days: 1
-
       - name: Playwright のブラウザを用意
         run: npx playwright install --with-deps chromium
 
@@ -55,76 +47,3 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
-
-  # verify が通ったビルドだけを Netlify に出す。
-  # PR → プレビュー（pr-<番号>--<サイト>.netlify.app）、main への push → 本番。
-  # Secrets（NETLIFY_AUTH_TOKEN / NETLIFY_SITE_ID）が未登録なら何もせず成功扱いにする。
-  deploy:
-    needs: verify
-    # フォークからの PR には Secrets が渡らないので対象外
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-      pull-requests: write
-    env:
-      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-    steps:
-      - name: デプロイ設定の確認
-        id: config
-        run: |
-          if [ -n "$NETLIFY_AUTH_TOKEN" ] && [ -n "$NETLIFY_SITE_ID" ]; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::NETLIFY_AUTH_TOKEN / NETLIFY_SITE_ID が未登録のためデプロイを省略しました（README「デプロイ」参照）"
-          fi
-
-      - uses: actions/download-artifact@v4
-        if: steps.config.outputs.enabled == 'true'
-        with:
-          name: dist
-          path: dist/
-
-      - uses: actions/setup-node@v4
-        if: steps.config.outputs.enabled == 'true'
-        with:
-          node-version: 22
-
-      - name: Netlify へデプロイ
-        id: deploy
-        if: steps.config.outputs.enabled == 'true'
-        env:
-          TARGET: ${{ github.event_name == 'push' && '--prod' || format('--alias=pr-{0}', github.event.pull_request.number) }}
-          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: |
-          npx --yes netlify-cli@27 deploy --dir=dist --no-build $TARGET \
-            --message "${GITHUB_REF_NAME} ${SHA::7}" --json > deploy.json
-          # 本番はサイトの URL、プレビューはデプロイ固有の URL
-          if [ "$GITHUB_EVENT_NAME" = "push" ]; then key=url; else key=deploy_url; fi
-          url=$(jq -r ".$key" deploy.json)
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-          echo "sha=${SHA::7}" >> "$GITHUB_OUTPUT"
-          echo "### デプロイ完了: $url（${SHA::7}）" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: プレビュー URL を PR にコメント
-        if: steps.deploy.outcome == 'success' && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        env:
-          URL: ${{ steps.deploy.outputs.url }}
-          SHA: ${{ steps.deploy.outputs.sha }}
-        with:
-          script: |
-            const marker = '<!-- netlify-preview -->';
-            const body = `${marker}\n**プレビュー**: ${process.env.URL}\n対象コミット: \`${process.env.SHA}\``;
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
-            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
-            const existing = comments.find((c) => c.body?.startsWith(marker));
-            if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-            } else {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-            }
