@@ -9,7 +9,8 @@ Astro による静的サイト（1ページ）。ビルド時に作品データ�
 | :--- | :--- | :--- |
 | `src/data/` | 作品データ（`image.ts`）。画像・動画・Web サイトの判別共用体。配列の順序がそのまま「カスタム順」 | なし |
 | `src/assets/gallery/` | 作品画像の原本。ビルド時に縮小・WebP 化され、原本は配信されない | なし |
-| `src/assets/brand/` | ロゴ・ローディングアニメーションの原本（同上） | なし |
+| `src/assets/sites/` | Web サイトの画面写真の原本（同上）。サイトが読み込まれるまで枠に敷く | なし |
+| `src/assets/brand/` | ロゴ・ローディングアニメーションの原本（同上）。PWA のアイコンもここのサインから作る | なし |
 | `src/lib/` | UI を持たない規則。DOM に触れないものはユニットテストの対象。`*-images.ts` はビルド専用 | `src/data/`, `src/assets/` |
 | `src/components/atoms/` | トークンだけを知る部品（ボタン・選択欄・チップ・アイコン・タイル） | `src/styles/tokens.css` |
 | `src/components/molecules/` | atoms の組み合わせと、その開閉・選択などの動き | atoms |
@@ -59,6 +60,11 @@ Astro による静的サイト（1ページ）。ビルド時に作品データ�
   `EmbedFrame` の全画面ボタンは `embed-expand` を送り、`Gallery` が表示中のサイトを並び順どおりに集めて
   `embed-viewer-open` で `EmbedViewer` を開く（前後の切り替えは絞り込み・並び替えの結果に従う）。
   `EmbedViewer` は切り替えのたびに iframe を差し替える（src の書き換えはブラウザの履歴に積まれ、「戻る」が iframe の中で消費されるため）。
+- **Web サイトの読み込み** … iframe は `data-src` だけを持って描かれ、枠が画面に近づいたとき
+  （`IntersectionObserver`、先読みは画面の高さの半分）か操作を始めたときに読み込む。届くまでは画面写真
+  （`poster`）か、無ければタイトルを見せ、iframe の `load` でフェードインする（`.is-loaded`）。
+  全画面表示（`EmbedViewer`）も同じく画面写真の上にフェードインする。
+  埋め込みを拒否するサイトでも `load` は発火するため、その場合はブラウザのエラー表示に切り替わる。
 - **Web サイトの枠の縦横比** は、スマホ（列数が最少）では `SITE_FRAME_NARROW`（縦長）、それ以外は `SITE_FRAME` を
   `layout()` が画面幅に応じて選ぶ。
 - **絞り込み** は `hidden` 属性で行う（`[hidden] { display: none !important }`）。
@@ -66,6 +72,14 @@ Astro による静的サイト（1ページ）。ビルド時に作品データ�
 - **スクリプト前の表示** … 配置計算前（`.is-masonry` が付く前）は通常の CSS Grid で並ぶ。
 - **読み込み中の見た目** … 各アイテムは代表色を敷いた箱として先に描かれ、画像が届いたら
   フェードインする（`.is-loaded`）。
+
+## PWA（ホーム画面に追加）
+
+- マニフェスト（`/manifest.webmanifest`）とアイコン（`/icons/<name>.png`）は `src/pages/` のエンドポイントがビルド時に書き出す。
+- アイコンはローディング画面のサインのアニメーション（`src/assets/brand/mov-sign-unscreen.gif`）の最後のコマ
+  （描き終わった形）を `--color-surface` の正方形に置いたもの（`src/lib/app-icons.ts`）。maskable は端が切り取られるため余白を広く取る。
+- 色は `src/lib/design-tokens.ts` が tokens.css から読む（CSS の外でもトークンを唯一の定義元にする）。
+- サイト名は `src/lib/site.ts`（`<title>`・ナビゲーション・マニフェストで共通）。
 
 ## ローディング画面
 

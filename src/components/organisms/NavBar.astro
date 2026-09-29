@@ -5,6 +5,7 @@ import Icon from "../atoms/Icon.astro";
 import LinkButton from "../atoms/LinkButton.astro";
 import Drawer from "../molecules/Drawer.astro";
 import { getBrandImages } from "../../lib/brand-images";
+import { SITE_NAME } from "../../lib/site";
 
 const { navLogo } = await getBrandImages();
 const MENU_ID = "site-menu";
@@ -24,7 +25,7 @@ const MENU_ID = "site-menu";
           height="78"
           alt="emar27181 logo"
         />
-        emar27181 Gallery
+        {SITE_NAME}
       </a>
     </h1>
 

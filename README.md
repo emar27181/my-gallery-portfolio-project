@@ -27,7 +27,8 @@ emar27181のアート作品を展示するギャラリーポートフォリオ�
 // 動画: YouTube の動画 ID
 { type: 'video', src: 'https://img.youtube.com/vi/<ID>/maxresdefault.jpg', videoId: '<ID>', alt: '…', title: '…', tags: ['動画'], date: '2026-01-01' },
 // Web サイト: iframe で埋め込み、その場で操作できる（埋め込みを許可しているサイトのみ）
-{ type: 'site', url: 'https://example.netlify.app/', alt: '…', title: '…', tags: ['サイト'], date: '2026-01-01' },
+// poster は src/assets/sites/ に置いた画面写真のファイル名。読み込み中に表示する（省略するとタイトルを表示）
+{ type: 'site', url: 'https://example.netlify.app/', poster: 'example.png', alt: '…', title: '…', tags: ['サイト'], date: '2026-01-01' },
 ```
 
 ## 🎨 カテゴリー
@@ -89,11 +90,12 @@ CI（型チェック・テスト・ビルド・E2E）は GitHub Actions、公開
 /
 ├── .github/workflows/ci.yml  # CI（型チェック・テスト・ビルド・E2E）
 ├── e2e/                      # Playwright の E2E テスト
-├── public/                   # そのまま配信するファイル（favicon など）
+├── public/                   # そのまま配信するファイル（フォント・画像など）
 ├── src/
 │   ├── assets/
 │   │   ├── gallery/          # 作品画像の原本（ビルド時に縮小・WebP 化）
-│   │   └── brand/            # ロゴ・ローディングアニメーションの原本
+│   │   ├── sites/            # Web サイトの画面写真の原本（読み込み中に表示）
+│   │   └── brand/            # ロゴ・ローディングのサインの原本（PWA のアイコンもここから生成）
 │   ├── components/
 │   │   ├── atoms/            # トークンだけを知る部品（Button, Select, Chip, Icon, Tile …）
 │   │   ├── molecules/        # atoms の組み合わせ（MultiSelect, Drawer, Lightbox, EmbedFrame …）

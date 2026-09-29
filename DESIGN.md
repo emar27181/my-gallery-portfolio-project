@@ -193,6 +193,9 @@ molecules は動きも持つ（開閉・選択など）。organisms にはカス
 全画面表示（`EmbedViewer`）は、操作を上端（閉じる・新しいタブ）と下端（前後の矢印・位置）に分け、
 前後の矢印は親指の届く下端に置く。端末の「戻る」で閉じられるよう、開くときに履歴を 1 つ積む。
 
+外部のページ（`EmbedFrame` / `EmbedViewer`）は何も見えない時間を作らない。届くまでは画面写真
+（上端を合わせて `object-fit: cover`）か、無ければタイトルを見せ、届いたらページを `--duration-slow` でフェードインする。
+
 ## 10. 検証
 
 - **ガード**（`npm test`）: `src/styles/design-guards.test.ts` が次を検査する。例外はファイルと理由を `EXCEPTIONS` に書く

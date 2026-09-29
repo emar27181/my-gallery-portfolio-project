@@ -80,6 +80,8 @@ const youtubeEmbed = (videoId: string) =>
                   deactivateLabel="操作を終える"
                   openLabel="新しいタブで開く"
                   expandLabel="全画面で見る"
+                  poster={img}
+                  data-full={full}
                 />
               ) : entry.type === "video" ? (
                 <VideoEmbed embedUrl={youtubeEmbed(entry.videoId)} title={title} playLabel="再生" thumbnail={img ?? {}} />
@@ -304,7 +306,7 @@ const youtubeEmbed = (videoId: string) =>
     const sites = lastShown.filter((entry) => entry.el.dataset.type === "site");
     const items = sites.map((entry) => {
       const embed = entry.el.querySelector<HTMLElement>("[data-embed]")!;
-      return { url: embed.dataset.url ?? "", title: embed.dataset.title ?? "" };
+      return { url: embed.dataset.url ?? "", title: embed.dataset.title ?? "", poster: embed.dataset.full };
     });
     const { url } = (e as CustomEvent<{ url: string }>).detail;
     document.dispatchEvent(
