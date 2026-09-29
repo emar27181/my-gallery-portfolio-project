@@ -1,5 +1,7 @@
 ---
+import { getBrandImages } from "../lib/brand-images";
 
+const { navLogo } = await getBrandImages();
 ---
 
 <nav class="navbar">
@@ -8,7 +10,7 @@
     <div class="navbar-brand">
       <h1 class="navbar-title">
         <a href="#top" class="navbar-title-link">
-          <img src="/favicon/ema_sign_logo_black.png" alt="emar27181 logo" class="navbar-favicon" id="navbar-favicon">
+          <img src={navLogo.light} data-src-light={navLogo.light} data-src-dark={navLogo.dark} width="96" height="78" alt="emar27181 logo" class="navbar-favicon" id="navbar-favicon">
           emar27181 Gallery
         </a>
       </h1>
@@ -112,7 +114,8 @@
     sunIcon?.classList.toggle("hidden", theme === "dark");
     moonIcon?.classList.toggle("hidden", theme !== "dark");
     if (favicon) {
-      favicon.src = theme === "dark" ? "/favicon/ema_sign_logo_white.png" : "/favicon/ema_sign_logo_black.png";
+      const src = theme === "dark" ? favicon.dataset.srcDark : favicon.dataset.srcLight;
+      if (src) favicon.src = src;
     }
   }
 

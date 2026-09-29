@@ -1,8 +1,11 @@
 ---
 import Gallery from "../components/Gallery.astro";
 import NavBar from "../components/NavBar.astro";
+import { getBrandImages } from "../lib/brand-images";
 import { THEME_STORAGE_KEY } from "../lib/theme";
 import "../styles/global.css";
+
+const { tabIcon, loading } = await getBrandImages();
 ---
 
 <html lang="en" data-theme="light">
@@ -11,7 +14,7 @@ import "../styles/global.css";
 		<link
 			rel="icon"
 			type="image/png"
-			href="/favicon/ema_sign_logo_white.png"
+			href={tabIcon}
 		/>
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
@@ -35,7 +38,9 @@ import "../styles/global.css";
 		<div id="loading-screen" class="loading-screen">
 			<img
 				id="loading-gif"
-				src="/images/mov-sign-unscreen.gif"
+				src={loading.src}
+				width={loading.width}
+				height={loading.height}
 				alt="Loading..."
 				class="loading-gif"
 				fetchpriority="high"
