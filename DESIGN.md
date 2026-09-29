@@ -170,7 +170,7 @@ primary はライトで `#3b82f6` → `#2563eb`、ダークの on-primary は白
 | 層 | 知ってよいもの | 部品（`src/components/`） |
 | :--- | :--- | :--- |
 | atoms | トークンだけ | `Button` / `IconButton` / `LinkButton` / `CoverButton` / `Select` / `Chip` / `Icon` / `Tile` |
-| molecules | atoms の組み合わせ方だけ | `Field` / `RemovableChip` / `MultiSelect` / `Drawer` / `Lightbox` / `EmbedFrame` / `VideoEmbed` |
+| molecules | atoms の組み合わせ方だけ | `Field` / `RemovableChip` / `MultiSelect` / `Drawer` / `Lightbox` / `EmbedFrame` / `EmbedViewer` / `VideoEmbed` |
 | organisms | サイトの概念（作品・タグ・並び順）と実データ・文言 | `NavBar` / `Gallery` / `LoadingScreen` |
 
 迷ったら:
@@ -188,7 +188,10 @@ atoms の規則:
 6. 新しくボタン・入力欄・チップを書かない。既存の atom を使う（生の `<button>` などは atoms の外では書けない）
 
 molecules は動きも持つ（開閉・選択など）。organisms にはカスタムイベントで伝える
-（`MultiSelect` → `multiselect-change`、`Lightbox` ← `lightbox-open`）。
+（`MultiSelect` → `multiselect-change`、`Lightbox` ← `lightbox-open`、`EmbedFrame` → `embed-expand`、`EmbedViewer` ← `embed-viewer-open`）。
+
+全画面表示（`EmbedViewer`）は、操作を上端（閉じる・新しいタブ）と下端（前後の矢印・位置）に分け、
+前後の矢印は親指の届く下端に置く。端末の「戻る」で閉じられるよう、開くときに履歴を 1 つ積む。
 
 ## 10. 検証
 

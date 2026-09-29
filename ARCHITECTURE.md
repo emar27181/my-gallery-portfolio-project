@@ -56,6 +56,11 @@ Astro による静的サイト（1ページ）。ビルド時に作品データ�
 - **部品間の連絡** はカスタムイベントで行う。`MultiSelect` は選択が変わると `multiselect-change` を送り、
   `Gallery` は画像が押されると `lightbox-open` を送って `Lightbox` を開く。`EmbedFrame`（Web サイト）と
   `VideoEmbed`（動画）は自分の操作（操作開始・終了、再生）を自分で扱う。
+  `EmbedFrame` の全画面ボタンは `embed-expand` を送り、`Gallery` が表示中のサイトを並び順どおりに集めて
+  `embed-viewer-open` で `EmbedViewer` を開く（前後の切り替えは絞り込み・並び替えの結果に従う）。
+  `EmbedViewer` は切り替えのたびに iframe を差し替える（src の書き換えはブラウザの履歴に積まれ、「戻る」が iframe の中で消費されるため）。
+- **Web サイトの枠の縦横比** は、スマホ（列数が最少）では `SITE_FRAME_NARROW`（縦長）、それ以外は `SITE_FRAME` を
+  `layout()` が画面幅に応じて選ぶ。
 - **絞り込み** は `hidden` 属性で行う（`[hidden] { display: none !important }`）。
 - **画面幅の変更** は `ResizeObserver` でギャラリーの幅を監視し、幅が変わったときだけ詰め直す。
 - **スクリプト前の表示** … 配置計算前（`.is-masonry` が付く前）は通常の CSS Grid で並ぶ。
