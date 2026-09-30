@@ -20,6 +20,7 @@ emar27181のアート作品を展示するギャラリーポートフォリオ�
 ## ➕ 作品の追加
 
 `src/data/image.ts` の `images` に 1 件足します。配列の順序が「カスタム順」です。
+書き方・タグ一覧・並び順の規則は [`docs/DATA-EDITING.md`](docs/DATA-EDITING.md) にまとめてあり、ChatGPT などに貼ってそのまま編集を頼めます。
 
 ```ts
 // 画像: src/assets/gallery/ にファイルを置き、ファイル名を書く（縮小・WebP 化はビルド時に自動）

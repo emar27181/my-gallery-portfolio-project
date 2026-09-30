@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { images } from '../data/image';
 import {
@@ -104,6 +104,20 @@ describe('作品データ', () => {
     for (const work of images) {
       if (work.type === 'image') expect(existsSync(`src/assets/gallery/${work.src}`), work.src).toBe(true);
     }
+  });
+
+  it('Web サイトの画面写真（poster）は src/assets/sites/ に実在する', () => {
+    for (const work of images) {
+      if (work.type === 'site' && work.poster) expect(existsSync(`src/assets/sites/${work.poster}`), work.poster).toBe(true);
+    }
+  });
+
+  it('使っているタグは docs/DATA-EDITING.md のタグ一覧に載っている（AI に渡すマニュアルを古くしない）', () => {
+    const manual = readFileSync('docs/DATA-EDITING.md', 'utf8');
+    const section = manual.slice(manual.indexOf('## 4. タグ'), manual.indexOf('## 5.'));
+    const documented = new Set([...section.matchAll(/^\|\s*`([^`]+)`\s*\|/gm)].map((m) => m[1]));
+    const missing = [...new Set(images.flatMap((work) => work.tags))].filter((tag) => !documented.has(tag));
+    expect(missing).toEqual([]);
   });
 
   it('Web サイトの URL は https で、重複しない', () => {
