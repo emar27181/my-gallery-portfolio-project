@@ -96,9 +96,18 @@ describe('並び替えの選択肢', () => {
 });
 
 describe('作品データ', () => {
+  it('評価下位50%の取り込みVALORANT動画は非表示で保持する', () => {
+    const hiddenIds = new Set(["oe8jBlS6ojk","0oLw64DxEww","1eNG96G7AEE","46a0f7dNVW4","471RvqnX2b0","5vqrKEoRYUI","7w6fo0I36LI","89-XDPmumUE","8fKkBfd_St0","Bx_StGqEbps","EWMlL4fZrDA","G0v9xTi48Gs","HiuCIyQBTuA","O52Jtotu4i8","bT70Au5LD6I","fJZP_eAKJvo","ooJdHWZ3KyU","qPOMfYDTVBg","u5yhldgN1i4","vU79pWsoA-I","wnhM3KOPWHM","it45ShfTm4M"]);
+    for (const work of images) {
+      if (work.type === 'video' && hiddenIds.has(work.videoId)) {
+        expect(work.visible, work.videoId).toBe(false);
+      }
+    }
+  });
+
   it('表示OFFの作品は visible: false で保持できる', () => {
     const hiddenTitles = images.filter((work) => work.visible === false).map((work) => work.title);
-    expect(hiddenTitles).toEqual(expect.arrayContaining(['Way Point Map', 'VALORANT Point Viewer', 'Card Pocket（デモ）']));
+    expect(hiddenTitles).toEqual(expect.arrayContaining(['Way Point Map', 'VALORANT Point Viewer', 'Card Pocket（デモ）', '色相・トーン推薦アプリ']));
   });
 
   it('日付は YYYY-MM-DD で解釈できる', () => {
