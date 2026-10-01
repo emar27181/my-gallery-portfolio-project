@@ -60,12 +60,12 @@ const { loading } = await getBrandImages();
 <script>
   import { GALLERY_READY_EVENT } from "../../lib/gallery-grid";
 
+  const screen = document.getElementById("loading-screen")!;
+  const content = document.getElementById(screen.dataset.loadingTarget ?? "");
+
   // 原本GIFの全フレーム遅延から算出した1ループ分。画像準備が先に終わってもここまでは閉じない。
   const MIN_LOADING_TIME = Number(screen.dataset.animationDuration) || 4470;
   const MAX_LOADING_TIME = Math.max(6000, MIN_LOADING_TIME); // 1周保証を優先しつつ、準備待ちは従来どおり最大6秒
-
-  const screen = document.getElementById("loading-screen")!;
-  const content = document.getElementById(screen.dataset.loadingTarget ?? "");
   const startedAt = Date.now();
   let closed = false;
 
