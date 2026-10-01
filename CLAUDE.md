@@ -123,6 +123,7 @@
 - **レスポンシブ対応**：16:9アスペクト比を維持したレスポンシブ動画プレイヤー
 - **動画表示サイズ**：2列ぶん（`src/lib/gallery-grid.ts` の `VIDEO_SPAN`。モバイルでは全幅）
 - `my-net-homepage-project/src/data/clips.json` から VALORANT クリップを取り込む場合は、`title` に加えて `map`・`agent`・`tags` をギャラリーのタグへ引き継ぐ。タグ順は `['動画', 'VALORANT', map, agent, ...tags]` とする
+- 同 clips.json の VALORANT 動画は `score` の各項目を合計し、**評価合計の上位50%だけ表示**する。下位50%は `visible: false` で保持する。同点境界は元データ順で決める
 
 ---
 
