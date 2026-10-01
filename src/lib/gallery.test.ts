@@ -8,6 +8,8 @@ import {
   matchesAllTags,
   sortItems,
   tagsByUsage,
+  filterTagsByUsage,
+  HIDDEN_FILTER_TAGS,
   type SortableItem,
 } from './gallery';
 
@@ -59,6 +61,19 @@ describe('matchesAllTags', () => {
 describe('tagsByUsage', () => {
   it('使用数の多い順、同数は初出順', () => {
     expect(tagsByUsage(items)).toEqual(['イラスト', '写真', '猫']);
+  });
+
+  it('詳細メタデータタグはフィルター候補に出さない', () => {
+    const withMetadata = [
+      ...items,
+      { index: 3, title: 'Clip', date: '2026-10-01', tags: ['動画', 'VALORANT', 'ascent', 'clove', 'vandal'] },
+    ];
+    expect(filterTagsByUsage(withMetadata)).toContain('VALORANT');
+    expect(filterTagsByUsage(withMetadata)).toContain('動画');
+    for (const tag of ['ascent', 'clove', 'vandal']) {
+      expect(HIDDEN_FILTER_TAGS.has(tag as never)).toBe(true);
+      expect(filterTagsByUsage(withMetadata)).not.toContain(tag);
+    }
   });
 });
 
