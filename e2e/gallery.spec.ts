@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { images } from '../src/data/image';
 import { SORT_OPTIONS, matchesAllTags, sortItems } from '../src/lib/gallery';
 
-const data = images.map((image, index) => ({ ...image, index }));
+const data = images.map((image, index) => ({ ...image, index })).filter((image) => image.visible !== false);
 
 // 外部（YouTube サムネイル）への通信に結果を左右されないよう、ローカル画像で代替する
 // 埋め込む Web サイトも、押すと文言が変わるボタンだけの HTML で代替する
@@ -163,8 +163,8 @@ test('詰めて配置: 重なりがなく、各アイテムの上に余計な隙
 
 test('ローディング画面が閉じた時点で、画面内の画像はすべて読み込み済み', async ({ page }) => {
   await page.goto('/');
-  // 最大待ち時間（index.astro の MAX_LOADING_TIME = 6000ms）で閉じたのでは意味がない
-  await expect(page.locator('#loading-screen')).toBeHidden({ timeout: 4_000 });
+  // サインアニメーションを最低1周してから閉じるため、1周＋フェード分を待つ。
+  await expect(page.locator('#loading-screen')).toBeHidden({ timeout: 7_000 });
 
   const inView = await page.evaluate(() =>
     [...document.querySelectorAll<HTMLImageElement>('.gallery-item:not([hidden]) img')]
