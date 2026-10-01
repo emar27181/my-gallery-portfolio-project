@@ -89,13 +89,13 @@ const MENU_ID = "site-menu";
     display: flex;
     gap: var(--space-8);
   }
-  /* テーマのアイコンは CSS だけで切り替える（色は意味色のアクセント） */
+  /* テーマのアイコンは CSS だけで切り替える。Lucide アイコンは無彩色で統一する。 */
   .navbar__actions :global(.navbar__theme-icon--light) {
-    color: var(--color-accent-warm);
+    color: var(--color-text);
   }
   .navbar__actions :global(.navbar__theme-icon--dark) {
     display: none;
-    color: var(--color-accent-cool);
+    color: var(--color-text);
   }
   :global([data-theme="dark"]) .navbar__actions :global(.navbar__theme-icon--light) {
     display: none;
