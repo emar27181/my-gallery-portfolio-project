@@ -62,7 +62,7 @@ const MENU_ID = "site-menu";
     justify-content: space-between;
     height: var(--layout-navbar-height);
     margin: 0 auto;
-    padding: 0 var(--space-12);
+    padding: 0 var(--space-6) 0 var(--space-12);
   }
   .navbar__title {
     font-size: var(--font-size-title);
@@ -87,6 +87,10 @@ const MENU_ID = "site-menu";
   .navbar__actions {
     display: flex;
     gap: var(--space-2);
+  }
+  .navbar__actions :global(.icon) {
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
   }
   /* テーマのアイコンは CSS だけで切り替える。Lucide アイコンは無彩色で統一する。 */
   .navbar__actions :global(.navbar__theme-icon--light) {
