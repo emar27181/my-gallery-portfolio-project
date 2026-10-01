@@ -34,6 +34,7 @@
 - **CD**：Netlify のリポジトリ連携。PR ごとにデプロイプレビュー、`main` への push（＝マージ）で本番に出る（README「デプロイ（CD）」）
 - PR のプレビュー URL は netlify[bot] のコメント（`Deploy Preview` と `Latest commit`）から取り、
   対象コミットが最新の push と一致し、ビルドが完了（ready）していることを確かめてから報告する
+- **PR作成後の報告では、PRリンクと Netlify Deploy Previewリンクを必ず両方貼る**。Preview がまだ processing の場合はその旨を明記し、ready になったら Preview URL を確認して報告する
 - ユーザーが「デプロイして」と言った場合の手動デプロイは `npm run build && netlify deploy --prod`
   （ビルド設定は `netlify.toml`）。デプロイ完了後にURLを確認し、動作を報告する
 - 本番URL: https://emar27181-gallery-portfolio.netlify.app
