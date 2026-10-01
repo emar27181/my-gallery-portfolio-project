@@ -103,5 +103,6 @@ function prepare(item: ImageData, index: number): GalleryEntry | Promise<Gallery
 }
 
 export async function getGalleryEntries(): Promise<GalleryEntry[]> {
-  return Promise.all(images.map(prepare));
+  const visibleEntries = images.flatMap((item, index) => (item.visible === false ? [] : [prepare(item, index)]));
+  return Promise.all(visibleEntries);
 }
