@@ -96,6 +96,11 @@ describe('並び替えの選択肢', () => {
 });
 
 describe('作品データ', () => {
+  it('表示OFFの作品は visible: false で保持できる', () => {
+    const hiddenTitles = images.filter((work) => work.visible === false).map((work) => work.title);
+    expect(hiddenTitles).toEqual(expect.arrayContaining(['Way Point Map', 'VALORANT Point Viewer', 'Card Pocket（デモ）']));
+  });
+
   it('日付は YYYY-MM-DD で解釈できる', () => {
     for (const work of images) {
       expect(work.date, work.title).toMatch(/^\d{4}-\d{2}-\d{2}$/);
