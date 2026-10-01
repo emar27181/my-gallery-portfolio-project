@@ -123,6 +123,38 @@ AI に渡すときは「このマニュアル」と「`src/data/image.ts` の全
 | `スノボ` | スノーボードの写真・動画 |
 | `動画` | YouTube 動画（動画は先頭タグを `動画` にする） |
 | `サイト` | 自作の Web サイト（サイトは先頭タグを `サイト` にする） |
+| `6kills` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `ascent` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `astra` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `bind` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `breeze` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `bucky` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `bundit` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `chamber` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `classic` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `clove` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `clutch` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `corrode` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `cypher` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `fracture` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `ghost` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `guardian` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `haven` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `icebox` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `jett` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `lotus` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `omen` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `onemagazine` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `op` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `pearl` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `smooth` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `spectre` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `split` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `summit` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `sunset` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `vandal` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `viper` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
+| `waylay` | my-net-homepage-project から取り込んだ VALORANT クリップのメタデータ |
 
 - 例：猫の写真 → `['猫', '写真']`、猫のイラスト → `['猫', 'イラスト']`
 - 新しいタグを作るときは、この表にも行を足す（足さないとテストが落ちる）

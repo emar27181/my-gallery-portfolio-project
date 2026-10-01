@@ -34,6 +34,7 @@
 - **CD**：Netlify のリポジトリ連携。PR ごとにデプロイプレビュー、`main` への push（＝マージ）で本番に出る（README「デプロイ（CD）」）
 - PR のプレビュー URL は netlify[bot] のコメント（`Deploy Preview` と `Latest commit`）から取り、
   対象コミットが最新の push と一致し、ビルドが完了（ready）していることを確かめてから報告する
+- **PR作成後の報告では、PRリンクと Netlify Deploy Previewリンクを必ず両方貼る**。Preview がまだ processing の場合はその旨を明記し、ready になったら Preview URL を確認して報告する
 - ユーザーが「デプロイして」と言った場合の手動デプロイは `npm run build && netlify deploy --prod`
   （ビルド設定は `netlify.toml`）。デプロイ完了後にURLを確認し、動作を報告する
 - 本番URL: https://emar27181-gallery-portfolio.netlify.app
@@ -118,6 +119,7 @@
 - **自動再生**：再生開始時に自動再生（音声オン、ループ再生オフ）
 - **レスポンシブ対応**：16:9アスペクト比を維持したレスポンシブ動画プレイヤー
 - **動画表示サイズ**：2列ぶん（`src/lib/gallery-grid.ts` の `VIDEO_SPAN`。モバイルでは全幅）
+- `my-net-homepage-project/src/data/clips.json` から VALORANT クリップを取り込む場合は、`title` に加えて `map`・`agent`・`tags` をギャラリーのタグへ引き継ぐ。タグ順は `['動画', 'VALORANT', map, agent, ...tags]` とする
 
 ---
 
@@ -153,6 +155,13 @@
 ---
 
 ## 🚧 TODO・未解決課題
+
+### 3. スポーツ動画クリップの追加
+- YouTube にある自分のテニス動画・クリップも、`type: 'video'` の作品としてギャラリーへ掲載する
+- YouTube にある自分のスノーボード動画・クリップも、`type: 'video'` の作品としてギャラリーへ掲載する
+- 追加時は `docs/DATA-EDITING.md` の動画ルールに従う
+- スノーボードは既存の `スノボ` タグを使う。テニス追加時は `テニス` タグを正式タグ一覧にも追加する
+
 
 ### 1. 並び替え・フィルタリセットの不具合（解消済み・テストで固定）
 - 以前ここに記載していた「Masonry で並び順が崩れる」「『全て』で全件に戻らない」は、
