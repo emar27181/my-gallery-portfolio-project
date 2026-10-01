@@ -56,7 +56,7 @@
 
 - **デザイン規格は `DESIGN.md`、値の実体は `src/styles/tokens.css`**。色・文字サイズ・余白・角丸・高さは直接書かずトークンから取る
 - 部品は `src/components/` の atoms / molecules / organisms に分ける（層の決め方は DESIGN.md「アトミックデザイン」）
-- **UIアイコンは Lucide の一般的なアイコンに統一する**。独自SVG・絵文字・記号文字でUIアイコンを新設しない。定義元は `src/components/atoms/icons.ts`
+- **UIアイコンは Lucide の一般的なアイコンに統一し、無彩色（白・黒・グレー系）のみを使う**。独自SVG・絵文字・記号文字・有彩色のUIアイコンを新設しない。定義元は `src/components/atoms/icons.ts`
 - 規約は `src/styles/design-guards.test.ts` で検査する（生の `<button>` 等・px や色の直書き・段階の追加で落ちる）
 
 ### 1. ギャラリーレイアウト
