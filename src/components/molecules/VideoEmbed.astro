@@ -24,7 +24,7 @@ const { embedUrl, title, playLabel, thumbnail } = Astro.props;
     allowfullscreen
     hidden></iframe>
   <CoverButton label={`${title}: ${playLabel}`} data-video-play>
-    <Icon name="play" size="lg" />
+    <Icon name="play" size="md" />
   </CoverButton>
 </div>
 
@@ -42,9 +42,18 @@ const { embedUrl, title, playLabel, thumbnail } = Astro.props;
     border: none;
     object-fit: cover;
   }
-  /* 再生の案内は写真の上で目立つよう、ホバーで少し暗くする */
+  /* 再生UIは動画だけ簡素化。無彩色・小さめ・影なし・枠なし。 */
+  .video :global([data-video-play] .cover__hint) {
+    width: var(--control-height-md);
+    min-height: var(--control-height-md);
+    padding: 0;
+    border-color: transparent;
+    background-color: var(--color-media-control);
+    color: var(--color-on-media-control);
+    box-shadow: none;
+  }
   .video :global([data-video-play]:hover) {
-    background-color: var(--color-media-overlay);
+    background-color: transparent;
   }
 </style>
 
