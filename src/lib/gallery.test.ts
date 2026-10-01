@@ -8,6 +8,8 @@ import {
   matchesAllTags,
   sortItems,
   tagsByUsage,
+  filterTagsByUsage,
+  HIDDEN_FILTER_TAGS,
   type SortableItem,
 } from './gallery';
 
@@ -60,6 +62,19 @@ describe('tagsByUsage', () => {
   it('使用数の多い順、同数は初出順', () => {
     expect(tagsByUsage(items)).toEqual(['イラスト', '写真', '猫']);
   });
+
+  it('詳細メタデータタグはフィルター候補に出さない', () => {
+    const withMetadata = [
+      ...items,
+      { index: 3, title: 'Clip', date: '2026-10-01', tags: ['動画', 'VALORANT', 'ascent', 'clove', 'vandal'] },
+    ];
+    expect(filterTagsByUsage(withMetadata)).toContain('VALORANT');
+    expect(filterTagsByUsage(withMetadata)).toContain('動画');
+    for (const tag of ['ascent', 'clove', 'vandal']) {
+      expect(HIDDEN_FILTER_TAGS.has(tag as never)).toBe(true);
+      expect(filterTagsByUsage(withMetadata)).not.toContain(tag);
+    }
+  });
 });
 
 describe('並び替えの選択肢', () => {
@@ -81,6 +96,20 @@ describe('並び替えの選択肢', () => {
 });
 
 describe('作品データ', () => {
+  it('評価下位50%の取り込みVALORANT動画は非表示で保持する', () => {
+    const hiddenIds = new Set(["oe8jBlS6ojk","0oLw64DxEww","1eNG96G7AEE","46a0f7dNVW4","471RvqnX2b0","5vqrKEoRYUI","7w6fo0I36LI","89-XDPmumUE","8fKkBfd_St0","Bx_StGqEbps","EWMlL4fZrDA","G0v9xTi48Gs","HiuCIyQBTuA","O52Jtotu4i8","bT70Au5LD6I","fJZP_eAKJvo","ooJdHWZ3KyU","qPOMfYDTVBg","u5yhldgN1i4","vU79pWsoA-I","wnhM3KOPWHM","it45ShfTm4M"]);
+    for (const work of images) {
+      if (work.type === 'video' && hiddenIds.has(work.videoId)) {
+        expect(work.visible, work.videoId).toBe(false);
+      }
+    }
+  });
+
+  it('表示OFFの作品は visible: false で保持できる', () => {
+    const hiddenTitles = images.filter((work) => work.visible === false).map((work) => work.title);
+    expect(hiddenTitles).toEqual(expect.arrayContaining(['Way Point Map', 'VALORANT Point Viewer', 'Card Pocket（デモ）', '色相・トーン推薦アプリ']));
+  });
+
   it('日付は YYYY-MM-DD で解釈できる', () => {
     for (const work of images) {
       expect(work.date, work.title).toMatch(/^\d{4}-\d{2}-\d{2}$/);

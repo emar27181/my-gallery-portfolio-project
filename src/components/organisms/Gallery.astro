@@ -10,12 +10,12 @@ import Field from "../molecules/Field.astro";
 import Lightbox from "../molecules/Lightbox.astro";
 import MultiSelect from "../molecules/MultiSelect.astro";
 import VideoEmbed from "../molecules/VideoEmbed.astro";
-import { DEFAULT_SORT, SORT_OPTIONS, tagsByUsage } from "../../lib/gallery";
+import { DEFAULT_SORT, SORT_OPTIONS, filterTagsByUsage } from "../../lib/gallery";
 import { GALLERY_BREAKPOINTS, SITE_FRAME_NARROW, galleryGridCss, gallerySizes } from "../../lib/gallery-grid";
 import { getGalleryEntries } from "../../lib/gallery-images";
 
 const entries = await getGalleryEntries();
-const tagOptions = tagsByUsage(entries).map((tag) => ({ value: tag, label: tag }));
+const tagOptions = filterTagsByUsage(entries).map((tag) => ({ value: tag, label: tag }));
 // HTML を読んだ時点で取りに行く枚数（最大列数 = 最初の1行ぶん）。残りはスクリプトが画面に入る分を判断する
 const EAGER_COUNT = Math.max(...GALLERY_BREAKPOINTS.map((bp) => bp.columns));
 const LIGHTBOX_ID = "image-lightbox";

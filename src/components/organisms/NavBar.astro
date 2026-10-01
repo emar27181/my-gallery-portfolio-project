@@ -30,11 +30,11 @@ const MENU_ID = "site-menu";
     </h1>
 
     <div class="navbar__actions">
-      <IconButton label="テーマを切り替える" id="theme-toggle">
+      <IconButton label="テーマを切り替える" id="theme-toggle" variant="ghost">
         <Icon name="sun" class="navbar__theme-icon navbar__theme-icon--light" />
         <Icon name="moon" class="navbar__theme-icon navbar__theme-icon--dark" />
       </IconButton>
-      <IconButton icon="menu" label="メニューを開く" data-drawer-open={MENU_ID} id="menu-toggle" />
+      <IconButton icon="menu" label="メニューを開く" variant="ghost" data-drawer-open={MENU_ID} id="menu-toggle" />
     </div>
   </div>
 </nav>
@@ -60,20 +60,19 @@ const MENU_ID = "site-menu";
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: var(--layout-content-max-width);
     height: var(--layout-navbar-height);
     margin: 0 auto;
-    padding: 0 var(--space-16);
+    padding: 0 var(--space-6) 0 var(--space-12);
   }
   .navbar__title {
-    font-size: var(--font-size-display);
+    font-size: var(--font-size-title);
     font-weight: var(--font-weight-bold);
     line-height: var(--line-height-tight);
   }
   .navbar__brand {
     display: flex;
     align-items: center;
-    gap: var(--space-8);
+    gap: var(--space-6);
     color: var(--color-text);
     text-decoration: none;
   }
@@ -81,21 +80,25 @@ const MENU_ID = "site-menu";
     opacity: var(--opacity-hover);
   }
   .navbar__logo {
-    width: var(--icon-size-lg);
-    height: var(--icon-size-lg);
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
     object-fit: contain;
   }
   .navbar__actions {
     display: flex;
-    gap: var(--space-8);
+    gap: var(--space-2);
   }
-  /* テーマのアイコンは CSS だけで切り替える（色は意味色のアクセント） */
+  .navbar__actions :global(.icon) {
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+  }
+  /* テーマのアイコンは CSS だけで切り替える。Lucide アイコンは無彩色で統一する。 */
   .navbar__actions :global(.navbar__theme-icon--light) {
-    color: var(--color-accent-warm);
+    color: var(--color-text);
   }
   .navbar__actions :global(.navbar__theme-icon--dark) {
     display: none;
-    color: var(--color-accent-cool);
+    color: var(--color-text);
   }
   :global([data-theme="dark"]) .navbar__actions :global(.navbar__theme-icon--light) {
     display: none;

@@ -78,7 +78,7 @@ primary はライトで `#3b82f6` → `#2563eb`、ダークの on-primary は白
 | `--font-size-body` | `14px` | 本文・見出しラベル |
 | `--font-size-title` | `16px` | 入力欄・主要なボタン（iOS Safari は 16px 未満の入力欄で自動拡大する） |
 | `--font-size-heading` | `20px` | パネルの見出し |
-| `--font-size-display` | `24px` | サイト名 |
+| `--font-size-display` | `24px` | 大きな見出し |
 | `--font-weight-regular` | `400` | 通常 |
 | `--font-weight-bold` | `700` | 見出し・サイト名 |
 
@@ -129,7 +129,7 @@ primary はライトで `#3b82f6` → `#2563eb`、ダークの on-primary は白
 
 | トークン | 値 | 用途 |
 | :--- | :--- | :--- |
-| `--layout-navbar-height` | `70px` | ナビゲーションバー（CLAUDE.md で固定） |
+| `--layout-navbar-height` | `60px` | ナビゲーションバー（CLAUDE.md で固定） |
 | `--layout-content-max-width` | `1200px` | ナビの中身の最大幅 |
 | `--layout-control-width` | `180px` | フィルタと並び替えの幅（揃える） |
 | `--layout-drawer-width` | `300px` | メニューのパネル（画面幅の 80% を上限） |

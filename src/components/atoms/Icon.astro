@@ -1,5 +1,6 @@
 ---
-// アイコン（atom）。形は icons.ts、大きさはトークンの段階から選ぶ。色は親の文字色を継ぐ。
+// アイコン（atom）。形は Lucide ベースの icons.ts、大きさはトークンの段階から選ぶ。
+// Lucide と同じく fill なし・stroke=currentColor で描画する。
 import type { HTMLAttributes } from "astro/types";
 import { ICONS, type IconName } from "./icons";
 
@@ -9,18 +10,22 @@ interface Props extends HTMLAttributes<"svg"> {
 }
 
 const { name, size = "md", class: className, ...rest } = Astro.props;
-const { viewBox, path } = ICONS[name];
+const paths = ICONS[name];
 ---
 
 <svg
   class:list={["icon", `icon--${size}`, className]}
-  viewBox={viewBox}
-  fill="currentColor"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
   aria-hidden="true"
   focusable="false"
   {...rest}
 >
-  <path fill-rule="evenodd" clip-rule="evenodd" d={path}></path>
+  {paths.map((path) => <path d={path}></path>)}
 </svg>
 
 <style>
