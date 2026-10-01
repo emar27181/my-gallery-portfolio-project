@@ -12,7 +12,7 @@ const { target } = Astro.props;
 const { loading } = await getBrandImages();
 ---
 
-<div id="loading-screen" class="loading" data-loading-target={target} data-animation-duration={loading.durationMs}>
+<div id="loading-screen" class="loading" data-loading-target={target} data-animation-duration={loading.durationMs} data-final-frame={loading.finalFrame}>
   <img
     class="loading__animation"
     src={loading.src}
@@ -68,6 +68,18 @@ const { loading } = await getBrandImages();
   const MAX_LOADING_TIME = Math.max(6000, MIN_LOADING_TIME); // 1周保証を優先しつつ、準備待ちは従来どおり最大6秒
   const startedAt = Date.now();
   let closed = false;
+  let frozen = false;
+
+  function freezeAnimation() {
+    if (frozen) return;
+    frozen = true;
+    const animation = screen.querySelector<HTMLImageElement>(".loading__animation");
+    const finalFrame = screen.dataset.finalFrame;
+    if (animation && finalFrame) animation.src = finalFrame;
+  }
+
+  // 2周目に入らないよう、1周分が終わった時点で最終フレームに差し替える。
+  setTimeout(freezeAnimation, MIN_LOADING_TIME);
 
   /** CSS の transition（トークンの時間）が終わったら呼ぶ。動きを減らす設定で時間が 0 なら即座に呼ぶ */
   const afterTransition = (el: HTMLElement, done: () => void) => {
