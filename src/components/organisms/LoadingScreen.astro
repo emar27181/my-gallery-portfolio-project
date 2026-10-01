@@ -12,7 +12,7 @@ const { target } = Astro.props;
 const { loading } = await getBrandImages();
 ---
 
-<div id="loading-screen" class="loading" data-loading-target={target}>
+<div id="loading-screen" class="loading" data-loading-target={target} data-animation-duration={loading.durationMs}>
   <img
     class="loading__animation"
     src={loading.src}
@@ -60,8 +60,9 @@ const { loading } = await getBrandImages();
 <script>
   import { GALLERY_READY_EVENT } from "../../lib/gallery-grid";
 
-  const MIN_LOADING_TIME = 1000; // 最低表示時間（ms）。サインのアニメーションを見せるため
-  const MAX_LOADING_TIME = 6000; // これを過ぎたら必ず閉じる（ms）
+  // 原本GIFの全フレーム遅延から算出した1ループ分。画像準備が先に終わってもここまでは閉じない。
+  const MIN_LOADING_TIME = Number(screen.dataset.animationDuration) || 4470;
+  const MAX_LOADING_TIME = Math.max(6000, MIN_LOADING_TIME); // 1周保証を優先しつつ、準備待ちは従来どおり最大6秒
 
   const screen = document.getElementById("loading-screen")!;
   const content = document.getElementById(screen.dataset.loadingTarget ?? "");
@@ -87,7 +88,7 @@ const { loading } = await getBrandImages();
   }
 
   function onGalleryReady() {
-    // 最低表示時間に満たなければ、満ちた時点で閉じる
+    // サインアニメーションが最低1周するまでは閉じない
     setTimeout(close, Math.max(0, MIN_LOADING_TIME - (Date.now() - startedAt)));
   }
 
