@@ -118,6 +118,7 @@
 - **自動再生**：再生開始時に自動再生（音声オン、ループ再生オフ）
 - **レスポンシブ対応**：16:9アスペクト比を維持したレスポンシブ動画プレイヤー
 - **動画表示サイズ**：2列ぶん（`src/lib/gallery-grid.ts` の `VIDEO_SPAN`。モバイルでは全幅）
+- `my-net-homepage-project/src/data/clips.json` から VALORANT クリップを取り込む場合は、`title` に加えて `map`・`agent`・`tags` をギャラリーのタグへ引き継ぐ。タグ順は `['動画', 'VALORANT', map, agent, ...tags]` とする
 
 ---
 
