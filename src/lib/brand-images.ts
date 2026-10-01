@@ -14,11 +14,16 @@ const TAB_ICON_WIDTH = 64;
 
 /** 寸法は原本から読む（ImageMetadata のプロパティを読むと原本が dist/ に残るため） */
 async function animationMetadata() {
-  const { width, pageHeight, height, delay } = await sharp(
-    path.join(process.cwd(), 'src/assets/brand/mov-sign-unscreen.gif'),
-  ).metadata();
+  const source = path.join(process.cwd(), 'src/assets/brand/mov-sign-unscreen.gif');
+  const { width, pageHeight, height, delay, pages = 1 } = await sharp(source).metadata();
   const durationMs = delay?.reduce((total, frameDelay) => total + frameDelay, 0) ?? 0;
-  return { width: width!, height: pageHeight ?? height!, durationMs };
+  return { width: width!, height: pageHeight ?? height!, durationMs, pages };
+}
+
+async function animationFinalFrame(page: number): Promise<string> {
+  const source = path.join(process.cwd(), 'src/assets/brand/mov-sign-unscreen.gif');
+  const buffer = await sharp(source, { page }).webp().toBuffer();
+  return `data:image/webp;base64,${buffer.toString('base64')}`;
 }
 
 export async function getBrandImages() {
@@ -30,10 +35,11 @@ export async function getBrandImages() {
     getImage({ src: signAnimation, format: 'webp' }),
     animationMetadata(),
   ]);
+  const finalFrame = await animationFinalFrame(animation.pages - 1);
   return {
     /** ライトテーマ用（黒）とダークテーマ用（白）のナビゲーションロゴ */
     navLogo: { light: navLight.src, dark: navDark.src },
     tabIcon: tabIcon.src,
-    loading: { src: loading.src, ...animation },
+    loading: { src: loading.src, finalFrame, width: animation.width, height: animation.height, durationMs: animation.durationMs },
   };
 }
