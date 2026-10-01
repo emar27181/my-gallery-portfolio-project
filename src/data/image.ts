@@ -653,6 +653,7 @@ export const images: ImageData[] = [
     title: '色相・トーン推薦アプリ',
     tags: ['サイト', 'オリジナル'],
     date: '2026-02-07',
+    visible: false,
     type: 'site'
   },
   {
