@@ -85,7 +85,7 @@
   --focus-ring-width: 2px;
 
   /* ---- レイアウト ---- */
-  --layout-navbar-height: 70px;
+  --layout-navbar-height: 60px;
   --layout-content-max-width: 1200px;
   --layout-control-width: 180px; /* フィルタと並び替えの幅（揃える） */
   --layout-drawer-width: 300px;
