@@ -100,6 +100,7 @@
 
 ### 5. Web サイトの展示
 - `src/data/image.ts` に `type: 'site'` と `url` を書くと、ギャラリー内の iframe でサイトをそのまま表示する
+- 作品データは `visible: false` で削除せず表示OFFにできる
 - 試作の展示のため、ギャラリーの末尾に置く
 - 枠は大きく取る：3列ぶん（タブレット・モバイルでは全幅）、縦横比 16:10。スマホ（2列）では縦長 9:16 にしてスマホ向けの表示で見せる
   （定義元 `src/lib/gallery-grid.ts` の `SITE_SPAN` / `SITE_FRAME` / `SITE_FRAME_NARROW`）
