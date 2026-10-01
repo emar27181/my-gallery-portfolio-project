@@ -746,7 +746,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'corrode', 'waylay', 'bucky'],
     date: '2026-10-01',
     type: 'video',
-    videoId: '0oLw64DxEww'
+    videoId: '0oLw64DxEww',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/1-ZWIAqR2sY/maxresdefault.jpg',
@@ -764,7 +765,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'ascent', 'clove', 'ghost'],
     date: '2026-10-01',
     type: 'video',
-    videoId: '1eNG96G7AEE'
+    videoId: '1eNG96G7AEE',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/46a0f7dNVW4/maxresdefault.jpg',
@@ -773,7 +775,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'lotus', 'clove', 'op'],
     date: '2026-10-01',
     type: 'video',
-    videoId: '46a0f7dNVW4'
+    videoId: '46a0f7dNVW4',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/471RvqnX2b0/maxresdefault.jpg',
@@ -782,7 +785,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'bind', 'clove', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: '471RvqnX2b0'
+    videoId: '471RvqnX2b0',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/5vqrKEoRYUI/maxresdefault.jpg',
@@ -791,7 +795,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'sunset', 'jett', 'ghost'],
     date: '2026-10-01',
     type: 'video',
-    videoId: '5vqrKEoRYUI'
+    videoId: '5vqrKEoRYUI',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/7hmRh7a0aOk/maxresdefault.jpg',
@@ -809,7 +814,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'haven', 'clove', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: '7w6fo0I36LI'
+    videoId: '7w6fo0I36LI',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/89-XDPmumUE/maxresdefault.jpg',
@@ -818,7 +824,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'breeze', 'chamber', 'guardian'],
     date: '2026-10-01',
     type: 'video',
-    videoId: '89-XDPmumUE'
+    videoId: '89-XDPmumUE',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/8fKkBfd_St0/maxresdefault.jpg',
@@ -827,7 +834,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'ascent', 'chamber', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: '8fKkBfd_St0'
+    videoId: '8fKkBfd_St0',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/AQCEUsw5PSc/maxresdefault.jpg',
@@ -845,7 +853,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'split', 'chamber', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'Bx_StGqEbps'
+    videoId: 'Bx_StGqEbps',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/EDLxam5-O7s/maxresdefault.jpg',
@@ -863,7 +872,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'split', 'chamber', 'bucky'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'EWMlL4fZrDA'
+    videoId: 'EWMlL4fZrDA',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/G0v9xTi48Gs/maxresdefault.jpg',
@@ -872,7 +882,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'haven', 'omen', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'G0v9xTi48Gs'
+    videoId: 'G0v9xTi48Gs',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/HiuCIyQBTuA/maxresdefault.jpg',
@@ -881,7 +892,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'pearl', 'astra', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'HiuCIyQBTuA'
+    videoId: 'HiuCIyQBTuA',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/KlgpnsWbaB4/maxresdefault.jpg',
@@ -926,7 +938,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'ascent', 'clove', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'O52Jtotu4i8'
+    videoId: 'O52Jtotu4i8',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/PxTPOOY-bcU/maxresdefault.jpg',
@@ -971,7 +984,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'haven', 'clove', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'bT70Au5LD6I'
+    videoId: 'bT70Au5LD6I',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/bcWBmsi--uM/maxresdefault.jpg',
@@ -989,7 +1003,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'haven', 'clove', 'ghost'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'fJZP_eAKJvo'
+    videoId: 'fJZP_eAKJvo',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/it45ShfTm4M/maxresdefault.jpg',
@@ -998,7 +1013,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'fracture', 'chamber', 'guardian'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'it45ShfTm4M'
+    videoId: 'it45ShfTm4M',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/kNc8Uly578s/maxresdefault.jpg',
@@ -1025,7 +1041,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'summit', 'clove', 'bundit'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'oe8jBlS6ojk'
+    videoId: 'oe8jBlS6ojk',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/ooJdHWZ3KyU/maxresdefault.jpg',
@@ -1034,7 +1051,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'haven', 'clove', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'ooJdHWZ3KyU'
+    videoId: 'ooJdHWZ3KyU',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/p35K09NJv8M/maxresdefault.jpg',
@@ -1052,7 +1070,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'sunset', 'clove', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'qPOMfYDTVBg'
+    videoId: 'qPOMfYDTVBg',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/sYukq2KxnUs/maxresdefault.jpg',
@@ -1079,7 +1098,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'haven', 'omen', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'u5yhldgN1i4'
+    videoId: 'u5yhldgN1i4',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/ukZkgIRBK5o/maxresdefault.jpg',
@@ -1097,7 +1117,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'sunset', 'chamber', 'vandal'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'vU79pWsoA-I'
+    videoId: 'vU79pWsoA-I',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/wnhM3KOPWHM/maxresdefault.jpg',
@@ -1106,7 +1127,8 @@ export const images: ImageData[] = [
     tags: ['動画', 'VALORANT', 'bind', 'waylay', 'spectre'],
     date: '2026-10-01',
     type: 'video',
-    videoId: 'wnhM3KOPWHM'
+    videoId: 'wnhM3KOPWHM',
+    visible: false
   },
   {
     src: 'https://img.youtube.com/vi/zw9QJLeZ2Uo/maxresdefault.jpg',
