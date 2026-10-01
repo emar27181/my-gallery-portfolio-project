@@ -11,6 +11,7 @@
 - `my-net-homepage-project/src/data/clips.json` の `score` 合計で順位付けし、45本中上位23本（上位50%相当）のみ表示。下位22本は `visible: false` で保持。
 
 ### 展示サイトの表示設定
+- `visible: false` 導入に合わせ、E2Eの期待値も表示対象だけを数えるよう更新。ローディング試験も1周再生後に閉じる仕様へ追従。
 - `visible: false` で作品データを残したままギャラリー表示をOFFにできるようにした。
 - Way Point Map / VALORANT Point Viewer / Card Pocket（デモ） / 色相・トーン推薦アプリを表示OFFに設定。
 
