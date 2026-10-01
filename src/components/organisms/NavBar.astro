@@ -30,11 +30,11 @@ const MENU_ID = "site-menu";
     </h1>
 
     <div class="navbar__actions">
-      <IconButton label="テーマを切り替える" id="theme-toggle">
+      <IconButton label="テーマを切り替える" id="theme-toggle" variant="ghost">
         <Icon name="sun" class="navbar__theme-icon navbar__theme-icon--light" />
         <Icon name="moon" class="navbar__theme-icon navbar__theme-icon--dark" />
       </IconButton>
-      <IconButton icon="menu" label="メニューを開く" data-drawer-open={MENU_ID} id="menu-toggle" />
+      <IconButton icon="menu" label="メニューを開く" variant="ghost" data-drawer-open={MENU_ID} id="menu-toggle" />
     </div>
   </div>
 </nav>
@@ -88,12 +88,6 @@ const MENU_ID = "site-menu";
   .navbar__actions {
     display: flex;
     gap: var(--space-8);
-  }
-  .navbar__actions :global(.button--outline) {
-    border-color: transparent;
-  }
-  .navbar__actions :global(.button--outline:hover) {
-    border-color: transparent;
   }
   /* テーマのアイコンは CSS だけで切り替える。Lucide アイコンは無彩色で統一する。 */
   .navbar__actions :global(.navbar__theme-icon--light) {
