@@ -60,3 +60,48 @@ export function tagsByUsage(items: readonly { tags: readonly string[] }[]): stri
   }
   return [...counts.keys()].sort((a, b) => counts.get(b)! - counts.get(a)!);
 }
+
+
+/**
+ * 作品データには保持するが、フィルター候補には出さない詳細メタデータタグ。
+ * VALORANT クリップの map / agent / 武器・プレイ属性を対象にする。
+ */
+export const HIDDEN_FILTER_TAGS = new Set([
+  '6kills',
+  'ascent',
+  'astra',
+  'bind',
+  'breeze',
+  'bucky',
+  'bundit',
+  'chamber',
+  'classic',
+  'clove',
+  'clutch',
+  'corrode',
+  'cypher',
+  'fracture',
+  'ghost',
+  'guardian',
+  'haven',
+  'icebox',
+  'jett',
+  'lotus',
+  'omen',
+  'onemagazine',
+  'op',
+  'pearl',
+  'smooth',
+  'spectre',
+  'split',
+  'summit',
+  'sunset',
+  'vandal',
+  'viper',
+  'waylay',
+] as const);
+
+/** フィルターUIに表示するタグだけを使用数順で返す */
+export function filterTagsByUsage(items: readonly { tags: readonly string[] }[]): string[] {
+  return tagsByUsage(items).filter((tag) => !HIDDEN_FILTER_TAGS.has(tag as never));
+}
