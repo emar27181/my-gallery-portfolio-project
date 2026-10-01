@@ -2,9 +2,12 @@
 
 ## Unreleased
 
+### VALORANT動画の表示選別
+- `my-net-homepage-project/src/data/clips.json` の `score` 合計で順位付けし、45本中上位23本（上位50%相当）のみ表示。下位22本は `visible: false` で保持。
+
 ### 展示サイトの表示設定
 - `visible: false` で作品データを残したままギャラリー表示をOFFにできるようにした。
-- Way Point Map / VALORANT Point Viewer / Card Pocket（デモ）を表示OFFに設定。
+- Way Point Map / VALORANT Point Viewer / Card Pocket（デモ） / 色相・トーン推薦アプリを表示OFFに設定。
 
 ### ローディング画面
 - サインアニメーションは画像の準備が早く終わっても、原本GIFのフレーム遅延から算出した **必ず1周分** を表示。1周後は最終フレームに差し替え、2周目以降はループさせず静止した状態で準備完了を待つ。
