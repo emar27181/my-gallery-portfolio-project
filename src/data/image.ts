@@ -4,6 +4,8 @@ interface WorkBase {
   tags: string[];
   /** YYYY-MM-DD */
   date: string;
+  /** false の作品はデータを残したままギャラリー表示から除外する */
+  visible?: boolean;
 }
 
 export interface ImageWork extends WorkBase {
@@ -603,6 +605,7 @@ export const images: ImageData[] = [
     title: 'Way Point Map',
     tags: ['サイト', 'オリジナル'],
     date: '2026-07-20',
+    visible: false,
     type: 'site'
   },
   {
@@ -630,6 +633,7 @@ export const images: ImageData[] = [
     title: 'VALORANT Point Viewer',
     tags: ['サイト', 'VALORANT', 'オリジナル'],
     date: '2026-05-17',
+    visible: false,
     type: 'site'
   },
   {
@@ -639,6 +643,7 @@ export const images: ImageData[] = [
     title: 'Card Pocket（デモ）',
     tags: ['サイト', 'オリジナル'],
     date: '2026-03-19',
+    visible: false,
     type: 'site'
   },
   {
