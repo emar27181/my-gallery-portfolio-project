@@ -512,7 +512,155 @@ export const images: ImageData[] = [
     type: 'image'
   },
 
-  // YouTube Videos
+  // YouTube Videos（VALORANT以外）
+  {
+    src: 'https://img.youtube.com/vi/1-tDSvjpxn4/maxresdefault.jpg',
+    alt: 'YouTube Video 4',
+    title: 'YouTube Video 4',
+    tags: ['動画', '猫', 'イラスト', 'オリジナル'],
+    date: '2024-12-05',
+    type: 'video',
+    videoId: '1-tDSvjpxn4'
+  },
+  {
+    src: 'https://img.youtube.com/vi/xGOPNPI7R18/maxresdefault.jpg',
+    alt: 'YouTube Video 8',
+    title: 'YouTube Video 8',
+    tags: ['動画', 'スノボ'],
+    date: '2025-01-08',
+    type: 'video',
+    videoId: 'xGOPNPI7R18'
+  },
+  {
+    src: 'https://img.youtube.com/vi/geEyOgN0SxU/maxresdefault.jpg',
+    alt: 'YouTube Video 9',
+    title: 'YouTube Video 9',
+    tags: ['動画', 'スノボ'],
+    date: '2025-01-09',
+    type: 'video',
+    videoId: 'geEyOgN0SxU'
+  },
+
+  // Web Sites（試作の展示のため末尾に置く。出典: https://emar27181-portfolio.netlify.app/ の制作物。日付は各リポジトリの最終更新日。
+  // poster の画面写真の出典は emar27181/my-homepage-project-Resume の src/assets）
+  {
+    url: 'https://emar27181-portfolio.netlify.app/',
+    poster: 'emar27181-portfolio.png',
+    alt: '経歴などをまとめたポートフォリオサイトです．',
+    title: 'ポートフォリオ',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-16',
+    type: 'site'
+  },
+  {
+    url: 'https://flex-railway-map.netlify.app/',
+    poster: 'flex-railway-map.png',
+    alt: '情報が多すぎる路線図を必要な路線だけに絞って見やすく表示できるサービスです．',
+    title: 'Flex Railway Map',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-29',
+    type: 'site'
+  },
+  {
+    url: 'https://memorio3.netlify.app/',
+    alt: '日々の出来事を記録し、振り返るための個人用ログです．',
+    title: 'Memorio',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-29',
+    type: 'site'
+  },
+  {
+    url: 'https://music-atlas.netlify.app/',
+    poster: 'music-atlas.jpg',
+    alt: '聴いている音楽の統計をまとめたサイトです．カラオケ向きの曲の分析や、聴いている曲の分布をプロットで確認できます．',
+    title: 'Music Atlas',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-28',
+    type: 'site'
+  },
+  {
+    url: 'https://waste-tax.netlify.app/onboarding',
+    poster: 'waste-tax.jpg',
+    alt: '研修で作成したサイトを普段から利用できるように模倣・再構成したサイトです．',
+    title: 'TAKUS',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-09-28',
+    type: 'site'
+  },
+  {
+    url: 'https://throw-frow-darts.netlify.app/',
+    poster: 'throw-frow-darts.jpg',
+    alt: '自宅でのダーツの記録を、音とデザインでゲームのように楽しく記録できるアプリです．',
+    title: 'ThrowFlowDarts',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-08-11',
+    type: 'site'
+  },
+  {
+    url: 'https://way-point-map.netlify.app/',
+    poster: 'way-point-map.jpg',
+    alt: 'ゴルフ場をマップ上で1球あたりの単価などで比較できるサイトです．フィルタリングやヒートマップにも対応しています．',
+    title: 'Way Point Map',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-07-20',
+    type: 'site'
+  },
+  {
+    url: 'https://window-brain.netlify.app/',
+    poster: 'window-brain.jpg',
+    alt: '使っていないモニターに時計・BGM・天気などのウィジェットを自由に配置できるサイトです．',
+    title: 'Window Brain',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-07-05',
+    type: 'site'
+  },
+  {
+    url: 'https://nodoame27181.netlify.app/',
+    poster: 'nodoame27181.png',
+    alt: 'ゲームアカウントに関する情報やプレイ実績をまとめたポートフォリオサイトです．',
+    title: 'ゲーム用ポートフォリオ',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-07-05',
+    type: 'site'
+  },
+  {
+    url: 'https://valorant-point-viewer.netlify.app/',
+    poster: 'valorant-point-viewer.png',
+    alt: 'VALORANT の各マップの定点動画をマップ上で確認できるサイトです．',
+    title: 'VALORANT Point Viewer',
+    tags: ['サイト', 'VALORANT', 'オリジナル'],
+    date: '2026-05-17',
+    type: 'site'
+  },
+  {
+    url: 'https://card-pocket.netlify.app/',
+    poster: 'card-pocket.png',
+    alt: '持ち運びの面倒な会員証をデジタルで管理するサービスのデモサイトです．',
+    title: 'Card Pocket（デモ）',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-03-19',
+    type: 'site'
+  },
+  {
+    url: 'https://color-recommend.netlify.app/',
+    poster: 'color-recommend.png',
+    alt: '研究内容であるイラスト制作における色の推薦のデモです．',
+    title: '色相・トーン推薦アプリ',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-02-07',
+    type: 'site'
+  },
+  {
+    url: 'https://mahjong-yaku-visualizer.netlify.app/',
+    poster: 'mahjong-yaku-visualizer.png',
+    alt: '麻雀の役を視覚的に確認できるサイトです．',
+    title: '麻雀役ビジュアライザー',
+    tags: ['サイト', 'オリジナル'],
+    date: '2026-01-16',
+    type: 'site'
+  },
+
+  // VALORANT Videos（カスタム順ではデモサイト群の後、最後に表示）
   {
     src: 'https://img.youtube.com/vi/oos2PYWiRGM/maxresdefault.jpg',
     alt: 'YouTube Video 1',
@@ -539,15 +687,6 @@ export const images: ImageData[] = [
     date: '2024-12-06',
     type: 'video',
     videoId: 'KTwFA1jQgFY'
-  },
-  {
-    src: 'https://img.youtube.com/vi/1-tDSvjpxn4/maxresdefault.jpg',
-    alt: 'YouTube Video 4',
-    title: 'YouTube Video 4',
-    tags: ['動画', '猫', 'イラスト', 'オリジナル'],
-    date: '2024-12-05',
-    type: 'video',
-    videoId: '1-tDSvjpxn4'
   },
   {
     src: 'https://img.youtube.com/vi/pqynYQGtxUM/maxresdefault.jpg',
@@ -577,24 +716,6 @@ export const images: ImageData[] = [
     videoId: 'MPVyQnYQ6wo'
   },
   {
-    src: 'https://img.youtube.com/vi/xGOPNPI7R18/maxresdefault.jpg',
-    alt: 'YouTube Video 8',
-    title: 'YouTube Video 8',
-    tags: ['動画', 'スノボ'],
-    date: '2025-01-08',
-    type: 'video',
-    videoId: 'xGOPNPI7R18'
-  },
-  {
-    src: 'https://img.youtube.com/vi/geEyOgN0SxU/maxresdefault.jpg',
-    alt: 'YouTube Video 9',
-    title: 'YouTube Video 9',
-    tags: ['動画', 'スノボ'],
-    date: '2025-01-09',
-    type: 'video',
-    videoId: 'geEyOgN0SxU'
-  },
-  {
     src: 'https://img.youtube.com/vi/V_hx-ft8w88/maxresdefault.jpg',
     alt: 'YouTube Video 10',
     title: 'YouTube Video 10',
@@ -612,7 +733,6 @@ export const images: ImageData[] = [
     type: 'video',
     videoId: '5IET-4mL9pA'
   },
-
   {
     src: 'https://img.youtube.com/vi/0oLw64DxEww/maxresdefault.jpg',
     alt: 'CorrodeWaylay UltBuckeyAce の VALORANT プレイ動画',
@@ -990,124 +1110,5 @@ export const images: ImageData[] = [
     date: '2026-10-01',
     type: 'video',
     videoId: 'zw9QJLeZ2Uo'
-  },
-
-  // Web Sites（試作の展示のため末尾に置く。出典: https://emar27181-portfolio.netlify.app/ の制作物。日付は各リポジトリの最終更新日。
-  // poster の画面写真の出典は emar27181/my-homepage-project-Resume の src/assets）
-  {
-    url: 'https://emar27181-portfolio.netlify.app/',
-    poster: 'emar27181-portfolio.png',
-    alt: '経歴などをまとめたポートフォリオサイトです．',
-    title: 'ポートフォリオ',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-09-16',
-    type: 'site'
-  },
-  {
-    url: 'https://flex-railway-map.netlify.app/',
-    poster: 'flex-railway-map.png',
-    alt: '情報が多すぎる路線図を必要な路線だけに絞って見やすく表示できるサービスです．',
-    title: 'Flex Railway Map',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-09-29',
-    type: 'site'
-  },
-  {
-    url: 'https://memorio3.netlify.app/',
-    alt: '日々の出来事を記録し、振り返るための個人用ログです．',
-    title: 'Memorio',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-09-29',
-    type: 'site'
-  },
-  {
-    url: 'https://music-atlas.netlify.app/',
-    poster: 'music-atlas.jpg',
-    alt: '聴いている音楽の統計をまとめたサイトです．カラオケ向きの曲の分析や、聴いている曲の分布をプロットで確認できます．',
-    title: 'Music Atlas',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-09-28',
-    type: 'site'
-  },
-  {
-    url: 'https://waste-tax.netlify.app/onboarding',
-    poster: 'waste-tax.jpg',
-    alt: '研修で作成したサイトを普段から利用できるように模倣・再構成したサイトです．',
-    title: 'TAKUS',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-09-28',
-    type: 'site'
-  },
-  {
-    url: 'https://throw-frow-darts.netlify.app/',
-    poster: 'throw-frow-darts.jpg',
-    alt: '自宅でのダーツの記録を、音とデザインでゲームのように楽しく記録できるアプリです．',
-    title: 'ThrowFlowDarts',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-08-11',
-    type: 'site'
-  },
-  {
-    url: 'https://way-point-map.netlify.app/',
-    poster: 'way-point-map.jpg',
-    alt: 'ゴルフ場をマップ上で1球あたりの単価などで比較できるサイトです．フィルタリングやヒートマップにも対応しています．',
-    title: 'Way Point Map',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-07-20',
-    type: 'site'
-  },
-  {
-    url: 'https://window-brain.netlify.app/',
-    poster: 'window-brain.jpg',
-    alt: '使っていないモニターに時計・BGM・天気などのウィジェットを自由に配置できるサイトです．',
-    title: 'Window Brain',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-07-05',
-    type: 'site'
-  },
-  {
-    url: 'https://nodoame27181.netlify.app/',
-    poster: 'nodoame27181.png',
-    alt: 'ゲームアカウントに関する情報やプレイ実績をまとめたポートフォリオサイトです．',
-    title: 'ゲーム用ポートフォリオ',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-07-05',
-    type: 'site'
-  },
-  {
-    url: 'https://valorant-point-viewer.netlify.app/',
-    poster: 'valorant-point-viewer.png',
-    alt: 'VALORANT の各マップの定点動画をマップ上で確認できるサイトです．',
-    title: 'VALORANT Point Viewer',
-    tags: ['サイト', 'VALORANT', 'オリジナル'],
-    date: '2026-05-17',
-    type: 'site'
-  },
-  {
-    url: 'https://card-pocket.netlify.app/',
-    poster: 'card-pocket.png',
-    alt: '持ち運びの面倒な会員証をデジタルで管理するサービスのデモサイトです．',
-    title: 'Card Pocket（デモ）',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-03-19',
-    type: 'site'
-  },
-  {
-    url: 'https://color-recommend.netlify.app/',
-    poster: 'color-recommend.png',
-    alt: '研究内容であるイラスト制作における色の推薦のデモです．',
-    title: '色相・トーン推薦アプリ',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-02-07',
-    type: 'site'
-  },
-  {
-    url: 'https://mahjong-yaku-visualizer.netlify.app/',
-    poster: 'mahjong-yaku-visualizer.png',
-    alt: '麻雀の役を視覚的に確認できるサイトです．',
-    title: '麻雀役ビジュアライザー',
-    tags: ['サイト', 'オリジナル'],
-    date: '2026-01-16',
-    type: 'site'
   },
 ];
