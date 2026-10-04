@@ -19,10 +19,11 @@ const tagOptions = filterTagsByUsage(entries).map((tag) => ({ value: tag, label:
 // HTML を読んだ時点で取りに行く枚数（最大列数 = 最初の1行ぶん）。残りはスクリプトが画面に入る分を判断する
 const EAGER_COUNT = Math.max(...GALLERY_BREAKPOINTS.map((bp) => bp.columns));
 const LIGHTBOX_ID = "image-lightbox";
-const VIEWER_ID = "site-viewer";
+const VIEWER_ID = "content-viewer";
 
 const youtubeEmbed = (videoId: string) =>
   `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
+const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${videoId}`;
 ---
 
 <style is:global set:html={galleryGridCss(".gallery-grid")}></style>
@@ -76,15 +77,21 @@ const youtubeEmbed = (videoId: string) =>
                 <EmbedFrame
                   url={entry.url}
                   title={title}
-                  activateLabel="クリックで操作"
+                  activateLabel="操作する"
                   deactivateLabel="操作を終える"
                   openLabel="新しいタブで開く"
-                  expandLabel="全画面で見る"
+                  expandLabel="大きく見る"
                   poster={img}
                   data-full={full}
                 />
               ) : entry.type === "video" ? (
-                <VideoEmbed embedUrl={youtubeEmbed(entry.videoId)} title={title} playLabel="再生" thumbnail={img ?? {}} />
+                <VideoEmbed
+                  embedUrl={youtubeEmbed(entry.videoId)}
+                  externalUrl={youtubeWatch(entry.videoId)}
+                  title={title}
+                  playLabel="大きく再生"
+                  thumbnail={img ?? {}}
+                />
               ) : (
                 <>
                   <img {...img} />
@@ -103,8 +110,8 @@ const youtubeEmbed = (videoId: string) =>
 <EmbedViewer
   id={VIEWER_ID}
   closeLabel="全画面を終える"
-  prevLabel="前のサイト"
-  nextLabel="次のサイト"
+  prevLabel="前のコンテンツ"
+  nextLabel="次のコンテンツ"
   openLabel="新しいタブで開く"
   positionLabel="{current} / {total}"
 />
@@ -301,12 +308,31 @@ const youtubeEmbed = (videoId: string) =>
     );
   });
 
-  // Web サイトの全画面表示: いま表示中のサイトを並び順どおりに前後で切り替えられるようにする
+  // サイトと動画は共通の拡大ビューで扱う。
+  // 現在のフィルタ・並び替え後の順序をそのまま左右ナビゲーションへ引き継ぐ。
   grid.addEventListener("embed-expand", (e) => {
-    const sites = lastShown.filter((entry) => entry.el.dataset.type === "site");
-    const items = sites.map((entry) => {
-      const embed = entry.el.querySelector<HTMLElement>("[data-embed]")!;
-      return { url: embed.dataset.url ?? "", title: embed.dataset.title ?? "", poster: embed.dataset.full };
+    const media = lastShown.filter((entry) => {
+      const type = entry.el.dataset.type;
+      return type === "site" || type === "video";
+    });
+    const items = media.map((entry) => {
+      if (entry.el.dataset.type === "site") {
+        const embed = entry.el.querySelector<HTMLElement>("[data-embed]")!;
+        return {
+          url: embed.dataset.url ?? "",
+          openUrl: embed.dataset.url ?? "",
+          title: embed.dataset.title ?? "",
+          poster: embed.dataset.full,
+        };
+      }
+      const video = entry.el.querySelector<HTMLElement>("[data-video]")!;
+      const poster = video.querySelector<HTMLImageElement>("[data-video-thumbnail]");
+      return {
+        url: video.dataset.url ?? "",
+        openUrl: video.dataset.externalUrl ?? "",
+        title: video.dataset.title ?? "",
+        poster: poster?.currentSrc || poster?.src,
+      };
     });
     const { url } = (e as CustomEvent<{ url: string }>).detail;
     document.dispatchEvent(
