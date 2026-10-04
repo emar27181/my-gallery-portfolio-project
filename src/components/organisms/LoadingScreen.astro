@@ -46,6 +46,20 @@ const { loading } = await getBrandImages();
     max-width: 40vw;
     max-height: 40vh;
     object-fit: contain;
+    /*
+     * 元GIFには黒線の外側に白いフリンジが残っている。
+     * ライトでは multiply で白を背景へ溶かし、黒線だけを残す。
+     */
+    mix-blend-mode: multiply;
+  }
+  /*
+   * ダークでは色を反転して白線にし、screen 合成する。
+   * 反転で黒くなった元の白フリンジは screen 上で背景色そのものになるため、
+   * #000 の縁として浮かず、現在の --color-bg に自然に馴染む。
+   */
+  :global([data-theme="dark"]) .loading__animation {
+    filter: invert(1);
+    mix-blend-mode: screen;
   }
   /* 読み込み中も visibility で隠すだけにしてレイアウトさせる（display: none だと画像が遅延読み込みされない） */
   :global([data-loading-hidden]) {
