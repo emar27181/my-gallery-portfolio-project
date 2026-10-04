@@ -94,6 +94,11 @@
 - **ハンバーガーメニュー**（一番右）
   - メインポートフォリオサイトへのリンク（https://emar27181-portfolio.netlify.app/）
 
+### 4.5 ローディングアニメーション
+- ローディングのサインアニメーションはライトテーマでは黒線、ダークテーマでは `filter: invert(1)` で白線にする
+- 元GIFに残る白いフリンジを目立たせないため、ライトでは `mix-blend-mode: multiply`、ダークでは `mix-blend-mode: screen` を使い、フリンジを現在の背景色へ馴染ませる
+- 背景色を画像側へ固定値で焼き込まず、`--color-bg` の変更に追従すること
+
 ### 4.5 PWA
 - ホーム画面のアイコンはローディング画面のサイン（描き終わった形）。ビルド時に `src/lib/app-icons.ts` が生成し、
   マニフェストは `/manifest.webmanifest`（色は tokens.css、名前は `src/lib/site.ts`）
