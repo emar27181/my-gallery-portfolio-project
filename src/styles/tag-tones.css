@@ -1,0 +1,44 @@
+/*
+ * タグの tone → デザイントークン対応の唯一の定義元。
+ * タグ名 → tone は src/lib/tag-visuals.ts、実際の色値は tokens.css が管理する。
+ */
+[data-tone="neutral"] {
+  --tag-color: var(--color-tag-neutral);
+  --tag-on-color: var(--color-white);
+}
+[data-tone="red"] {
+  --tag-color: var(--color-tag-red);
+  --tag-on-color: var(--color-white);
+}
+[data-tone="blue"] {
+  --tag-color: var(--color-tag-blue);
+  --tag-on-color: var(--color-white);
+}
+[data-tone="violet"] {
+  --tag-color: var(--color-tag-violet);
+  --tag-on-color: var(--color-white);
+}
+[data-tone="emerald"] {
+  --tag-color: var(--color-tag-emerald);
+  --tag-on-color: var(--color-black);
+}
+[data-tone="orange"] {
+  --tag-color: var(--color-tag-orange);
+  --tag-on-color: var(--color-black);
+}
+[data-tone="pink"] {
+  --tag-color: var(--color-tag-pink);
+  --tag-on-color: var(--color-white);
+}
+[data-tone="cyan"] {
+  --tag-color: var(--color-tag-cyan);
+  --tag-on-color: var(--color-black);
+}
+[data-tone="amber"] {
+  --tag-color: var(--color-tag-amber);
+  --tag-on-color: var(--color-black);
+}
+[data-tone="indigo"] {
+  --tag-color: var(--color-tag-indigo);
+  --tag-on-color: var(--color-white);
+}
