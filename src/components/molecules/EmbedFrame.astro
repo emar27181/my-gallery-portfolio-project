@@ -124,6 +124,10 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel, post
   .embed.is-active :global([data-embed-activate]) {
     display: none;
   }
+  /* インライン操作中は、viewport 全面の拡大用 CoverButton が iframe のクリックを奪わないようにする */
+  .embed.is-active .embed__viewport :global([data-embed-expand]) {
+    display: none;
+  }
 </style>
 
 <script>
