@@ -16,7 +16,7 @@ const { id, options, value, label, icon = "sort" } = Astro.props;
 const selected = options.find((option) => option.value === value) ?? options[0];
 ---
 
-<div class="selection-menu singleselect" id={id} data-singleselect data-value={selected?.value ?? ""}>
+<div class="selection-menu selection-menu--end singleselect" id={id} data-singleselect data-value={selected?.value ?? ""}>
   <Button
     class="selection-menu__trigger"
     variant="outline"
