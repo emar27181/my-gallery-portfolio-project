@@ -131,7 +131,7 @@ primary はライトで `#3b82f6` → `#2563eb`、ダークの on-primary は白
 | :--- | :--- | :--- |
 | `--layout-navbar-height` | `60px` | ナビゲーションバー（CLAUDE.md で固定） |
 | `--layout-content-max-width` | `1200px` | ナビの中身の最大幅 |
-| `--layout-control-width` | `180px` | フィルタと並び替えの幅（揃える） |
+| `--layout-control-width` | `180px` | タグ選択ボタンの基準幅 |
 | `--layout-drawer-width` | `300px` | メニューのパネル（画面幅の 80% を上限） |
 
 画面幅での切り替え（`@media` の幅指定）はコンポーネントに書かない。ギャラリーの列数だけは
