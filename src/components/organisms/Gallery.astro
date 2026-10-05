@@ -6,7 +6,6 @@ import Select from "../atoms/Select.astro";
 import Tile from "../atoms/Tile.astro";
 import EmbedFrame from "../molecules/EmbedFrame.astro";
 import EmbedViewer from "../molecules/EmbedViewer.astro";
-import Field from "../molecules/Field.astro";
 import Lightbox from "../molecules/Lightbox.astro";
 import MultiSelect from "../molecules/MultiSelect.astro";
 import VideoEmbed from "../molecules/VideoEmbed.astro";
@@ -37,9 +36,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
       allLabel="全て"
       removeLabel="{label} を解除"
     />
-    <Field label="並び替え:" for="sort-select">
-      <Select id="sort-select" options={SORT_OPTIONS} value={DEFAULT_SORT} />
-    </Field>
+    <Select id="sort-select" options={SORT_OPTIONS} value={DEFAULT_SORT} aria-label="並び替え" />
   </div>
 
   <div id="gallery" class="gallery-grid" data-lightbox-id={LIGHTBOX_ID} data-viewer-id={VIEWER_ID}>
