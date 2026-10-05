@@ -52,6 +52,11 @@
   --color-tag-cyan: var(--color-cyan-600);
   --color-tag-amber: var(--color-amber-500);
   --color-tag-indigo: var(--color-indigo-500);
+  /* コンポーネントが上書きするローカル意味色の既定値 */
+  --tag-color: var(--color-tag-neutral);
+  --tag-on-color: var(--color-white);
+  --viewer-accent: var(--color-surface);
+  --viewer-ink: var(--color-text);
   /* 写真・動画の上に載せる操作部品（テーマによらず明るい地に暗い文字） */
   --color-media-control: color-mix(in srgb, var(--color-white) 90%, transparent);
   --color-on-media-control: var(--color-gray-900);
