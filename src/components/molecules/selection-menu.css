@@ -69,3 +69,19 @@
   background-color: var(--tag-color);
   color: var(--tag-on-color);
 }
+
+
+.selection-menu--end .selection-menu__menu {
+  left: auto;
+  right: 0;
+}
+
+.selection-menu__menu {
+  max-width: calc(100vw - var(--space-16) * 2);
+}
+
+.selection-menu__option {
+  flex: 0 0 auto;
+  min-height: var(--control-height-sm);
+  padding-inline: var(--space-10);
+}
