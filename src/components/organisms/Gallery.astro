@@ -30,15 +30,13 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
 
 <section class="gallery">
   <div class="gallery__controls">
-    <Field label="フィルタ:">
-      <MultiSelect
-        id="tag-filter"
-        options={tagOptions}
-        placeholder="タグを選択"
-        allLabel="全て"
-        removeLabel="{label} を解除"
-      />
-    </Field>
+    <MultiSelect
+      id="tag-filter"
+      options={tagOptions}
+      placeholder="タグ"
+      allLabel="全て"
+      removeLabel="{label} を解除"
+    />
     <Field label="並び替え:" for="sort-select">
       <Select id="sort-select" options={SORT_OPTIONS} value={DEFAULT_SORT} />
     </Field>
@@ -67,6 +65,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
             data-date={date}
             data-tags={tags.join(",")}
             data-type={type}
+            data-color={color}
             data-aspect={height / width}
             data-aspect-narrow={type === "site" ? SITE_FRAME_NARROW.height / SITE_FRAME_NARROW.width : undefined}
             data-span={span}
@@ -125,7 +124,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-12) var(--space-24);
+    gap: var(--space-8) var(--space-16);
     margin: 0 var(--space-16) var(--space-12);
   }
 
@@ -323,6 +322,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
           openUrl: embed.dataset.url ?? "",
           title: embed.dataset.title ?? "",
           poster: embed.dataset.full,
+          color: entry.el.dataset.color,
         };
       }
       const video = entry.el.querySelector<HTMLElement>("[data-video]")!;
@@ -332,6 +332,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
         openUrl: video.dataset.externalUrl ?? "",
         title: video.dataset.title ?? "",
         poster: poster?.currentSrc || poster?.src,
+        color: entry.el.dataset.color,
       };
     });
     const { url } = (e as CustomEvent<{ url: string }>).detail;
