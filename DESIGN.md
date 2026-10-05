@@ -42,6 +42,7 @@ Pinterest と違えている点（このサイトで既に決めた見た目を�
 | :--- | :--- | :--- |
 | `--color-bg` | `var(--color-gray-50)` | ページの地 |
 | `--color-surface` | `var(--color-white)` | ナビ・入力欄・メニューなど面の地 |
+| `--color-tag-*` | semantic palette | タグの意味色。値は tokens.css、タグ名との対応は src/lib/tag-visuals.ts |
 | `--color-surface-muted` | `var(--color-gray-200)` | チップの地など控えめな面 |
 | `--color-surface-hover` | `var(--color-gray-300)` | 面のホバー |
 | `--color-text` | `var(--color-gray-900)` | 本文 |
