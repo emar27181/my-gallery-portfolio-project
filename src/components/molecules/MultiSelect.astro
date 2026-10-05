@@ -8,7 +8,7 @@ import RemovableChip from "./RemovableChip.astro";
 
 interface Props {
   id: string;
-  options: readonly { value: string; label: string }[];
+  options: readonly { value: string; label: string; tone?: string }[];
   placeholder: string;
   /** 全解除の選択肢の文言 */
   allLabel: string;
@@ -29,6 +29,7 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     aria-expanded="false"
     aria-controls={`${id}-menu`}
   >
+    <Icon name="tags" size="sm" />
     <span data-multiselect-placeholder>{placeholder}</span>
     <span class="multiselect__count" data-multiselect-count hidden></span>
     <Icon name="chevronDown" size="sm" class="multiselect__chevron" />
@@ -38,7 +39,15 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     <Button variant="ghost" size="sm" shape="pill" role="option" aria-selected="true" data-option="">{allLabel}</Button>
     {
       options.map((option) => (
-        <Button variant="ghost" size="sm" shape="pill" role="option" aria-selected="false" data-option={option.value}>
+        <Button
+          variant="ghost"
+          size="sm"
+          shape="pill"
+          role="option"
+          aria-selected="false"
+          data-option={option.value}
+          data-tone={option.tone}
+        >
           {option.label}
         </Button>
       ))
@@ -55,11 +64,12 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
 <style>
   .multiselect {
     position: relative;
-    width: var(--layout-control-width);
+    width: fit-content;
   }
   .multiselect :global(.multiselect__box) {
     justify-content: flex-start;
-    width: 100%;
+    width: auto;
+    border-radius: var(--radius-pill);
     color: var(--color-text);
   }
   .multiselect__count {
@@ -114,8 +124,8 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     const count = root.querySelector<HTMLElement>("[data-multiselect-count]")!;
     const template = root.querySelector<HTMLTemplateElement>("template[data-multiselect-chip]")!;
     const options = [...menu.querySelectorAll<HTMLElement>("[data-option]")];
-    const labelOf = (value: string) =>
-      options.find((o) => o.dataset.option === value)?.textContent?.trim() ?? value;
+    const optionOf = (value: string) => options.find((o) => o.dataset.option === value);
+    const labelOf = (value: string) => optionOf(value)?.textContent?.trim() ?? value;
 
     let selected: string[] = [];
 
@@ -129,6 +139,8 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
         ...selected.map((value) => {
           const chip = (template.content.cloneNode(true) as DocumentFragment).firstElementChild as HTMLElement;
           chip.querySelector("[data-chip-label]")!.textContent = labelOf(value);
+          const tone = optionOf(value)?.dataset.tone;
+          if (tone) chip.dataset.tone = tone;
           const remove = chip.querySelector<HTMLElement>("[data-chip-remove]")!;
           const name = (root.dataset.removeLabel ?? "").replace("{label}", labelOf(value));
           remove.dataset.value = value;
