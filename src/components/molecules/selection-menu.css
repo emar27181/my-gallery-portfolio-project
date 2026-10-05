@@ -1,0 +1,52 @@
+@import "../../styles/tag-tones.css";
+
+.selection-menu {
+  position: relative;
+  width: fit-content;
+}
+
+.selection-menu .selection-menu__trigger {
+  justify-content: flex-start;
+  width: auto;
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+}
+
+.selection-menu__trigger .selection-menu__chevron {
+  margin-inline-start: auto;
+  color: var(--color-text-muted);
+}
+
+.selection-menu__menu {
+  position: absolute;
+  top: calc(100% + var(--space-4));
+  left: 0;
+  z-index: var(--z-dropdown);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  width: min(calc(var(--layout-control-width) * 2), calc(100vw - var(--space-16) * 2));
+  max-height: calc(var(--control-height-md) * 6);
+  padding: var(--space-8);
+  overflow-y: auto;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-md);
+}
+
+.selection-menu__option[data-tone] {
+  border-color: transparent;
+  background-color: color-mix(in srgb, var(--tag-color) 12%, var(--color-surface));
+  color: var(--tag-color);
+}
+
+.selection-menu__option[data-tone]:hover {
+  background-color: color-mix(in srgb, var(--tag-color) 22%, var(--color-surface));
+}
+
+.selection-menu__option[data-tone][aria-selected="true"] {
+  background-color: var(--tag-color);
+  color: var(--tag-on-color);
+}
