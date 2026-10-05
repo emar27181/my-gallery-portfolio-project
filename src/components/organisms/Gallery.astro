@@ -10,11 +10,12 @@ import Lightbox from "../molecules/Lightbox.astro";
 import MultiSelect from "../molecules/MultiSelect.astro";
 import VideoEmbed from "../molecules/VideoEmbed.astro";
 import { DEFAULT_SORT, SORT_OPTIONS, filterTagsByUsage } from "../../lib/gallery";
+import { tagTone } from "../../lib/tag-visuals";
 import { GALLERY_BREAKPOINTS, SITE_FRAME_NARROW, galleryGridCss, gallerySizes } from "../../lib/gallery-grid";
 import { getGalleryEntries } from "../../lib/gallery-images";
 
 const entries = await getGalleryEntries();
-const tagOptions = filterTagsByUsage(entries).map((tag) => ({ value: tag, label: tag }));
+const tagOptions = filterTagsByUsage(entries).map((tag) => ({ value: tag, label: tag, tone: tagTone(tag) }));
 // HTML を読んだ時点で取りに行く枚数（最大列数 = 最初の1行ぶん）。残りはスクリプトが画面に入る分を判断する
 const EAGER_COUNT = Math.max(...GALLERY_BREAKPOINTS.map((bp) => bp.columns));
 const LIGHTBOX_ID = "image-lightbox";
@@ -121,7 +122,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-8) var(--space-16);
+    gap: var(--space-8);
     margin: 0 var(--space-16) var(--space-12);
   }
 
