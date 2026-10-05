@@ -1,6 +1,7 @@
 ---
 // チップ（atom）。色・文言・選択状態だけを受け取る。何を表すかは呼び出し側が決める。
 import type { HTMLAttributes } from "astro/types";
+import "../../styles/tag-tones.css";
 
 type Props = HTMLAttributes<"span"> & {
   /** 塗り（primary）で示す */
@@ -29,7 +30,7 @@ const { selected = false, class: className, ...rest } = Astro.props;
     white-space: nowrap;
   }
   .chip--selected {
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
+    background-color: var(--tag-color, var(--color-primary));
+    color: var(--tag-on-color, var(--color-on-primary));
   }
 </style>

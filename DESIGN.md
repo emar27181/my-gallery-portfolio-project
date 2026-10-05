@@ -42,6 +42,7 @@ Pinterest と違えている点（このサイトで既に決めた見た目を�
 | :--- | :--- | :--- |
 | `--color-bg` | `var(--color-gray-50)` | ページの地 |
 | `--color-surface` | `var(--color-white)` | ナビ・入力欄・メニューなど面の地 |
+| `--color-tag-*` | semantic palette | タグの意味色。値は tokens.css、タグ名との対応は src/lib/tag-visuals.ts |
 | `--color-surface-muted` | `var(--color-gray-200)` | チップの地など控えめな面 |
 | `--color-surface-hover` | `var(--color-gray-300)` | 面のホバー |
 | `--color-text` | `var(--color-gray-900)` | 本文 |
@@ -131,7 +132,7 @@ primary はライトで `#3b82f6` → `#2563eb`、ダークの on-primary は白
 | :--- | :--- | :--- |
 | `--layout-navbar-height` | `60px` | ナビゲーションバー（CLAUDE.md で固定） |
 | `--layout-content-max-width` | `1200px` | ナビの中身の最大幅 |
-| `--layout-control-width` | `180px` | フィルタと並び替えの幅（揃える） |
+| `--layout-control-width` | `180px` | タグ選択ボタンの基準幅 |
 | `--layout-drawer-width` | `300px` | メニューのパネル（画面幅の 80% を上限） |
 
 画面幅での切り替え（`@media` の幅指定）はコンポーネントに書かない。ギャラリーの列数だけは
@@ -207,3 +208,9 @@ molecules は動きも持つ（開閉・選択など）。organisms にはカス
 - **実描画**（`npm run measure:styles -- <ラベル>`）: ブラウザで全要素の computed style を集計し、
   画面に実在する文字サイズ・角丸・余白・色・操作部品の高さの種類と件数を `reports/` に出す。
   静的な検査は「書かれているか」しか分からないので、見た目を変えたら両方を見る。
+
+
+### 選択系コントロール
+- タグ選択と並び替えは `src/components/molecules/selection-menu.css` を共通の見た目定義として使う。
+- 高さは `--control-height-md`、幅は `--layout-control-width`、トリガーと候補の文字は `--font-size-body`、左右余白は `--space-12` を使う。
+- 選択値が変わっても幅・文字サイズ・余白を変えず、隣のコントロールが動かないこと。

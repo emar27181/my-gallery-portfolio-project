@@ -18,6 +18,12 @@
   --color-gray-900: #111827;
   --color-blue-400: #60a5fa;
   --color-blue-600: #2563eb;
+  --color-red-600: #dc2626;
+  --color-violet-600: #7c3aed;
+  --color-emerald-600: #059669;
+  --color-orange-600: #ea580c;
+  --color-pink-600: #db2777;
+  --color-cyan-600: #0891b2;
   --color-amber-500: #f59e0b;
   --color-indigo-500: #6366f1;
 
@@ -34,6 +40,23 @@
   --color-placeholder: var(--color-gray-300);
   --color-accent-warm: var(--color-amber-500);
   --color-accent-cool: var(--color-indigo-500);
+
+  /* タグ色。値はここだけで管理し、タグ名との対応は src/lib/tag-visuals.ts に置く */
+  --color-tag-neutral: var(--color-gray-600);
+  --color-tag-red: var(--color-red-600);
+  --color-tag-blue: var(--color-blue-600);
+  --color-tag-violet: var(--color-violet-600);
+  --color-tag-emerald: var(--color-emerald-600);
+  --color-tag-orange: var(--color-orange-600);
+  --color-tag-pink: var(--color-pink-600);
+  --color-tag-cyan: var(--color-cyan-600);
+  --color-tag-amber: var(--color-amber-500);
+  --color-tag-indigo: var(--color-indigo-500);
+  /* コンポーネントが上書きするローカル意味色の既定値 */
+  --tag-color: var(--color-tag-neutral);
+  --tag-on-color: var(--color-white);
+  --viewer-accent: var(--color-surface);
+  --viewer-ink: var(--color-text);
   /* 写真・動画の上に載せる操作部品（テーマによらず明るい地に暗い文字） */
   --color-media-control: color-mix(in srgb, var(--color-white) 90%, transparent);
   --color-on-media-control: var(--color-gray-900);

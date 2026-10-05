@@ -2,45 +2,42 @@
 // ギャラリー（organism）: 作品データ・絞り込み・並び替え・配置を知る。
 // 見た目の部品は atoms / molecules を組み合わせ、文言（日本語）はここで渡す。
 import CoverButton from "../atoms/CoverButton.astro";
-import Select from "../atoms/Select.astro";
 import Tile from "../atoms/Tile.astro";
 import EmbedFrame from "../molecules/EmbedFrame.astro";
 import EmbedViewer from "../molecules/EmbedViewer.astro";
-import Field from "../molecules/Field.astro";
 import Lightbox from "../molecules/Lightbox.astro";
 import MultiSelect from "../molecules/MultiSelect.astro";
+import SingleSelect from "../molecules/SingleSelect.astro";
 import VideoEmbed from "../molecules/VideoEmbed.astro";
 import { DEFAULT_SORT, SORT_OPTIONS, filterTagsByUsage } from "../../lib/gallery";
+import { tagTone } from "../../lib/tag-visuals";
 import { GALLERY_BREAKPOINTS, SITE_FRAME_NARROW, galleryGridCss, gallerySizes } from "../../lib/gallery-grid";
 import { getGalleryEntries } from "../../lib/gallery-images";
 
 const entries = await getGalleryEntries();
-const tagOptions = filterTagsByUsage(entries).map((tag) => ({ value: tag, label: tag }));
+const tagOptions = filterTagsByUsage(entries).map((tag) => ({ value: tag, label: tag, tone: tagTone(tag) }));
 // HTML を読んだ時点で取りに行く枚数（最大列数 = 最初の1行ぶん）。残りはスクリプトが画面に入る分を判断する
 const EAGER_COUNT = Math.max(...GALLERY_BREAKPOINTS.map((bp) => bp.columns));
 const LIGHTBOX_ID = "image-lightbox";
-const VIEWER_ID = "site-viewer";
+const VIEWER_ID = "content-viewer";
 
 const youtubeEmbed = (videoId: string) =>
   `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
+const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${videoId}`;
 ---
 
 <style is:global set:html={galleryGridCss(".gallery-grid")}></style>
 
 <section class="gallery">
   <div class="gallery__controls">
-    <Field label="フィルタ:">
-      <MultiSelect
-        id="tag-filter"
-        options={tagOptions}
-        placeholder="タグを選択"
-        allLabel="全て"
-        removeLabel="{label} を解除"
-      />
-    </Field>
-    <Field label="並び替え:" for="sort-select">
-      <Select id="sort-select" options={SORT_OPTIONS} value={DEFAULT_SORT} />
-    </Field>
+    <MultiSelect
+      id="tag-filter"
+      options={tagOptions}
+      placeholder="タグ"
+      allLabel="全て"
+      removeLabel="{label} を解除"
+    />
+    <SingleSelect id="sort-select" options={SORT_OPTIONS} value={DEFAULT_SORT} label="並び替え" />
   </div>
 
   <div id="gallery" class="gallery-grid" data-lightbox-id={LIGHTBOX_ID} data-viewer-id={VIEWER_ID}>
@@ -66,6 +63,7 @@ const youtubeEmbed = (videoId: string) =>
             data-date={date}
             data-tags={tags.join(",")}
             data-type={type}
+            data-color={color}
             data-aspect={height / width}
             data-aspect-narrow={type === "site" ? SITE_FRAME_NARROW.height / SITE_FRAME_NARROW.width : undefined}
             data-span={span}
@@ -76,15 +74,21 @@ const youtubeEmbed = (videoId: string) =>
                 <EmbedFrame
                   url={entry.url}
                   title={title}
-                  activateLabel="クリックで操作"
+                  activateLabel="操作する"
                   deactivateLabel="操作を終える"
                   openLabel="新しいタブで開く"
-                  expandLabel="全画面で見る"
+                  expandLabel="大きく見る"
                   poster={img}
                   data-full={full}
                 />
               ) : entry.type === "video" ? (
-                <VideoEmbed embedUrl={youtubeEmbed(entry.videoId)} title={title} playLabel="再生" thumbnail={img ?? {}} />
+                <VideoEmbed
+                  embedUrl={youtubeEmbed(entry.videoId)}
+                  externalUrl={youtubeWatch(entry.videoId)}
+                  title={title}
+                  playLabel="大きく再生"
+                  thumbnail={img ?? {}}
+                />
               ) : (
                 <>
                   <img {...img} />
@@ -103,8 +107,8 @@ const youtubeEmbed = (videoId: string) =>
 <EmbedViewer
   id={VIEWER_ID}
   closeLabel="全画面を終える"
-  prevLabel="前のサイト"
-  nextLabel="次のサイト"
+  prevLabel="前のコンテンツ"
+  nextLabel="次のコンテンツ"
   openLabel="新しいタブで開く"
   positionLabel="{current} / {total}"
 />
@@ -118,8 +122,9 @@ const youtubeEmbed = (videoId: string) =>
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-12) var(--space-24);
+    gap: var(--space-8);
     margin: 0 var(--space-16) var(--space-12);
+    justify-content: flex-start;
   }
 
   /*
@@ -187,7 +192,7 @@ const youtubeEmbed = (videoId: string) =>
   }
 
   const grid = document.getElementById("gallery")!;
-  const sortSelect = document.getElementById("sort-select") as HTMLSelectElement;
+  const sortSelect = document.getElementById("sort-select")!;
   const tagFilter = document.getElementById("tag-filter")!;
 
   const entries: Entry[] = [...grid.querySelectorAll<HTMLElement>(".gallery-item")].map((el) => ({
@@ -283,9 +288,10 @@ const youtubeEmbed = (videoId: string) =>
     layout();
   });
 
-  sortSelect.addEventListener("change", () => {
-    if (isSortKey(sortSelect.value)) {
-      state.sort = sortSelect.value;
+  sortSelect.addEventListener("singleselect-change", (e) => {
+    const value = (e as CustomEvent<{ value: string }>).detail.value;
+    if (isSortKey(value)) {
+      state.sort = value;
       layout();
     }
   });
@@ -301,12 +307,33 @@ const youtubeEmbed = (videoId: string) =>
     );
   });
 
-  // Web サイトの全画面表示: いま表示中のサイトを並び順どおりに前後で切り替えられるようにする
+  // サイトと動画は共通の拡大ビューで扱う。
+  // 現在のフィルタ・並び替え後の順序をそのまま左右ナビゲーションへ引き継ぐ。
   grid.addEventListener("embed-expand", (e) => {
-    const sites = lastShown.filter((entry) => entry.el.dataset.type === "site");
-    const items = sites.map((entry) => {
-      const embed = entry.el.querySelector<HTMLElement>("[data-embed]")!;
-      return { url: embed.dataset.url ?? "", title: embed.dataset.title ?? "", poster: embed.dataset.full };
+    const media = lastShown.filter((entry) => {
+      const type = entry.el.dataset.type;
+      return type === "site" || type === "video";
+    });
+    const items = media.map((entry) => {
+      if (entry.el.dataset.type === "site") {
+        const embed = entry.el.querySelector<HTMLElement>("[data-embed]")!;
+        return {
+          url: embed.dataset.url ?? "",
+          openUrl: embed.dataset.url ?? "",
+          title: embed.dataset.title ?? "",
+          poster: embed.dataset.full,
+          color: entry.el.dataset.color,
+        };
+      }
+      const video = entry.el.querySelector<HTMLElement>("[data-video]")!;
+      const poster = video.querySelector<HTMLImageElement>("[data-video-thumbnail]");
+      return {
+        url: video.dataset.url ?? "",
+        openUrl: video.dataset.externalUrl ?? "",
+        title: video.dataset.title ?? "",
+        poster: poster?.currentSrc || poster?.src,
+        color: entry.el.dataset.color,
+      };
     });
     const { url } = (e as CustomEvent<{ url: string }>).detail;
     document.dispatchEvent(

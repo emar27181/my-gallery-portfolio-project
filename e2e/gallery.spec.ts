@@ -65,7 +65,8 @@ test('初期表示はカスタム順で全件', async ({ page }) => {
 for (const { value, label } of SORT_OPTIONS) {
   test(`並び替え「${label}」の順に表示される`, async ({ page }) => {
     await openGallery(page);
-    await page.selectOption('#sort-select', value);
+    await page.locator('#sort-select [data-singleselect-trigger]').click();
+    await page.locator(`#sort-select [data-single-option="${value}"]`).click();
     await expectPlacedInOrder(page, sortItems(data, value));
   });
 }
@@ -87,7 +88,8 @@ test('タグは AND で絞り込み、「全て」で全件に戻る', async ({ 
 
 test('並び替え後に絞り込み・解除しても並び順が保たれる', async ({ page }) => {
   await openGallery(page);
-  await page.selectOption('#sort-select', 'title-asc');
+  await page.locator('#sort-select [data-singleselect-trigger]').click();
+  await page.locator('#sort-select [data-single-option="title-asc"]').click();
   await selectTag(page, '写真');
   await page.locator('[data-chip-remove]').click();
   await expectPlacedInOrder(page, sortItems(data, 'title-asc'));
@@ -97,7 +99,7 @@ test('ドロップダウンは外側クリックで閉じる', async ({ page }) 
   await openGallery(page);
   await page.locator('[data-multiselect-box]').click();
   await expect(page.locator('[data-multiselect-menu]')).toBeVisible();
-  await page.locator('label[for="sort-select"]').click();
+  await page.locator('body').click({ position: { x: 1, y: 1 } });
   await expect(page.locator('[data-multiselect-menu]')).toBeHidden();
 });
 
@@ -121,16 +123,27 @@ test('画像クリックでモーダル表示、×と Escape で閉じる', asyn
   await expect(lightbox).not.toHaveClass(/is-open/);
 });
 
-test('動画クリックでその場に YouTube プレイヤーを埋め込む', async ({ page }) => {
+test('動画クリックで拡大ビューを開き、左右の矢印でサイト・動画を切り替えられる', async ({ page }) => {
   await openGallery(page);
-  const video = data.find((item) => item.type === 'video')!;
-  if (video.type !== 'video') return;
-  const item = page.locator(`.gallery-item[data-index="${video.index}"]`);
+  const media = data.filter((item) => item.type === 'site' || item.type === 'video');
+  const videoIndex = media.findIndex((item) => item.type === 'video');
+  const video = media[videoIndex];
+  test.skip(video?.type !== 'video', '動画が無い');
+  if (video?.type !== 'video') return;
 
-  await item.locator('[data-video-play]').click();
-  await expect(item.locator('iframe')).toBeVisible();
-  await expect(item.locator('iframe')).toHaveAttribute('src', new RegExp(`youtube\\.com/embed/${video.videoId}`));
-  await expect(item.locator('[data-video-thumbnail]')).toBeHidden();
+  const item = page.locator(`.gallery-item[data-index="${video.index}"]`);
+  const viewer = page.locator('[data-embed-viewer]');
+  await item.locator('[data-video-expand]').click();
+
+  await expect(viewer).toBeVisible();
+  await expect(viewer.locator('[data-viewer-frame]')).toHaveAttribute('src', new RegExp(`youtube\\.com/embed/${video.videoId}`));
+  await expect(viewer.locator('[data-viewer-title]')).toHaveText(video.title);
+  await expect(viewer.locator('[data-viewer-position]')).toHaveText(`${videoIndex + 1} / ${media.length}`);
+
+  if (videoIndex < media.length - 1) {
+    await viewer.locator('[data-viewer-next]').click();
+    await expect(viewer.locator('[data-viewer-position]')).toHaveText(`${videoIndex + 2} / ${media.length}`);
+  }
 });
 
 test('テーマ切り替えは保存され、再読み込み後も維持される', async ({ page }) => {
@@ -223,7 +236,7 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
   // 外側のクリックでも終える
   await item.locator('[data-embed-activate]').click();
   await expect(embed).toHaveClass(/is-active/);
-  await page.locator('label[for="sort-select"]').click();
+  await page.locator('body').click({ position: { x: 1, y: 1 } });
   await expect(embed).not.toHaveClass(/is-active/);
 });
 
@@ -281,17 +294,20 @@ test('Web サイトの枠は、スマホでは縦長・それ以外では横長'
   else expect(box.width).toBeGreaterThan(box.height);
 });
 
-test('Web サイトは全画面で見られ、左右の矢印で切り替え、戻るボタン・Escape・端末の戻るで閉じる', async ({ page }) => {
-  const sites = data.filter((item) => item.type === 'site');
+test('Web サイトはクリックで全画面になり、左右の矢印でサイト・動画を切り替え、戻る操作で閉じる', async ({ page }) => {
+  const media = data.filter((item) => item.type === 'site' || item.type === 'video');
+  const sites = media.filter((item) => item.type === 'site');
   test.skip(sites.length < 2, 'Web サイトの作品が 2 件未満');
   await openGallery(page);
 
   const viewer = page.locator('[data-embed-viewer]');
   const frame = viewer.locator('[data-viewer-frame]');
   const first = sites[0];
-  const second = sites[1];
-  if (first.type !== 'site' || second.type !== 'site') return;
-  const openFirst = () => page.locator(`.gallery-item[data-index="${first.index}"] [data-embed-expand]`).click();
+  const firstIndex = media.findIndex((item) => item.index === first.index);
+  const second = media[firstIndex + 1];
+  if (first.type !== 'site' || !second) return;
+  const openFirst = () =>
+    page.locator(`.gallery-item[data-index="${first.index}"] .embed__viewport [data-embed-expand]`).click();
 
   await openFirst();
   await expect(viewer).toBeVisible();
@@ -304,14 +320,15 @@ test('Web サイトは全画面で見られ、左右の矢印で切り替え、�
   await expect(viewer.locator('[data-viewer-poster]')).toBeVisible({ visible: Boolean(first.poster) });
   await expect(frame).toHaveClass(/is-loaded/);
   await expect(viewer.locator('[data-viewer-title]')).toHaveText(first.title);
-  await expect(viewer.locator('[data-viewer-position]')).toHaveText(`1 / ${sites.length}`);
-  await expect(viewer.locator('[data-viewer-prev]')).toBeDisabled();
+  await expect(viewer.locator('[data-viewer-position]')).toHaveText(`${firstIndex + 1} / ${media.length}`);
+  if (firstIndex === 0) await expect(viewer.locator('[data-viewer-prev]')).toBeDisabled();
+  else await expect(viewer.locator('[data-viewer-prev]')).toBeEnabled();
 
-  // 右の矢印で次のサイト、左の矢印で戻る
+  // 右の矢印で現在の並び順の次コンテンツへ移動し、左で戻る
   await viewer.locator('[data-viewer-next]').click();
-  await expect(frame).toHaveAttribute('src', second.url);
-  await expect(viewer.locator('[data-viewer-position]')).toHaveText(`2 / ${sites.length}`);
-  await expect(viewer.locator('[data-viewer-open]')).toHaveAttribute('href', second.url);
+  if (second.type === 'site') await expect(frame).toHaveAttribute('src', second.url);
+  else await expect(frame).toHaveAttribute('src', new RegExp(`youtube\\.com/embed/${second.videoId}`));
+  await expect(viewer.locator('[data-viewer-position]')).toHaveText(`${firstIndex + 2} / ${media.length}`);
   await viewer.locator('[data-viewer-prev]').click();
   await expect(frame).toHaveAttribute('src', first.url);
 

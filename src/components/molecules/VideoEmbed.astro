@@ -1,29 +1,24 @@
 ---
-// サムネイルを押すとその場で再生する動画（molecule）。
-// サムネイルの属性・埋め込み URL・文言は props で受け取る。
+// 動画サムネイル（molecule）。作品本体を押すと共通の拡大ビューを開く。
+// 実際のプレイヤー表示・前後移動は organism 側が管理する。
 import type { HTMLAttributes } from "astro/types";
 import CoverButton from "../atoms/CoverButton.astro";
 import Icon from "../atoms/Icon.astro";
 
 interface Props {
   embedUrl: string;
+  externalUrl: string;
   title: string;
   playLabel: string;
   thumbnail: HTMLAttributes<"img">;
 }
 
-const { embedUrl, title, playLabel, thumbnail } = Astro.props;
+const { embedUrl, externalUrl, title, playLabel, thumbnail } = Astro.props;
 ---
 
-<div class="video" data-video data-embed-src={embedUrl}>
+<div class="video" data-video data-url={embedUrl} data-external-url={externalUrl} data-title={title}>
   <img class="video__thumbnail" data-video-thumbnail {...thumbnail} />
-  <iframe
-    class="video__player"
-    title={title}
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen
-    hidden></iframe>
-  <CoverButton label={`${title}: ${playLabel}`} data-video-play>
+  <CoverButton label={`${title}: ${playLabel}`} data-video-expand>
     <Icon name="play" size="md" />
   </CoverButton>
 </div>
@@ -34,16 +29,13 @@ const { embedUrl, title, playLabel, thumbnail } = Astro.props;
     width: 100%;
     height: 100%;
   }
-  .video__thumbnail,
-  .video__player {
+  .video__thumbnail {
     display: block;
     width: 100%;
     height: 100%;
-    border: none;
     object-fit: cover;
   }
-  /* 再生UIは動画だけ簡素化。無彩色・小さめ・影なし・枠なし。 */
-  .video :global([data-video-play] .cover__hint) {
+  .video :global([data-video-expand] .cover__hint) {
     width: var(--control-height-md);
     min-height: var(--control-height-md);
     padding: 0;
@@ -52,20 +44,25 @@ const { embedUrl, title, playLabel, thumbnail } = Astro.props;
     color: var(--color-on-media-control);
     box-shadow: none;
   }
-  .video :global([data-video-play]:hover) {
+  .video :global([data-video-expand]:hover) {
     background-color: transparent;
   }
 </style>
 
 <script>
   document.addEventListener("click", (e) => {
-    const play = (e.target as HTMLElement).closest<HTMLElement>("[data-video-play]");
-    const video = play?.closest<HTMLElement>("[data-video]");
-    if (!play || !video) return;
-    const player = video.querySelector("iframe")!;
-    player.src = video.dataset.embedSrc ?? "";
-    player.hidden = false;
-    video.querySelector<HTMLElement>("[data-video-thumbnail]")!.hidden = true;
-    play.hidden = true;
+    const trigger = (e.target as HTMLElement).closest<HTMLElement>("[data-video-expand]");
+    const video = trigger?.closest<HTMLElement>("[data-video]");
+    if (!trigger || !video) return;
+    video.dispatchEvent(
+      new CustomEvent("embed-expand", {
+        detail: {
+          url: video.dataset.url ?? "",
+          title: video.dataset.title ?? "",
+          externalUrl: video.dataset.externalUrl ?? "",
+        },
+        bubbles: true,
+      }),
+    );
   });
 </script>

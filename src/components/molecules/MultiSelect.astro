@@ -5,10 +5,11 @@
 import Button from "../atoms/Button.astro";
 import Icon from "../atoms/Icon.astro";
 import RemovableChip from "./RemovableChip.astro";
+import "./selection-menu.css";
 
 interface Props {
   id: string;
-  options: readonly { value: string; label: string }[];
+  options: readonly { value: string; label: string; tone?: string }[];
   placeholder: string;
   /** 全解除の選択肢の文言 */
   allLabel: string;
@@ -19,31 +20,42 @@ interface Props {
 const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
 ---
 
-<div class="multiselect" id={id} data-multiselect data-remove-label={removeLabel}>
-  <div
-    class="multiselect__box"
+<div class="selection-menu multiselect" id={id} data-multiselect data-remove-label={removeLabel}>
+  <Button
+    class="selection-menu__trigger"
+    variant="outline"
     data-multiselect-box
-    role="button"
-    tabindex="0"
     aria-haspopup="listbox"
     aria-expanded="false"
     aria-controls={`${id}-menu`}
   >
-    <span class="multiselect__placeholder" data-multiselect-placeholder>{placeholder}</span>
-    <span class="multiselect__chips" data-multiselect-chips></span>
-    <Icon name="chevronDown" size="sm" class="multiselect__chevron" />
-  </div>
+    <Icon name="tags" size="sm" />
+    <span data-multiselect-placeholder>{placeholder}</span>
+    <span class="multiselect__count" data-multiselect-count hidden></span>
+    <Icon name="chevronDown" size="sm" class="selection-menu__chevron" />
+  </Button>
 
-  <div class="multiselect__menu" id={`${id}-menu`} role="listbox" aria-multiselectable="true" data-multiselect-menu hidden>
-    <Button variant="ghost" block role="option" aria-selected="true" data-option="">{allLabel}</Button>
+  <div class="selection-menu__menu" id={`${id}-menu`} role="listbox" aria-multiselectable="true" data-multiselect-menu hidden>
+    <Button class="selection-menu__option" variant="ghost" size="sm" shape="pill" role="option" aria-selected="true" data-option="" data-tone="neutral">{allLabel}</Button>
     {
       options.map((option) => (
-        <Button variant="ghost" block role="option" aria-selected="false" data-option={option.value}>
+        <Button
+          class="selection-menu__option"
+          variant="ghost"
+          size="sm"
+          shape="pill"
+          role="option"
+          aria-selected="false"
+          data-option={option.value}
+          data-tone={option.tone}
+        >
           {option.label}
         </Button>
       ))
     }
   </div>
+
+  <div class="multiselect__chips" data-multiselect-chips hidden></div>
 
   <template data-multiselect-chip>
     <RemovableChip label="" removeLabel="" />
@@ -51,58 +63,24 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
 </div>
 
 <style>
-  .multiselect {
-    position: relative;
-  }
-  .multiselect__box {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-4);
-    min-height: var(--control-height-md);
-    padding: var(--space-8) var(--space-40) var(--space-8) var(--space-16);
-    border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-control);
-    background-color: var(--color-surface);
+  .multiselect__count {
+    min-width: var(--control-height-sm);
+    padding: 0 var(--space-6);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-surface-muted);
     color: var(--color-text);
-    font-size: var(--font-size-title);
-    cursor: pointer;
-    transition: border-color var(--duration-fast) var(--easing-standard);
-  }
-  .multiselect__box:hover {
-    border-color: var(--color-primary);
-  }
-  .multiselect__placeholder {
-    color: var(--color-text-muted);
-    font-weight: var(--font-weight-regular);
+    font-size: var(--font-size-caption);
+    line-height: var(--control-height-sm);
+    text-align: center;
   }
   .multiselect__chips {
-    display: contents;
-  }
-  .multiselect__box :global(.multiselect__chevron) {
-    position: absolute;
-    top: calc(var(--control-height-md) / 2);
-    right: var(--space-16);
-    color: var(--color-text-muted);
-    transform: translateY(-50%);
-    pointer-events: none;
-  }
-  .multiselect__menu {
-    position: absolute;
-    top: calc(100% + var(--space-4));
-    left: 0;
-    right: 0;
-    z-index: var(--z-dropdown);
     display: flex;
-    flex-direction: column;
-    max-height: calc(var(--control-height-md) * 6);
-    padding: var(--space-4);
-    overflow-y: auto;
-    border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-control);
-    background-color: var(--color-surface);
-    color: var(--color-text);
-    box-shadow: var(--shadow-md);
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  .multiselect__chips[hidden] {
+    display: none;
   }
 </style>
 
@@ -112,10 +90,11 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     const menu = root.querySelector<HTMLElement>("[data-multiselect-menu]")!;
     const chips = root.querySelector<HTMLElement>("[data-multiselect-chips]")!;
     const placeholder = root.querySelector<HTMLElement>("[data-multiselect-placeholder]")!;
+    const count = root.querySelector<HTMLElement>("[data-multiselect-count]")!;
     const template = root.querySelector<HTMLTemplateElement>("template[data-multiselect-chip]")!;
     const options = [...menu.querySelectorAll<HTMLElement>("[data-option]")];
-    const labelOf = (value: string) =>
-      options.find((o) => o.dataset.option === value)?.textContent?.trim() ?? value;
+    const optionOf = (value: string) => options.find((o) => o.dataset.option === value);
+    const labelOf = (value: string) => optionOf(value)?.textContent?.trim() ?? value;
 
     let selected: string[] = [];
 
@@ -129,6 +108,8 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
         ...selected.map((value) => {
           const chip = (template.content.cloneNode(true) as DocumentFragment).firstElementChild as HTMLElement;
           chip.querySelector("[data-chip-label]")!.textContent = labelOf(value);
+          const tone = optionOf(value)?.dataset.tone;
+          if (tone) chip.dataset.tone = tone;
           const remove = chip.querySelector<HTMLElement>("[data-chip-remove]")!;
           const name = (root.dataset.removeLabel ?? "").replace("{label}", labelOf(value));
           remove.dataset.value = value;
@@ -137,7 +118,10 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
           return chip;
         }),
       );
-      placeholder.hidden = selected.length > 0;
+      placeholder.textContent = "タグ";
+      count.hidden = selected.length === 0;
+      count.textContent = String(selected.length);
+      chips.hidden = selected.length === 0;
     };
 
     const commit = (next: string[]) => {
@@ -151,19 +135,11 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
       box.setAttribute("aria-expanded", String(open));
     };
 
-    box.addEventListener("click", (e) => {
+    box.addEventListener("click", () => setOpen(menu.hidden));
+
+    chips.addEventListener("click", (e) => {
       const remove = (e.target as HTMLElement).closest<HTMLElement>("[data-chip-remove]");
-      if (remove) {
-        commit(selected.filter((value) => value !== remove.dataset.value));
-        return;
-      }
-      setOpen(menu.hidden);
-    });
-    box.addEventListener("keydown", (e) => {
-      if (e.target === box && (e.key === "Enter" || e.key === " ")) {
-        e.preventDefault();
-        setOpen(menu.hidden);
-      }
+      if (remove) commit(selected.filter((value) => value !== remove.dataset.value));
     });
 
     // 複数選択できるよう、選んでもメニューは開いたままにする

@@ -1,0 +1,87 @@
+---
+import Button from "../atoms/Button.astro";
+import Icon from "../atoms/Icon.astro";
+import type { IconName } from "../atoms/icons";
+import "./selection-menu.css";
+
+interface Props {
+  id: string;
+  options: readonly { value: string; label: string }[];
+  value: string;
+  label: string;
+  icon?: IconName;
+}
+
+const { id, options, value, label, icon = "sort" } = Astro.props;
+const selected = options.find((option) => option.value === value) ?? options[0];
+---
+
+<div class="selection-menu selection-menu--end singleselect" id={id} data-singleselect data-value={selected?.value ?? ""}>
+  <Button
+    class="selection-menu__trigger"
+    variant="outline"
+    aria-label={label}
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls={`${id}-menu`}
+    data-singleselect-trigger
+  >
+    <Icon name={icon} size="sm" />
+    <span data-singleselect-label>{selected?.label}</span>
+    <Icon name="chevronDown" size="sm" class="selection-menu__chevron" />
+  </Button>
+
+  <div class="selection-menu__menu" id={`${id}-menu`} role="listbox" data-singleselect-menu hidden>
+    {
+      options.map((option) => (
+        <Button
+          class="selection-menu__option"
+          variant="ghost"
+          size="sm"
+          shape="pill"
+          role="option"
+          aria-selected={option.value === selected?.value ? "true" : "false"}
+          data-single-option={option.value}
+          data-tone="neutral"
+        >
+          {option.label}
+        </Button>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-singleselect]")) {
+    const trigger = root.querySelector<HTMLElement>("[data-singleselect-trigger]")!;
+    const menu = root.querySelector<HTMLElement>("[data-singleselect-menu]")!;
+    const label = root.querySelector<HTMLElement>("[data-singleselect-label]")!;
+    const options = [...menu.querySelectorAll<HTMLElement>("[data-single-option]")];
+
+    const setOpen = (open: boolean) => {
+      menu.hidden = !open;
+      trigger.setAttribute("aria-expanded", String(open));
+    };
+
+    const commit = (option: HTMLElement) => {
+      const value = option.dataset.singleOption ?? "";
+      root.dataset.value = value;
+      label.textContent = option.textContent?.trim() ?? "";
+      for (const item of options) item.setAttribute("aria-selected", String(item === option));
+      setOpen(false);
+      root.dispatchEvent(new CustomEvent("singleselect-change", { detail: { value }, bubbles: true }));
+    };
+
+    trigger.addEventListener("click", () => setOpen(menu.hidden));
+    menu.addEventListener("click", (e) => {
+      const option = (e.target as HTMLElement).closest<HTMLElement>("[data-single-option]");
+      if (option) commit(option);
+    });
+    document.addEventListener("click", (e) => {
+      if (!root.contains(e.target as Node)) setOpen(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(false);
+    });
+  }
+</script>

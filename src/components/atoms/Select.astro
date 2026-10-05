@@ -12,6 +12,7 @@ const { options, value, class: className, ...rest } = Astro.props;
 ---
 
 <span class:list={["select", className]}>
+  <Icon name="sort" size="sm" class="select__sort" />
   <select class="select__control" {...rest}>
     {
       options.map((option) => (
@@ -28,31 +29,40 @@ const { options, value, class: className, ...rest } = Astro.props;
   .select {
     position: relative;
     display: inline-flex;
-    width: 100%;
+    align-items: center;
+    width: fit-content;
   }
   .select__control {
-    width: 100%;
+    width: auto;
     min-height: var(--control-height-md);
-    padding: 0 var(--space-40) 0 var(--space-16);
+    padding: 0 var(--space-40) 0 var(--space-40);
     border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-control);
+    border-radius: var(--radius-pill);
     background-color: var(--color-surface);
     color: var(--color-text);
     font-family: inherit;
     font-size: var(--font-size-title);
     appearance: none;
     cursor: pointer;
-    transition: border-color var(--duration-fast) var(--easing-standard);
+    transition:
+      background-color var(--duration-fast) var(--easing-standard),
+      border-color var(--duration-fast) var(--easing-standard);
   }
   .select__control:hover {
-    border-color: var(--color-primary);
+    background-color: var(--color-surface-muted);
   }
+  .select :global(.select__sort),
   .select :global(.select__chevron) {
     position: absolute;
     top: 50%;
-    right: var(--space-16);
     color: var(--color-text-muted);
     transform: translateY(-50%);
     pointer-events: none;
+  }
+  .select :global(.select__sort) {
+    left: var(--space-12);
+  }
+  .select :global(.select__chevron) {
+    right: var(--space-12);
   }
 </style>

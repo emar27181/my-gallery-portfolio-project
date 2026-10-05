@@ -4,7 +4,8 @@
 // 操作を始めるまではページに入力を渡さない（周りのスクロールを奪わない）。
 // 「終える」ボタン・外側のクリック・Escape で操作を終える
 // （埋め込み先にフォーカスがあると Escape はそちらに届くため、ボタンでも終えられるようにする）。
-// 全画面ボタンを押すと root から "embed-expand"（detail: { url, title }）を送る。何を全画面で見せるかは呼び出し側が決める。
+// 作品本体または全画面ボタンを押すと root から "embed-expand"（detail: { url, title }）を送る。
+// インライン操作は帯の「操作する」ボタンから明示的に開始する。何を全画面で見せるかは呼び出し側が決める。
 // 読み込みの重さを隠すため、ページは画面に近づいてから読み込み（操作を始めたときも読み込む）、
 // 届くまでは画面写真（poster）か、無ければタイトルを見せる。読み込みが済んだらページをフェードインする。
 import Button from "../atoms/Button.astro";
@@ -30,6 +31,7 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel, post
 <div class="embed" data-embed data-url={url} data-title={title} {...rest}>
   <div class="embed__toolbar">
     <span class="embed__title">{title}</span>
+    <Button size="sm" shape="pill" data-embed-activate>{activateLabel}</Button>
     <Button size="sm" shape="pill" data-embed-deactivate hidden>{deactivateLabel}</Button>
     <LinkButton href={url} external externalMark={false} size="sm" shape="pill" data-embed-open>{openLabel}</LinkButton>
     <IconButton icon="expand" size="sm" label={expandLabel} data-embed-expand />
@@ -43,7 +45,7 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel, post
       tabindex="-1"
       sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
     ></iframe>
-    <CoverButton label={`${title}: ${activateLabel}`} data-embed-activate>{activateLabel}</CoverButton>
+    <CoverButton label={`${title}: ${expandLabel}`} data-embed-expand />
   </div>
 </div>
 
@@ -120,6 +122,10 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel, post
     pointer-events: auto;
   }
   .embed.is-active :global([data-embed-activate]) {
+    display: none;
+  }
+  /* インライン操作中は、viewport 全面の拡大用 CoverButton が iframe のクリックを奪わないようにする */
+  .embed.is-active .embed__viewport :global([data-embed-expand]) {
     display: none;
   }
 </style>

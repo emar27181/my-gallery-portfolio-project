@@ -1,5 +1,5 @@
 ---
-// 外部のページを画面いっぱいに見せ、左右の矢印で前後のページに切り替える（molecule）。
+// サイト・動画など iframe で表示するコンテンツを画面いっぱいに見せ、左右の矢印で前後に切り替える（molecule）。
 // document に "embed-viewer-open"（detail: { id, items: { url, title, poster? }[], index }）を送ると開く。
 // ページが届くまでは画面写真（poster）を見せ、読み込みが済んだらページをフェードインする。
 // 上端に「全画面を終える」と「新しいタブで開く」、下端（親指の届く位置）に前後の矢印と位置を置く。
@@ -41,7 +41,9 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
       class="viewer__frame"
       data-viewer-frame
       title=""
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"
     ></iframe>
   </div>
   <div class="viewer__bar viewer__bar--nav">
@@ -68,11 +70,13 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
     gap: var(--space-8);
     flex-shrink: 0;
     padding: var(--space-4) var(--space-8);
-    border-bottom: var(--border-width) solid var(--color-border);
+    border-bottom: var(--border-width) solid color-mix(in srgb, currentColor 20%, transparent);
+    background-color: var(--viewer-accent, var(--color-surface));
+    color: var(--viewer-ink, var(--color-text));
   }
   .viewer__bar--nav {
     justify-content: space-between;
-    border-top: var(--border-width) solid var(--color-border);
+    border-top: var(--border-width) solid color-mix(in srgb, currentColor 20%, transparent);
     border-bottom: none;
     /* iPhone の下端（ホームバー）に重ならないようにする */
     padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
@@ -123,6 +127,8 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
     url: string;
     title: string;
     poster?: string;
+    openUrl?: string;
+    color?: string;
   }
   interface ViewerOpenDetail {
     id: string;
@@ -164,7 +170,17 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
       if (item.poster) poster.src = item.poster;
       else poster.removeAttribute("src");
       title.textContent = item.title;
-      openLink.href = item.url;
+      openLink.href = item.openUrl || item.url;
+      if (item.color) {
+        viewer.style.setProperty("--viewer-accent", item.color);
+        const hex = item.color.replace("#", "");
+        const rgb = [0, 2, 4].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16));
+        const luminance = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+        viewer.style.setProperty("--viewer-ink", luminance > 150 ? "var(--color-black)" : "var(--color-white)");
+      } else {
+        viewer.style.removeProperty("--viewer-accent");
+        viewer.style.removeProperty("--viewer-ink");
+      }
       position.textContent = (viewer.dataset.positionLabel ?? "")
         .replace("{current}", String(index + 1))
         .replace("{total}", String(items.length));
