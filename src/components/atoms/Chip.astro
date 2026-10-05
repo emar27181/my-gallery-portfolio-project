@@ -1,6 +1,7 @@
 ---
 // チップ（atom）。色・文言・選択状態だけを受け取る。何を表すかは呼び出し側が決める。
 import type { HTMLAttributes } from "astro/types";
+import "../../styles/tag-tones.css";
 
 type Props = HTMLAttributes<"span"> & {
   /** 塗り（primary）で示す */
@@ -29,17 +30,7 @@ const { selected = false, class: className, ...rest } = Astro.props;
     white-space: nowrap;
   }
   .chip--selected {
-    background-color: color-mix(in srgb, var(--tag-color, var(--color-primary)) 16%, var(--color-surface));
-    color: var(--tag-color, var(--color-primary));
+    background-color: var(--tag-color, var(--color-primary));
+    color: var(--tag-on-color, var(--color-on-primary));
   }
-  :global([data-tone="neutral"]) { --tag-color: var(--color-tag-neutral); }
-  :global([data-tone="red"]) { --tag-color: var(--color-tag-red); }
-  :global([data-tone="blue"]) { --tag-color: var(--color-tag-blue); }
-  :global([data-tone="violet"]) { --tag-color: var(--color-tag-violet); }
-  :global([data-tone="emerald"]) { --tag-color: var(--color-tag-emerald); }
-  :global([data-tone="orange"]) { --tag-color: var(--color-tag-orange); }
-  :global([data-tone="pink"]) { --tag-color: var(--color-tag-pink); }
-  :global([data-tone="cyan"]) { --tag-color: var(--color-tag-cyan); }
-  :global([data-tone="amber"]) { --tag-color: var(--color-tag-amber); }
-  :global([data-tone="indigo"]) { --tag-color: var(--color-tag-indigo); }
 </style>
