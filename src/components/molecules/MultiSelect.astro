@@ -5,6 +5,7 @@
 import Button from "../atoms/Button.astro";
 import Icon from "../atoms/Icon.astro";
 import RemovableChip from "./RemovableChip.astro";
+import "./selection-menu.css";
 
 interface Props {
   id: string;
@@ -19,9 +20,9 @@ interface Props {
 const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
 ---
 
-<div class="multiselect" id={id} data-multiselect data-remove-label={removeLabel}>
+<div class="selection-menu multiselect" id={id} data-multiselect data-remove-label={removeLabel}>
   <Button
-    class="multiselect__box"
+    class="selection-menu__trigger"
     variant="outline"
     block
     data-multiselect-box
@@ -32,14 +33,15 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     <Icon name="tags" size="sm" />
     <span data-multiselect-placeholder>{placeholder}</span>
     <span class="multiselect__count" data-multiselect-count hidden></span>
-    <Icon name="chevronDown" size="sm" class="multiselect__chevron" />
+    <Icon name="chevronDown" size="sm" class="selection-menu__chevron" />
   </Button>
 
-  <div class="multiselect__menu" id={`${id}-menu`} role="listbox" aria-multiselectable="true" data-multiselect-menu hidden>
-    <Button variant="ghost" size="sm" shape="pill" role="option" aria-selected="true" data-option="">{allLabel}</Button>
+  <div class="selection-menu__menu" id={`${id}-menu`} role="listbox" aria-multiselectable="true" data-multiselect-menu hidden>
+    <Button class="selection-menu__option" variant="ghost" size="sm" shape="pill" role="option" aria-selected="true" data-option="" data-tone="neutral">{allLabel}</Button>
     {
       options.map((option) => (
         <Button
+          class="selection-menu__option"
           variant="ghost"
           size="sm"
           shape="pill"
@@ -62,16 +64,6 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
 </div>
 
 <style>
-  .multiselect {
-    position: relative;
-    width: fit-content;
-  }
-  .multiselect :global(.multiselect__box) {
-    justify-content: flex-start;
-    width: auto;
-    border-radius: var(--radius-pill);
-    color: var(--color-text);
-  }
   .multiselect__count {
     min-width: var(--control-height-sm);
     padding: 0 var(--space-6);
@@ -81,28 +73,6 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     font-size: var(--font-size-caption);
     line-height: var(--control-height-sm);
     text-align: center;
-  }
-  .multiselect :global(.multiselect__chevron) {
-    margin-inline-start: auto;
-    color: var(--color-text-muted);
-  }
-  .multiselect__menu {
-    position: absolute;
-    top: calc(100% + var(--space-4));
-    left: 0;
-    z-index: var(--z-dropdown);
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    width: min(calc(var(--layout-control-width) * 2), calc(100vw - var(--space-16) * 2));
-    max-height: calc(var(--control-height-md) * 6);
-    padding: var(--space-8);
-    overflow-y: auto;
-    border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-control);
-    background-color: var(--color-surface);
-    color: var(--color-text);
-    box-shadow: var(--shadow-md);
   }
   .multiselect__chips {
     display: flex;
