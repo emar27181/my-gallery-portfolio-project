@@ -99,7 +99,7 @@ test('ドロップダウンは外側クリックで閉じる', async ({ page }) 
   await openGallery(page);
   await page.locator('[data-multiselect-box]').click();
   await expect(page.locator('[data-multiselect-menu]')).toBeVisible();
-  await page.locator('label[for="sort-select"]').click();
+  await page.locator('body').click({ position: { x: 1, y: 1 } });
   await expect(page.locator('[data-multiselect-menu]')).toBeHidden();
 });
 
@@ -236,7 +236,7 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
   // 外側のクリックでも終える
   await item.locator('[data-embed-activate]').click();
   await expect(embed).toHaveClass(/is-active/);
-  await page.locator('label[for="sort-select"]').click();
+  await page.locator('body').click({ position: { x: 1, y: 1 } });
   await expect(embed).not.toHaveClass(/is-active/);
 });
 
@@ -321,7 +321,8 @@ test('Web サイトはクリックで全画面になり、左右の矢印でサ�
   await expect(frame).toHaveClass(/is-loaded/);
   await expect(viewer.locator('[data-viewer-title]')).toHaveText(first.title);
   await expect(viewer.locator('[data-viewer-position]')).toHaveText(`${firstIndex + 1} / ${media.length}`);
-  await expect(viewer.locator('[data-viewer-prev]')).toBeDisabled({ disabled: firstIndex === 0 });
+  if (firstIndex === 0) await expect(viewer.locator('[data-viewer-prev]')).toBeDisabled();
+  else await expect(viewer.locator('[data-viewer-prev]')).toBeEnabled();
 
   // 右の矢印で現在の並び順の次コンテンツへ移動し、左で戻る
   await viewer.locator('[data-viewer-next]').click();
