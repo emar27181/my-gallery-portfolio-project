@@ -2,19 +2,32 @@
 
 .selection-menu {
   position: relative;
-  width: fit-content;
+  width: var(--layout-control-width);
 }
 
 .selection-menu .selection-menu__trigger {
   justify-content: flex-start;
-  width: auto;
+  width: 100%;
+  min-width: 0;
+  gap: var(--space-8);
+  padding-inline: var(--space-12);
   border-radius: var(--radius-pill);
   color: var(--color-text);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
 }
 
 .selection-menu__trigger .selection-menu__chevron {
   margin-inline-start: auto;
   color: var(--color-text-muted);
+}
+
+.selection-menu__trigger > span:not(.multiselect__count) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .selection-menu__menu {
@@ -34,6 +47,12 @@
   background-color: var(--color-surface);
   color: var(--color-text);
   box-shadow: var(--shadow-md);
+}
+
+.selection-menu__option {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
 }
 
 .selection-menu__option[data-tone] {
