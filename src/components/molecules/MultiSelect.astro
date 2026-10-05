@@ -20,30 +20,32 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
 ---
 
 <div class="multiselect" id={id} data-multiselect data-remove-label={removeLabel}>
-  <div
+  <Button
     class="multiselect__box"
+    variant="outline"
+    block
     data-multiselect-box
-    role="button"
-    tabindex="0"
     aria-haspopup="listbox"
     aria-expanded="false"
     aria-controls={`${id}-menu`}
   >
-    <span class="multiselect__placeholder" data-multiselect-placeholder>{placeholder}</span>
-    <span class="multiselect__chips" data-multiselect-chips></span>
+    <span data-multiselect-placeholder>{placeholder}</span>
+    <span class="multiselect__count" data-multiselect-count hidden></span>
     <Icon name="chevronDown" size="sm" class="multiselect__chevron" />
-  </div>
+  </Button>
 
   <div class="multiselect__menu" id={`${id}-menu`} role="listbox" aria-multiselectable="true" data-multiselect-menu hidden>
-    <Button variant="ghost" block role="option" aria-selected="true" data-option="">{allLabel}</Button>
+    <Button variant="ghost" size="sm" shape="pill" role="option" aria-selected="true" data-option="">{allLabel}</Button>
     {
       options.map((option) => (
-        <Button variant="ghost" block role="option" aria-selected="false" data-option={option.value}>
+        <Button variant="ghost" size="sm" shape="pill" role="option" aria-selected="false" data-option={option.value}>
           {option.label}
         </Button>
       ))
     }
   </div>
+
+  <div class="multiselect__chips" data-multiselect-chips hidden></div>
 
   <template data-multiselect-chip>
     <RemovableChip label="" removeLabel="" />
@@ -53,56 +55,53 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
 <style>
   .multiselect {
     position: relative;
+    width: var(--layout-control-width);
   }
-  .multiselect__box {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-4);
-    min-height: var(--control-height-md);
-    padding: var(--space-8) var(--space-40) var(--space-8) var(--space-16);
-    border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-control);
-    background-color: var(--color-surface);
+  .multiselect :global(.multiselect__box) {
+    justify-content: flex-start;
+    width: 100%;
     color: var(--color-text);
-    font-size: var(--font-size-title);
-    cursor: pointer;
-    transition: border-color var(--duration-fast) var(--easing-standard);
   }
-  .multiselect__box:hover {
-    border-color: var(--color-primary);
+  .multiselect__count {
+    min-width: var(--control-height-sm);
+    padding: 0 var(--space-6);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-surface-muted);
+    color: var(--color-text);
+    font-size: var(--font-size-caption);
+    line-height: var(--control-height-sm);
+    text-align: center;
   }
-  .multiselect__placeholder {
+  .multiselect :global(.multiselect__chevron) {
+    margin-inline-start: auto;
     color: var(--color-text-muted);
-    font-weight: var(--font-weight-regular);
-  }
-  .multiselect__chips {
-    display: contents;
-  }
-  .multiselect__box :global(.multiselect__chevron) {
-    position: absolute;
-    top: calc(var(--control-height-md) / 2);
-    right: var(--space-16);
-    color: var(--color-text-muted);
-    transform: translateY(-50%);
-    pointer-events: none;
   }
   .multiselect__menu {
     position: absolute;
     top: calc(100% + var(--space-4));
     left: 0;
-    right: 0;
     z-index: var(--z-dropdown);
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    width: min(calc(var(--layout-control-width) * 2), calc(100vw - var(--space-16) * 2));
     max-height: calc(var(--control-height-md) * 6);
-    padding: var(--space-4);
+    padding: var(--space-8);
     overflow-y: auto;
     border: var(--border-width) solid var(--color-border);
     border-radius: var(--radius-control);
     background-color: var(--color-surface);
     color: var(--color-text);
     box-shadow: var(--shadow-md);
+  }
+  .multiselect__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  .multiselect__chips[hidden] {
+    display: none;
   }
 </style>
 
@@ -112,6 +111,7 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     const menu = root.querySelector<HTMLElement>("[data-multiselect-menu]")!;
     const chips = root.querySelector<HTMLElement>("[data-multiselect-chips]")!;
     const placeholder = root.querySelector<HTMLElement>("[data-multiselect-placeholder]")!;
+    const count = root.querySelector<HTMLElement>("[data-multiselect-count]")!;
     const template = root.querySelector<HTMLTemplateElement>("template[data-multiselect-chip]")!;
     const options = [...menu.querySelectorAll<HTMLElement>("[data-option]")];
     const labelOf = (value: string) =>
@@ -137,7 +137,10 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
           return chip;
         }),
       );
-      placeholder.hidden = selected.length > 0;
+      placeholder.textContent = "タグ";
+      count.hidden = selected.length === 0;
+      count.textContent = String(selected.length);
+      chips.hidden = selected.length === 0;
     };
 
     const commit = (next: string[]) => {
@@ -151,19 +154,11 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
       box.setAttribute("aria-expanded", String(open));
     };
 
-    box.addEventListener("click", (e) => {
+    box.addEventListener("click", () => setOpen(menu.hidden));
+
+    chips.addEventListener("click", (e) => {
       const remove = (e.target as HTMLElement).closest<HTMLElement>("[data-chip-remove]");
-      if (remove) {
-        commit(selected.filter((value) => value !== remove.dataset.value));
-        return;
-      }
-      setOpen(menu.hidden);
-    });
-    box.addEventListener("keydown", (e) => {
-      if (e.target === box && (e.key === "Enter" || e.key === " ")) {
-        e.preventDefault();
-        setOpen(menu.hidden);
-      }
+      if (remove) commit(selected.filter((value) => value !== remove.dataset.value));
     });
 
     // 複数選択できるよう、選んでもメニューは開いたままにする
