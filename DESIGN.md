@@ -208,3 +208,9 @@ molecules は動きも持つ（開閉・選択など）。organisms にはカス
 - **実描画**（`npm run measure:styles -- <ラベル>`）: ブラウザで全要素の computed style を集計し、
   画面に実在する文字サイズ・角丸・余白・色・操作部品の高さの種類と件数を `reports/` に出す。
   静的な検査は「書かれているか」しか分からないので、見た目を変えたら両方を見る。
+
+
+### 選択系コントロール
+- タグ選択と並び替えは `src/components/molecules/selection-menu.css` を共通の見た目定義として使う。
+- 高さは `--control-height-md`、幅は `--layout-control-width`、トリガーと候補の文字は `--font-size-body`、左右余白は `--space-12` を使う。
+- 選択値が変わっても幅・文字サイズ・余白を変えず、隣のコントロールが動かないこと。
