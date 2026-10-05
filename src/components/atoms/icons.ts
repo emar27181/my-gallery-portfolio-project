@@ -23,6 +23,8 @@ export const ICONS = {
   close: ['M18 6 6 18', 'm6 6 12 12'],
   // Lucide: ExternalLink
   external: ['M15 3h6v6', 'M10 14 21 3', 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'],
+  // Lucide: ArrowUpDown
+  sort: ['m3 16 4 4 4-4', 'M7 20V4', 'm21 8-4-4-4 4', 'M17 4v16'],
   // Lucide: ChevronDown
   chevronDown: ['m6 9 6 6 6-6'],
   // Lucide: ChevronLeft
