@@ -65,7 +65,8 @@ test('初期表示はカスタム順で全件', async ({ page }) => {
 for (const { value, label } of SORT_OPTIONS) {
   test(`並び替え「${label}」の順に表示される`, async ({ page }) => {
     await openGallery(page);
-    await page.selectOption('#sort-select', value);
+    await page.locator('#sort-select [data-singleselect-trigger]').click();
+    await page.locator(`#sort-select [data-single-option="${value}"]`).click();
     await expectPlacedInOrder(page, sortItems(data, value));
   });
 }
@@ -87,7 +88,8 @@ test('タグは AND で絞り込み、「全て」で全件に戻る', async ({ 
 
 test('並び替え後に絞り込み・解除しても並び順が保たれる', async ({ page }) => {
   await openGallery(page);
-  await page.selectOption('#sort-select', 'title-asc');
+  await page.locator('#sort-select [data-singleselect-trigger]').click();
+  await page.locator('#sort-select [data-single-option="title-asc"]').click();
   await selectTag(page, '写真');
   await page.locator('[data-chip-remove]').click();
   await expectPlacedInOrder(page, sortItems(data, 'title-asc'));
