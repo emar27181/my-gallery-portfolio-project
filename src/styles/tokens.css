@@ -60,6 +60,8 @@
   /* 写真・動画の上に載せる操作部品（テーマによらず明るい地に暗い文字） */
   --color-media-control: color-mix(in srgb, var(--color-white) 90%, transparent);
   --color-on-media-control: var(--color-gray-900);
+  /* 拡大画像の左右の矢印。画像の邪魔をしないよう薄くする */
+  --color-media-control-subtle: color-mix(in srgb, var(--color-white) 55%, transparent);
 
   /* 半透明（alphaBlack 相当）。rgba はここ以外に書かない */
   --color-shadow: color-mix(in srgb, var(--color-black) 10%, transparent);

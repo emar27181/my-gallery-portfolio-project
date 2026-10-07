@@ -117,7 +117,7 @@ const captionOf = (entry: (typeof entries)[number]): WorkCaption => {
   </div>
 </section>
 
-<Lightbox id={LIGHTBOX_ID} closeLabel="閉じる" />
+<Lightbox id={LIGHTBOX_ID} closeLabel="閉じる" prevLabel="前の画像" nextLabel="次の画像" />
 <EmbedViewer
   id={VIEWER_ID}
   closeLabel="全画面を終える"
@@ -311,19 +311,23 @@ const captionOf = (entry: (typeof entries)[number]): WorkCaption => {
     }
   });
 
-  // 画像を押したら拡大表示（Lightbox molecule に開くよう伝える）
+  // 画像を押したら拡大表示（Lightbox molecule に開くよう伝える）。
+  // 現在のフィルタ・並び替え後の画像の並びを渡し、スワイプ・矢印で前後に移れるようにする
   grid.addEventListener("click", (e) => {
     const trigger = (e.target as HTMLElement).closest<HTMLElement>("[data-lightbox-trigger]");
     if (!trigger) return;
-    const item = trigger.closest<HTMLElement>(".gallery-item");
+    const triggers = lastShown.flatMap(({ el }) => {
+      const t = el.querySelector<HTMLElement>("[data-lightbox-trigger]");
+      return t ? [{ el, t }] : [];
+    });
+    const items = triggers.map(({ el, t }) => ({
+      src: t.dataset.full ?? "",
+      alt: t.dataset.alt ?? "",
+      caption: readWorkCaption(el.dataset.caption),
+    }));
     document.dispatchEvent(
       new CustomEvent("lightbox-open", {
-        detail: {
-          id: grid.dataset.lightboxId,
-          src: trigger.dataset.full ?? "",
-          alt: trigger.dataset.alt ?? "",
-          caption: readWorkCaption(item?.dataset.caption),
-        },
+        detail: { id: grid.dataset.lightboxId, items, index: Math.max(0, triggers.findIndex(({ t }) => t === trigger)) },
       }),
     );
   });

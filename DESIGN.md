@@ -52,6 +52,7 @@ Pinterest と違えている点（このサイトで既に決めた見た目を�
 | `--color-on-primary` | `var(--color-white)` | primary の上の文字 |
 | `--color-placeholder` | `var(--color-gray-300)` | 代表色が無いタイルの地 |
 | `--color-media-control` | `color-mix(in srgb, var(--color-white) 90%, transparent)` | 写真・動画の上に載せる操作部品の地 |
+| `--color-media-control-subtle` | `color-mix(in srgb, var(--color-white) 55%, transparent)` | 拡大画像の左右の矢印の地（画像の邪魔をしないよう薄く） |
 | `--color-on-media-control` | `var(--color-gray-900)` | その上の文字 |
 | `--color-media-overlay` | `color-mix(in srgb, var(--color-black) 30%, transparent)` | 写真を少し暗くする |
 | `--color-scrim` | `color-mix(in srgb, var(--color-black) 50%, transparent)` | メニューの背景 |

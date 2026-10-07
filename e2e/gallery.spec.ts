@@ -191,6 +191,79 @@ test('ローディング画面が閉じた時点で、画面内の画像はす�
   expect(inView.filter((img) => !img.loaded)).toEqual([]);
 });
 
+test('拡大した画像は、左右の矢印・←→キー・スワイプで前後の画像に移る', async ({ page }) => {
+  const imagesInOrder = data.filter((item) => item.type === 'image');
+  const [first, second, third] = imagesInOrder;
+  await openGallery(page);
+  const lightbox = page.locator('#image-lightbox');
+  const img = lightbox.locator('[data-lightbox-img]');
+  const fullOf = (index: number) =>
+    page.locator(`.gallery-item[data-index="${index}"] [data-lightbox-trigger]`).getAttribute('data-full');
+
+  await page.locator(`.gallery-item[data-index="${first.index}"] [data-lightbox-trigger]`).click();
+  await expect(img).toHaveAttribute('src', (await fullOf(first.index))!);
+  // 先頭では「前」は出さない
+  await expect(lightbox.locator('[data-lightbox-prev]')).toBeDisabled();
+  // 矢印は画像に重ねず、画像の下（説明と同じ行）に置く
+  const imgBox = (await img.boundingBox())!;
+  const nextBox = (await lightbox.locator('[data-lightbox-next]').boundingBox())!;
+  expect(nextBox.y).toBeGreaterThanOrEqual(imgBox.y + imgBox.height);
+
+  await lightbox.locator('[data-lightbox-next]').click();
+  await expect(img).toHaveAttribute('src', (await fullOf(second.index))!);
+  await page.keyboard.press('ArrowRight');
+  await expect(img).toHaveAttribute('src', (await fullOf(third.index))!);
+  await page.keyboard.press('ArrowLeft');
+  await expect(img).toHaveAttribute('src', (await fullOf(second.index))!);
+
+  // 左へスワイプで次、右へスワイプで前。縦方向の動きでは切り替えない
+  const swipe = (dx: number, dy = 0) =>
+    lightbox.evaluate(
+      (el, [dx, dy]) => {
+        const touch = (x: number, y: number) => new Touch({ identifier: 1, target: el, clientX: x, clientY: y });
+        el.dispatchEvent(new TouchEvent('touchstart', { touches: [touch(200, 300)], bubbles: true }));
+        el.dispatchEvent(new TouchEvent('touchend', { changedTouches: [touch(200 + dx, 300 + dy)], bubbles: true }));
+      },
+      [dx, dy],
+    );
+  await swipe(-120);
+  await expect(img).toHaveAttribute('src', (await fullOf(third.index))!);
+  await swipe(120);
+  await expect(img).toHaveAttribute('src', (await fullOf(second.index))!);
+  await swipe(-60, 200);
+  await expect(img).toHaveAttribute('src', (await fullOf(second.index))!);
+});
+
+test('画像を切り替えたとき、次の画像が届くまで前の画像を残さない', async ({ page }) => {
+  const [first, second] = data.filter((item) => item.type === 'image');
+  await openGallery(page);
+  const fullOf = (index: number) =>
+    page.locator(`.gallery-item[data-index="${index}"] [data-lightbox-trigger]`).getAttribute('data-full');
+  const secondFull = (await fullOf(second.index))!;
+
+  // 次の画像の応答を止めておく
+  let respond = () => {};
+  const responded = new Promise<void>((resolve) => (respond = resolve));
+  await page.route(`**${secondFull}`, async (route) => {
+    await responded;
+    await route.continue();
+  });
+
+  const img = page.locator('#image-lightbox [data-lightbox-img]');
+  await page.locator(`.gallery-item[data-index="${first.index}"] [data-lightbox-trigger]`).click();
+  await expect(img).not.toHaveClass(/is-loading/);
+  await page.keyboard.press('ArrowRight');
+
+  // 届くまでは前の画像を見せない（説明はすぐ切り替わる）
+  await expect(img).toHaveAttribute('src', secondFull);
+  await expect(img).toHaveCSS('opacity', '0');
+  await expect(page.locator('#image-lightbox .work-caption__date')).toHaveText(`作成日 ${second.date}`);
+
+  respond();
+  await expect(img).not.toHaveClass(/is-loading/);
+  await expect(img).toHaveCSS('opacity', '1');
+});
+
 test('拡大表示の下に説明・作成日・タグを出し、ロゴには対応するサイトへのリンクを付ける', async ({ page }) => {
   const logo = data.find((item) => item.type === 'image' && item.link);
   test.skip(logo?.type !== 'image', 'リンク付きの画像が無い');
