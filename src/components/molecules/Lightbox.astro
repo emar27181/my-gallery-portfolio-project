@@ -93,6 +93,22 @@ const { id, closeLabel, prevLabel, nextLabel } = Astro.props;
   .lightbox__nav :global(button:disabled) {
     visibility: hidden;
   }
+  /* 押せる範囲は --control-height-md のまま、見える丸だけ --space-4 ずつ内側に縮めて薄くする */
+  .lightbox__nav :global(button) {
+    position: relative;
+    isolation: isolate;
+    background-color: transparent;
+    box-shadow: none;
+  }
+  .lightbox__nav :global(button)::before {
+    content: "";
+    position: absolute;
+    inset: var(--space-4);
+    z-index: -1;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-media-control-subtle);
+    box-shadow: var(--shadow-sm);
+  }
   /* どの画面幅でも右上に固定する（スマホでも押しやすい位置） */
   .lightbox__close {
     position: fixed;
