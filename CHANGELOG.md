@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### 拡大した画像をスワイプで前後に移動
+- 拡大表示（Lightbox）で、左右スワイプ・左右端の矢印ボタン・←→キーで前後の画像に移れるようにした。
+  順序は現在のフィルタ・並び替え後の並び。端では止まり、その側の矢印は出さない。
+
 ### 自作サイトのロゴと、拡大表示の説明
 - 自作サイトのアプリアイコン（PWA アイコン）8 点をロゴ作品として追加（Flex Railway Map・Memorio・Music Atlas・TAKUS・ThrowFlowDarts・ゲーム用ポートフォリオ・VALORANT Point Viewer・色相・トーン推薦アプリ）。
   画像は各サイトのリポジトリから取得。Way Point Map と経歴ポートフォリオのアイコンは使わない（ユーザー判断）。Window Brain・Card Pocket・麻雀役ビジュアライザーはリポジトリにアイコンが無い。

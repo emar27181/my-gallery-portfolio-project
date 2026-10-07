@@ -67,6 +67,8 @@ Astro による静的サイト（1ページ）。ビルド時に作品データ�
   埋め込みを拒否するサイトでも `load` は発火するため、その場合はブラウザのエラー表示に切り替わる。
 - **Web サイトの操作** … マウスの端末（`hover: hover` かつ `pointer: fine`）では最初から iframe に入力を渡す。
   指の端末では全幅の枠が縦スクロールを奪うため、タップで全画面を開き、その場の操作は帯の「操作する」から始める。
+- **画像の前後移動** … `Gallery` が画像を押されたとき、表示中（絞り込み・並び替え後）の画像を並び順どおりに集めて
+  `lightbox-open`（detail: `{ id, items, index }`）で渡す。`Lightbox` は左右の矢印・←→キー・横スワイプ（50px 以上かつ縦より横が大きい動き）で前後に移る。
 - **拡大表示の説明** … `Gallery` が作品ごとに説明（`workDescription`）・関連リンク・作成日・タグを組み立てて `data-caption` に埋め、
   `lightbox-open` / `embed-viewer-open` の detail で渡す。描画は `Lightbox` と `EmbedViewer` 共通の `molecules/work-caption.ts`。
 - **Web サイトの枠の縦横比** は、スマホ（列数が最少）では `SITE_FRAME_NARROW`（縦長）、それ以外は `SITE_FRAME` を
