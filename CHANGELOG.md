@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### 自作サイトのロゴに AI タグ
+- AI で生成したロゴ 6 点（Memorio・Music Atlas・TAKUS・ThrowFlowDarts・VALORANT Point Viewer・色相・トーン推薦アプリ）に `AI` タグを付けた。
+  ゲーム用ポートフォリオと Flex Railway Map のロゴは手描き・自作のため付けない（ユーザー判断）。
+
 ### 拡大した画像をスワイプで前後に移動
 - 拡大表示（Lightbox）で、左右スワイプ・左右端の矢印ボタン・←→キーで前後の画像に移れるようにした。
   順序は現在のフィルタ・並び替え後の並び。端では止まり、その側の矢印は出さない。
