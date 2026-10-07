@@ -80,7 +80,13 @@ const { id, closeLabel, prevLabel, nextLabel } = Astro.props;
     min-width: 0;
     color: var(--color-on-scrim);
   }
+  /* 切り替えた直後は前の画像を残さず消し、次の画像が描ける状態になったらフェードインする */
+  .lightbox__img.is-loading {
+    opacity: 0;
+    transition: none;
+  }
   .lightbox__img {
+    transition: opacity var(--duration-fast) var(--easing-standard);
     min-height: 0;
     max-width: 100%;
     max-height: 100%;
@@ -157,8 +163,23 @@ const { id, closeLabel, prevLabel, nextLabel } = Astro.props;
       if (items.length === 0) return;
       index = Math.min(Math.max(i, 0), items.length - 1);
       const item = items[index];
-      img.src = item.src;
+      if (img.getAttribute("src") !== item.src) {
+        img.classList.add("is-loading");
+        img.src = item.src;
+        // 速く切り替えたとき、前に頼んだ画像の完了で今の画像を見せてしまわないよう、src が同じか確かめる
+        const requested = item.src;
+        img
+          .decode()
+          .catch(() => undefined)
+          .then(() => {
+            if (img.getAttribute("src") === requested) img.classList.remove("is-loading");
+          });
+      }
       img.alt = item.alt;
+      // 前後の画像を先に読み込んでおき、切り替えをすぐ終わらせる
+      for (const neighbor of [items[index - 1], items[index + 1]]) {
+        if (neighbor) new Image().src = neighbor.src;
+      }
       renderWorkCaption(captionEl, item.caption);
       prev.disabled = index === 0;
       next.disabled = index === items.length - 1;

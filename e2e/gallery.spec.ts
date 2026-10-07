@@ -234,6 +234,36 @@ test('拡大した画像は、左右の矢印・←→キー・スワイプで�
   await expect(img).toHaveAttribute('src', (await fullOf(second.index))!);
 });
 
+test('画像を切り替えたとき、次の画像が届くまで前の画像を残さない', async ({ page }) => {
+  const [first, second] = data.filter((item) => item.type === 'image');
+  await openGallery(page);
+  const fullOf = (index: number) =>
+    page.locator(`.gallery-item[data-index="${index}"] [data-lightbox-trigger]`).getAttribute('data-full');
+  const secondFull = (await fullOf(second.index))!;
+
+  // 次の画像の応答を止めておく
+  let respond = () => {};
+  const responded = new Promise<void>((resolve) => (respond = resolve));
+  await page.route(`**${secondFull}`, async (route) => {
+    await responded;
+    await route.continue();
+  });
+
+  const img = page.locator('#image-lightbox [data-lightbox-img]');
+  await page.locator(`.gallery-item[data-index="${first.index}"] [data-lightbox-trigger]`).click();
+  await expect(img).not.toHaveClass(/is-loading/);
+  await page.keyboard.press('ArrowRight');
+
+  // 届くまでは前の画像を見せない（説明はすぐ切り替わる）
+  await expect(img).toHaveAttribute('src', secondFull);
+  await expect(img).toHaveCSS('opacity', '0');
+  await expect(page.locator('#image-lightbox .work-caption__date')).toHaveText(`作成日 ${second.date}`);
+
+  respond();
+  await expect(img).not.toHaveClass(/is-loading/);
+  await expect(img).toHaveCSS('opacity', '1');
+});
+
 test('拡大表示の下に説明・作成日・タグを出し、ロゴには対応するサイトへのリンクを付ける', async ({ page }) => {
   const logo = data.find((item) => item.type === 'image' && item.link);
   test.skip(logo?.type !== 'image', 'リンク付きの画像が無い');
