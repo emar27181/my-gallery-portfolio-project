@@ -518,7 +518,7 @@ export const images: ImageData[] = [
     title: 'Memorio ロゴ',
     description: 'Memorio のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
     link: 'https://memorio3.netlify.app/',
-    tags: ['ロゴ', 'オリジナル'],
+    tags: ['ロゴ', 'オリジナル', 'AI'],
     date: '2026-09-29',
     type: 'image'
   },
@@ -528,7 +528,7 @@ export const images: ImageData[] = [
     title: 'Music Atlas ロゴ',
     description: 'Music Atlas のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
     link: 'https://music-atlas.netlify.app/',
-    tags: ['ロゴ', 'オリジナル'],
+    tags: ['ロゴ', 'オリジナル', 'AI'],
     date: '2026-09-28',
     type: 'image'
   },
@@ -538,7 +538,7 @@ export const images: ImageData[] = [
     title: 'TAKUS ロゴ',
     description: 'TAKUS のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
     link: 'https://waste-tax.netlify.app/onboarding',
-    tags: ['ロゴ', 'オリジナル'],
+    tags: ['ロゴ', 'オリジナル', 'AI'],
     date: '2026-09-28',
     type: 'image'
   },
@@ -548,7 +548,7 @@ export const images: ImageData[] = [
     title: 'ThrowFlowDarts ロゴ',
     description: 'ThrowFlowDarts のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
     link: 'https://throw-frow-darts.netlify.app/',
-    tags: ['ロゴ', 'オリジナル'],
+    tags: ['ロゴ', 'オリジナル', 'AI'],
     date: '2026-08-11',
     type: 'image'
   },
@@ -568,7 +568,7 @@ export const images: ImageData[] = [
     title: 'VALORANT Point Viewer ロゴ',
     description: 'VALORANT Point Viewer のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
     link: 'https://valorant-point-viewer.netlify.app/',
-    tags: ['ロゴ', 'オリジナル'],
+    tags: ['ロゴ', 'オリジナル', 'AI'],
     date: '2026-05-17',
     type: 'image'
   },
@@ -578,7 +578,7 @@ export const images: ImageData[] = [
     title: '色相・トーン推薦アプリ ロゴ',
     description: '色相・トーン推薦アプリ のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
     link: 'https://color-recommend.netlify.app/',
-    tags: ['ロゴ', 'オリジナル'],
+    tags: ['ロゴ', 'オリジナル', 'AI'],
     date: '2026-02-07',
     type: 'image'
   },
