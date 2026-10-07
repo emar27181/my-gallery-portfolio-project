@@ -9,7 +9,8 @@ import Lightbox from "../molecules/Lightbox.astro";
 import MultiSelect from "../molecules/MultiSelect.astro";
 import SingleSelect from "../molecules/SingleSelect.astro";
 import VideoEmbed from "../molecules/VideoEmbed.astro";
-import { DEFAULT_SORT, SORT_OPTIONS, filterTagsByUsage } from "../../lib/gallery";
+import { DEFAULT_SORT, SORT_OPTIONS, filterTagsByUsage, linkedSiteTitle, workDescription } from "../../lib/gallery";
+import type { WorkCaption } from "../molecules/work-caption";
 import { tagTone } from "../../lib/tag-visuals";
 import { GALLERY_BREAKPOINTS, SITE_FRAME_NARROW, galleryGridCss, gallerySizes } from "../../lib/gallery-grid";
 import { getGalleryEntries } from "../../lib/gallery-images";
@@ -24,6 +25,18 @@ const VIEWER_ID = "content-viewer";
 const youtubeEmbed = (videoId: string) =>
   `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
 const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${videoId}`;
+
+/** 拡大表示の下に出す説明（説明文・関連リンク・作成日・タグ）。文言はここで決める */
+const captionOf = (entry: (typeof entries)[number]): WorkCaption => {
+  const linkTitle = entry.link ? linkedSiteTitle(entry.link, entries) : undefined;
+  return {
+    description: workDescription(entry),
+    link: entry.link ? { href: entry.link, label: linkTitle ? `${linkTitle} を開く` : "リンクを開く" } : undefined,
+    date: entry.date,
+    dateLabel: "作成日",
+    tags: entry.tags,
+  };
+};
 ---
 
 <style is:global set:html={galleryGridCss(".gallery-grid")}></style>
@@ -64,6 +77,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
             data-tags={tags.join(",")}
             data-type={type}
             data-color={color}
+            data-caption={JSON.stringify(captionOf(entry))}
             data-aspect={height / width}
             data-aspect-narrow={type === "site" ? SITE_FRAME_NARROW.height / SITE_FRAME_NARROW.width : undefined}
             data-span={span}
@@ -179,6 +193,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
   import { DEFAULT_SORT, isSortKey, matchesAllTags, sortItems, type SortKey, type SortableItem } from "../../lib/gallery";
   import { GALLERY_READY_EVENT, isNarrowLayout } from "../../lib/gallery-grid";
   import { layoutMasonry, type Placement } from "../../lib/masonry";
+  import { readWorkCaption } from "../molecules/work-caption";
 
   interface Entry extends SortableItem {
     el: HTMLElement;
@@ -300,9 +315,15 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
   grid.addEventListener("click", (e) => {
     const trigger = (e.target as HTMLElement).closest<HTMLElement>("[data-lightbox-trigger]");
     if (!trigger) return;
+    const item = trigger.closest<HTMLElement>(".gallery-item");
     document.dispatchEvent(
       new CustomEvent("lightbox-open", {
-        detail: { id: grid.dataset.lightboxId, src: trigger.dataset.full ?? "", alt: trigger.dataset.alt ?? "" },
+        detail: {
+          id: grid.dataset.lightboxId,
+          src: trigger.dataset.full ?? "",
+          alt: trigger.dataset.alt ?? "",
+          caption: readWorkCaption(item?.dataset.caption),
+        },
       }),
     );
   });
@@ -323,6 +344,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
           title: embed.dataset.title ?? "",
           poster: embed.dataset.full,
           color: entry.el.dataset.color,
+          caption: readWorkCaption(entry.el.dataset.caption),
         };
       }
       const video = entry.el.querySelector<HTMLElement>("[data-video]")!;
@@ -333,6 +355,7 @@ const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${vid
         title: video.dataset.title ?? "",
         poster: poster?.currentSrc || poster?.src,
         color: entry.el.dataset.color,
+        caption: readWorkCaption(entry.el.dataset.caption),
       };
     });
     const { url } = (e as CustomEvent<{ url: string }>).detail;

@@ -191,6 +191,41 @@ test('ローディング画面が閉じた時点で、画面内の画像はす�
   expect(inView.filter((img) => !img.loaded)).toEqual([]);
 });
 
+test('拡大表示の下に説明・作成日・タグを出し、ロゴには対応するサイトへのリンクを付ける', async ({ page }) => {
+  const logo = data.find((item) => item.type === 'image' && item.link);
+  test.skip(logo?.type !== 'image', 'リンク付きの画像が無い');
+  if (logo?.type !== 'image' || !logo.link) return;
+  const site = data.find((item) => item.type === 'site' && item.url === logo.link);
+
+  await openGallery(page);
+  const trigger = page.locator(`.gallery-item[data-index="${logo.index}"] [data-lightbox-trigger]`);
+  await trigger.scrollIntoViewIfNeeded();
+  await trigger.click();
+  const caption = page.locator('#image-lightbox [data-lightbox-caption]');
+  await expect(caption).toBeVisible();
+  await expect(caption.locator('.work-caption__description')).toHaveText(logo.description!);
+  await expect(caption.locator('.work-caption__date')).toHaveText(`作成日 ${logo.date}`);
+  await expect(caption.locator('.work-caption__tag')).toHaveText(logo.tags);
+  const link = caption.locator('.work-caption__link');
+  await expect(link).toHaveAttribute('href', logo.link);
+  await expect(link).toHaveAttribute('target', '_blank');
+  if (site) await expect(link).toHaveText(`${site.title} を開く`);
+
+  // 説明（リンク）は画像の下にあり、画面内に収まる
+  const imgBox = (await page.locator('#image-lightbox [data-lightbox-img]').boundingBox())!;
+  const captionBox = (await caption.boundingBox())!;
+  expect(captionBox.y).toBeGreaterThanOrEqual(imgBox.y + imgBox.height);
+  expect(captionBox.y + captionBox.height).toBeLessThanOrEqual(page.viewportSize()!.height);
+
+  // 説明の無い画像は作成日とタグだけを出す
+  const plain = data.find((item) => item.type === 'image' && !item.description)!;
+  await page.keyboard.press('Escape');
+  await page.locator(`.gallery-item[data-index="${plain.index}"] [data-lightbox-trigger]`).click();
+  await expect(caption.locator('.work-caption__description')).toHaveCount(0);
+  await expect(caption.locator('.work-caption__link')).toHaveCount(0);
+  await expect(caption.locator('.work-caption__date')).toHaveText(`作成日 ${plain.date}`);
+});
+
 test('Web サイトは大きな枠に埋め込まれ、クリックするとその場で操作できる', async ({ page }) => {
   const site = data.find((item) => item.type === 'site');
   test.skip(!site, 'Web サイトの作品が無い');
@@ -320,6 +355,10 @@ test('Web サイトはクリックで全画面になり、左右の矢印でサ�
   await expect(viewer.locator('[data-viewer-poster]')).toBeVisible({ visible: Boolean(first.poster) });
   await expect(frame).toHaveClass(/is-loaded/);
   await expect(viewer.locator('[data-viewer-title]')).toHaveText(first.title);
+  // 説明（サイトは alt）・作成日・タグを下に出す
+  const viewerCaption = viewer.locator('[data-viewer-caption]');
+  await expect(viewerCaption.locator('.work-caption__description')).toHaveText(first.description ?? first.alt);
+  await expect(viewerCaption.locator('.work-caption__date')).toHaveText(`作成日 ${first.date}`);
   await expect(viewer.locator('[data-viewer-position]')).toHaveText(`${firstIndex + 1} / ${media.length}`);
   if (firstIndex === 0) await expect(viewer.locator('[data-viewer-prev]')).toBeDisabled();
   else await expect(viewer.locator('[data-viewer-prev]')).toBeEnabled();
