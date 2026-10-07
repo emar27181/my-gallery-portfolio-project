@@ -1,7 +1,7 @@
 ---
 // 画像を画面いっぱいに見せる（molecule）。document に "lightbox-open"
 // （detail: { id, items: { src, alt, caption? }[], index }）を送ると開く。背景のクリック・閉じるボタン・Escape で閉じる。
-// 左右のスワイプ・左右の矢印ボタン・←→キーで前後の画像に移る（items の順。端では止まる）。
+// 左右のスワイプ・説明の左右の矢印ボタン・←→キーで前後の画像に移る（items の順。端では止まる）。
 // caption（説明・リンク・作成日・タグ）は画像の下に出す（work-caption.ts）。
 import IconButton from "../atoms/IconButton.astro";
 import "./work-caption.css";
@@ -19,16 +19,19 @@ const { id, closeLabel, prevLabel, nextLabel } = Astro.props;
 <div class="lightbox" id={id} data-lightbox role="dialog" aria-modal="true">
   <figure class="lightbox__figure">
     <img class="lightbox__img" data-lightbox-img src="" alt="" />
-    <figcaption class="lightbox__caption work-caption" data-lightbox-caption hidden></figcaption>
+    <!-- 画像の下の 1 行に「前の矢印・説明・次の矢印」を並べる（矢印を画像に重ねない） -->
+    <div class="lightbox__footer">
+      <div class="lightbox__nav">
+        <IconButton icon="chevronLeft" variant="media" label={prevLabel} data-lightbox-prev />
+      </div>
+      <div class="lightbox__caption work-caption" data-lightbox-caption hidden></div>
+      <div class="lightbox__nav">
+        <IconButton icon="chevronRight" variant="media" label={nextLabel} data-lightbox-next />
+      </div>
+    </div>
   </figure>
   <div class="lightbox__close">
     <IconButton icon="close" label={closeLabel} data-lightbox-close />
-  </div>
-  <div class="lightbox__nav lightbox__nav--prev">
-    <IconButton icon="chevronLeft" variant="media" label={prevLabel} data-lightbox-prev />
-  </div>
-  <div class="lightbox__nav lightbox__nav--next">
-    <IconButton icon="chevronRight" variant="media" label={nextLabel} data-lightbox-next />
   </div>
 </div>
 
@@ -64,10 +67,17 @@ const { id, closeLabel, prevLabel, nextLabel } = Astro.props;
     max-height: 100%;
     margin: 0;
   }
-  .lightbox__caption {
+  .lightbox__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
     flex-shrink: 0;
     width: 100%;
     max-width: var(--layout-content-max-width);
+  }
+  .lightbox__caption {
+    flex: 1;
+    min-width: 0;
     color: var(--color-on-scrim);
   }
   .lightbox__img {
@@ -78,17 +88,12 @@ const { id, closeLabel, prevLabel, nextLabel } = Astro.props;
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-lg);
   }
-  /* 前後の矢印は左右の端の中央に置く（画像に少し重なってもよい）。端では押せない */
+  /* 前後の矢印は説明の左右（説明が無くても両端）。端では押せない（場所は空けたまま、行の幅を変えない） */
   .lightbox__nav {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
+    flex-shrink: 0;
   }
-  .lightbox__nav--prev {
-    left: var(--space-8);
-  }
-  .lightbox__nav--next {
-    right: var(--space-8);
+  .lightbox__footer > .lightbox__nav:last-child {
+    margin-left: auto;
   }
   .lightbox__nav :global(button:disabled) {
     visibility: hidden;

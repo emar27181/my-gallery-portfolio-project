@@ -204,6 +204,10 @@ test('拡大した画像は、左右の矢印・←→キー・スワイプで�
   await expect(img).toHaveAttribute('src', (await fullOf(first.index))!);
   // 先頭では「前」は出さない
   await expect(lightbox.locator('[data-lightbox-prev]')).toBeDisabled();
+  // 矢印は画像に重ねず、画像の下（説明と同じ行）に置く
+  const imgBox = (await img.boundingBox())!;
+  const nextBox = (await lightbox.locator('[data-lightbox-next]').boundingBox())!;
+  expect(nextBox.y).toBeGreaterThanOrEqual(imgBox.y + imgBox.height);
 
   await lightbox.locator('[data-lightbox-next]').click();
   await expect(img).toHaveAttribute('src', (await fullOf(second.index))!);
