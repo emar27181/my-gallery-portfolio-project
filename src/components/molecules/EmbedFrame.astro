@@ -6,8 +6,11 @@
 // （埋め込み先にフォーカスがあると Escape はそちらに届くため、ボタンでも終えられるようにする）。
 // 作品本体または全画面ボタンを押すと root から "embed-expand"（detail: { url, title }）を送る。
 // インライン操作は帯の「操作する」ボタンから明示的に開始する。何を全画面で見せるかは呼び出し側が決める。
-// 読み込みの重さを隠すため、ページは画面に近づいてから読み込み（操作を始めたときも読み込む）、
-// 届くまでは画面写真（poster）か、無ければタイトルを見せる。読み込みが済んだらページをフェードインする。
+// ページは最初から読み込んでおく（このページ自体の読み込みが済んだ直後。初期表示の画像を先に通すため）。
+// 届くまでは画面写真（poster）か、無ければタイトルを見せ、読み込みが済んだらページをフェードインする。
+// マウスで操作する端末（hover: hover かつ pointer: fine）では、枠の中をそのままクリック・スクロールして操作できる
+// （「操作する」は不要。全画面は帯のボタンから）。指で操作する端末では、全幅の枠が縦スクロールを奪わないよう、
+// 従来どおり作品本体のタップで全画面を開き、その場で触るときは帯の「操作する」を押す。
 import Button from "../atoms/Button.astro";
 import IconButton from "../atoms/IconButton.astro";
 import CoverButton from "../atoms/CoverButton.astro";
@@ -121,6 +124,16 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel, post
   .embed.is-active .embed__frame {
     pointer-events: auto;
   }
+  /* マウスで操作する端末は、最初から枠の中を操作できる */
+  @media (hover: hover) and (pointer: fine) {
+    .embed__frame {
+      pointer-events: auto;
+    }
+    .embed :global([data-embed-activate]),
+    .embed .embed__viewport :global([data-embed-expand]) {
+      display: none;
+    }
+  }
   .embed.is-active :global([data-embed-activate]) {
     display: none;
   }
@@ -133,9 +146,6 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel, post
 <script>
   const embeds = [...document.querySelectorAll<HTMLElement>("[data-embed]")];
 
-  /** 画面に近づいた枠からページを読み込む（先読みの距離は画面の高さの半分） */
-  const PRELOAD_MARGIN = "50% 0px";
-
   const load = (embed: HTMLElement) => {
     const frame = embed.querySelector<HTMLIFrameElement>("iframe")!;
     if (frame.src || !frame.dataset.src) return;
@@ -143,17 +153,10 @@ const { url, title, activateLabel, deactivateLabel, openLabel, expandLabel, post
     frame.src = frame.dataset.src;
   };
 
-  const observer = new IntersectionObserver(
-    (records) => {
-      for (const record of records) {
-        if (!record.isIntersecting) continue;
-        load(record.target as HTMLElement);
-        observer.unobserve(record.target);
-      }
-    },
-    { rootMargin: PRELOAD_MARGIN },
-  );
-  for (const embed of embeds) observer.observe(embed);
+  // このページの読み込み（初期表示の画像など）が済んでから、すべての枠のページを読み込み始める
+  const loadAll = () => embeds.forEach(load);
+  if (document.readyState === "complete") loadAll();
+  else window.addEventListener("load", loadAll, { once: true });
 
   const setActive = (active: HTMLElement | null) => {
     for (const embed of embeds) {
