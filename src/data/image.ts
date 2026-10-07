@@ -6,6 +6,10 @@ interface WorkBase {
   date: string;
   /** false の作品はデータを残したままギャラリー表示から除外する */
   visible?: boolean;
+  /** 拡大表示の下に出す説明文。省略時、Web サイトは alt を説明として使う */
+  description?: string;
+  /** 関連するページの URL（https）。拡大表示の説明にリンクとして出す（例: ロゴ → そのロゴのサイト） */
+  link?: string;
 }
 
 export interface ImageWork extends WorkBase {
@@ -495,6 +499,87 @@ export const images: ImageData[] = [
     title: 'Shandy T-shirt Tail Design',
     tags: ['ロゴ', 'イラスト', 'オリジナル'],
     date: '2024-09-27',
+    type: 'image'
+  },
+  // 自作サイトのアプリアイコン（出典: 各サイトのリポジトリの PWA アイコン。link で対応するサイトを開ける）
+  {
+    src: 'image_logo_flex_railway_map.png',
+    alt: 'Flex Railway Map のアプリアイコン',
+    title: 'Flex Railway Map ロゴ',
+    description: 'Flex Railway Map のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
+    link: 'https://flex-railway-map.netlify.app/',
+    tags: ['ロゴ', 'オリジナル'],
+    date: '2026-09-29',
+    type: 'image'
+  },
+  {
+    src: 'image_logo_memorio.png',
+    alt: 'Memorio のアプリアイコン',
+    title: 'Memorio ロゴ',
+    description: 'Memorio のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
+    link: 'https://memorio3.netlify.app/',
+    tags: ['ロゴ', 'オリジナル'],
+    date: '2026-09-29',
+    type: 'image'
+  },
+  {
+    src: 'image_logo_music_atlas.png',
+    alt: 'Music Atlas のアプリアイコン',
+    title: 'Music Atlas ロゴ',
+    description: 'Music Atlas のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
+    link: 'https://music-atlas.netlify.app/',
+    tags: ['ロゴ', 'オリジナル'],
+    date: '2026-09-28',
+    type: 'image'
+  },
+  {
+    src: 'image_logo_takus.png',
+    alt: 'TAKUS のアプリアイコン',
+    title: 'TAKUS ロゴ',
+    description: 'TAKUS のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
+    link: 'https://waste-tax.netlify.app/onboarding',
+    tags: ['ロゴ', 'オリジナル'],
+    date: '2026-09-28',
+    type: 'image'
+  },
+  {
+    src: 'image_logo_throw_flow_darts.png',
+    alt: 'ThrowFlowDarts のアプリアイコン',
+    title: 'ThrowFlowDarts ロゴ',
+    description: 'ThrowFlowDarts のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
+    link: 'https://throw-frow-darts.netlify.app/',
+    tags: ['ロゴ', 'オリジナル'],
+    date: '2026-08-11',
+    type: 'image'
+  },
+  {
+    src: 'image_logo_nodoame.png',
+    alt: 'ゲーム用ポートフォリオ のアプリアイコン',
+    title: 'ゲーム用ポートフォリオ ロゴ',
+    description: 'ゲーム用ポートフォリオ のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
+    link: 'https://nodoame27181.netlify.app/',
+    tags: ['ロゴ', 'オリジナル'],
+    date: '2026-07-05',
+    type: 'image'
+  },
+  {
+    src: 'image_logo_valorant_point_viewer.png',
+    alt: 'VALORANT Point Viewer のアプリアイコン',
+    title: 'VALORANT Point Viewer ロゴ',
+    description: 'VALORANT Point Viewer のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
+    link: 'https://valorant-point-viewer.netlify.app/',
+    tags: ['ロゴ', 'オリジナル'],
+    date: '2026-05-17',
+    type: 'image'
+  },
+  {
+    src: 'image_logo_color_recommend.png',
+    alt: '色相・トーン推薦アプリ のアプリアイコン',
+    title: '色相・トーン推薦アプリ ロゴ',
+    description: '色相・トーン推薦アプリ のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
+    link: 'https://color-recommend.netlify.app/',
+    tags: ['ロゴ', 'オリジナル'],
+    date: '2026-02-07',
     type: 'image'
   },
   {
