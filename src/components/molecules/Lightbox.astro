@@ -1,6 +1,7 @@
 ---
 // 画像を画面いっぱいに見せる（molecule）。document に "lightbox-open"
-// （detail: { id, src, alt, caption? }）を送ると開く。背景のクリック・閉じるボタン・Escape で閉じる。
+// （detail: { id, items: { src, alt, caption? }[], index }）を送ると開く。背景のクリック・閉じるボタン・Escape で閉じる。
+// 左右のスワイプ・左右の矢印ボタン・←→キーで前後の画像に移る（items の順。端では止まる）。
 // caption（説明・リンク・作成日・タグ）は画像の下に出す（work-caption.ts）。
 import IconButton from "../atoms/IconButton.astro";
 import "./work-caption.css";
@@ -8,9 +9,11 @@ import "./work-caption.css";
 interface Props {
   id: string;
   closeLabel: string;
+  prevLabel: string;
+  nextLabel: string;
 }
 
-const { id, closeLabel } = Astro.props;
+const { id, closeLabel, prevLabel, nextLabel } = Astro.props;
 ---
 
 <div class="lightbox" id={id} data-lightbox role="dialog" aria-modal="true">
@@ -20,6 +23,12 @@ const { id, closeLabel } = Astro.props;
   </figure>
   <div class="lightbox__close">
     <IconButton icon="close" label={closeLabel} data-lightbox-close />
+  </div>
+  <div class="lightbox__nav lightbox__nav--prev">
+    <IconButton icon="chevronLeft" variant="media" label={prevLabel} data-lightbox-prev />
+  </div>
+  <div class="lightbox__nav lightbox__nav--next">
+    <IconButton icon="chevronRight" variant="media" label={nextLabel} data-lightbox-next />
   </div>
 </div>
 
@@ -33,6 +42,8 @@ const { id, closeLabel } = Astro.props;
     justify-content: center;
     padding: var(--space-16);
     background-color: var(--color-scrim-strong);
+    /* 横スワイプはこちらで扱い、縦方向の操作（拡大・スクロール）はブラウザに任せる */
+    touch-action: pan-y pinch-zoom;
     opacity: 0;
     visibility: hidden;
     transition:
@@ -67,6 +78,21 @@ const { id, closeLabel } = Astro.props;
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-lg);
   }
+  /* 前後の矢印は左右の端の中央に置く（画像に少し重なってもよい）。端では押せない */
+  .lightbox__nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .lightbox__nav--prev {
+    left: var(--space-8);
+  }
+  .lightbox__nav--next {
+    right: var(--space-8);
+  }
+  .lightbox__nav :global(button:disabled) {
+    visibility: hidden;
+  }
   /* どの画面幅でも右上に固定する（スマホでも押しやすい位置） */
   .lightbox__close {
     position: fixed;
@@ -78,40 +104,85 @@ const { id, closeLabel } = Astro.props;
 <script>
   import { renderWorkCaption, type WorkCaption } from "./work-caption";
 
-  interface LightboxOpenDetail {
-    id: string;
+  interface LightboxItem {
     src: string;
     alt: string;
     caption?: WorkCaption;
   }
-
-  const setOpen = (lightbox: HTMLElement, open: boolean) => {
-    lightbox.classList.toggle("is-open", open);
-    document.body.style.overflow = open ? "hidden" : "";
-  };
-
-  document.addEventListener("lightbox-open", (e) => {
-    const { id, src, alt, caption } = (e as CustomEvent<LightboxOpenDetail>).detail;
-    const lightbox = document.getElementById(id);
-    const img = lightbox?.querySelector<HTMLImageElement>("[data-lightbox-img]");
-    const captionEl = lightbox?.querySelector<HTMLElement>("[data-lightbox-caption]");
-    if (!lightbox || !img || !captionEl) return;
-    img.src = src;
-    img.alt = alt;
-    renderWorkCaption(captionEl, caption);
-    setOpen(lightbox, true);
-  });
-
-  for (const lightbox of document.querySelectorAll<HTMLElement>("[data-lightbox]")) {
-    lightbox.addEventListener("click", (e) => {
-      const target = e.target as HTMLElement;
-      const background = target === lightbox || target.classList.contains("lightbox__figure");
-      if (background || target.closest("[data-lightbox-close]")) setOpen(lightbox, false);
-    });
+  interface LightboxOpenDetail {
+    id: string;
+    items: LightboxItem[];
+    index: number;
   }
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape") return;
-    for (const lightbox of document.querySelectorAll<HTMLElement>("[data-lightbox].is-open")) setOpen(lightbox, false);
-  });
+  /** これ以上横に動かしたらスワイプとみなす（px。誤操作で切り替わらない程度） */
+  const SWIPE_DISTANCE = 50;
+
+  for (const lightbox of document.querySelectorAll<HTMLElement>("[data-lightbox]")) {
+    const img = lightbox.querySelector<HTMLImageElement>("[data-lightbox-img]")!;
+    const captionEl = lightbox.querySelector<HTMLElement>("[data-lightbox-caption]")!;
+    const prev = lightbox.querySelector<HTMLButtonElement>("[data-lightbox-prev]")!;
+    const next = lightbox.querySelector<HTMLButtonElement>("[data-lightbox-next]")!;
+    let items: LightboxItem[] = [];
+    let index = 0;
+
+    const isOpen = () => lightbox.classList.contains("is-open");
+    const setOpen = (open: boolean) => {
+      lightbox.classList.toggle("is-open", open);
+      document.body.style.overflow = open ? "hidden" : "";
+    };
+
+    const show = (i: number) => {
+      if (items.length === 0) return;
+      index = Math.min(Math.max(i, 0), items.length - 1);
+      const item = items[index];
+      img.src = item.src;
+      img.alt = item.alt;
+      renderWorkCaption(captionEl, item.caption);
+      prev.disabled = index === 0;
+      next.disabled = index === items.length - 1;
+    };
+
+    document.addEventListener("lightbox-open", (e) => {
+      const detail = (e as CustomEvent<LightboxOpenDetail>).detail;
+      if (detail.id !== lightbox.id || detail.items.length === 0) return;
+      items = detail.items;
+      show(detail.index);
+      setOpen(true);
+    });
+
+    lightbox.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-lightbox-prev]")) return show(index - 1);
+      if (target.closest("[data-lightbox-next]")) return show(index + 1);
+      const background = target === lightbox || target.classList.contains("lightbox__figure");
+      if (background || target.closest("[data-lightbox-close]")) setOpen(false);
+    });
+
+    // 横方向のスワイプで前後に移る（縦方向が大きい動きは無視する）
+    let start: { x: number; y: number } | null = null;
+    lightbox.addEventListener(
+      "touchstart",
+      (e) => {
+        start = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null;
+      },
+      { passive: true },
+    );
+    lightbox.addEventListener("touchend", (e) => {
+      if (!start) return;
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - start.x;
+      const dy = touch.clientY - start.y;
+      start = null;
+      if (Math.abs(dx) < SWIPE_DISTANCE || Math.abs(dx) < Math.abs(dy)) return;
+      show(dx < 0 ? index + 1 : index - 1);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (!isOpen()) return;
+      if (e.key === "Escape") setOpen(false);
+      else if (e.key === "ArrowLeft") show(index - 1);
+      else if (e.key === "ArrowRight") show(index + 1);
+    });
+  }
 </script>
