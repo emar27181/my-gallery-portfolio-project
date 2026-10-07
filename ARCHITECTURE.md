@@ -60,11 +60,15 @@ Astro による静的サイト（1ページ）。ビルド時に作品データ�
   `EmbedFrame` の全画面ボタンは `embed-expand` を送り、`Gallery` が表示中のサイトを並び順どおりに集めて
   `embed-viewer-open` で `EmbedViewer` を開く（前後の切り替えは絞り込み・並び替えの結果に従う）。
   `EmbedViewer` は切り替えのたびに iframe を差し替える（src の書き換えはブラウザの履歴に積まれ、「戻る」が iframe の中で消費されるため）。
-- **Web サイトの読み込み** … iframe は `data-src` だけを持って描かれ、枠が画面に近づいたとき
-  （`IntersectionObserver`、先読みは画面の高さの半分）か操作を始めたときに読み込む。届くまでは画面写真
+- **Web サイトの読み込み** … iframe は `data-src` だけを持って描かれ、このページの読み込み（`window` の `load`。
+  初期表示の画像を先に通すため）が済んだ直後にすべて読み込みを始める。届くまでは画面写真
   （`poster`）か、無ければタイトルを見せ、iframe の `load` でフェードインする（`.is-loaded`）。
   全画面表示（`EmbedViewer`）も同じく画面写真の上にフェードインする。
   埋め込みを拒否するサイトでも `load` は発火するため、その場合はブラウザのエラー表示に切り替わる。
+- **Web サイトの操作** … マウスの端末（`hover: hover` かつ `pointer: fine`）では最初から iframe に入力を渡す。
+  指の端末では全幅の枠が縦スクロールを奪うため、タップで全画面を開き、その場の操作は帯の「操作する」から始める。
+- **拡大表示の説明** … `Gallery` が作品ごとに説明（`workDescription`）・関連リンク・作成日・タグを組み立てて `data-caption` に埋め、
+  `lightbox-open` / `embed-viewer-open` の detail で渡す。描画は `Lightbox` と `EmbedViewer` 共通の `molecules/work-caption.ts`。
 - **Web サイトの枠の縦横比** は、スマホ（列数が最少）では `SITE_FRAME_NARROW`（縦長）、それ以外は `SITE_FRAME` を
   `layout()` が画面幅に応じて選ぶ。
 - **絞り込み** は `hidden` 属性で行う（`[hidden] { display: none !important }`）。
