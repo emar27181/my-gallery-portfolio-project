@@ -1,11 +1,13 @@
 ---
 // サイト・動画など iframe で表示するコンテンツを画面いっぱいに見せ、左右の矢印で前後に切り替える（molecule）。
-// document に "embed-viewer-open"（detail: { id, items: { url, title, poster? }[], index }）を送ると開く。
+// document に "embed-viewer-open"（detail: { id, items: { url, title, poster?, caption? }[], index }）を送ると開く。
+// caption（説明・作成日・タグ）は表示中のコンテンツの下、前後の矢印の上に出す（work-caption.ts）。
 // ページが届くまでは画面写真（poster）を見せ、読み込みが済んだらページをフェードインする。
 // 上端に「全画面を終える」と「新しいタブで開く」、下端（親指の届く位置）に前後の矢印と位置を置く。
 // 閉じるボタン・Escape・端末の「戻る」で閉じる（開くときに履歴を 1 つ積む）。
 import IconButton from "../atoms/IconButton.astro";
 import LinkButton from "../atoms/LinkButton.astro";
+import "./work-caption.css";
 
 interface Props {
   id: string;
@@ -46,6 +48,7 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
     sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"
     ></iframe>
   </div>
+  <div class="viewer__caption work-caption" data-viewer-caption hidden></div>
   <div class="viewer__bar viewer__bar--nav">
     <IconButton icon="chevronLeft" label={prevLabel} data-viewer-prev />
     <span class="viewer__position" data-viewer-position aria-live="polite"></span>
@@ -94,6 +97,18 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
     color: var(--color-text-muted);
     font-size: var(--font-size-body);
   }
+  /* 説明は短く保ち（2 行まで）、コンテンツの表示領域を削りすぎない */
+  .viewer__caption {
+    flex-shrink: 0;
+    padding: var(--space-8) var(--space-12);
+    border-top: var(--border-width) solid var(--color-border);
+  }
+  .viewer__caption :global(.work-caption__description) {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
   .viewer__stage {
     position: relative;
     flex: 1;
@@ -123,12 +138,15 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
 </style>
 
 <script>
+  import { renderWorkCaption, type WorkCaption } from "./work-caption";
+
   interface ViewerItem {
     url: string;
     title: string;
     poster?: string;
     openUrl?: string;
     color?: string;
+    caption?: WorkCaption;
   }
   interface ViewerOpenDetail {
     id: string;
@@ -140,6 +158,7 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
     let frame = viewer.querySelector<HTMLIFrameElement>("[data-viewer-frame]")!;
     const poster = viewer.querySelector<HTMLImageElement>("[data-viewer-poster]")!;
     const title = viewer.querySelector<HTMLElement>("[data-viewer-title]")!;
+    const caption = viewer.querySelector<HTMLElement>("[data-viewer-caption]")!;
     const position = viewer.querySelector<HTMLElement>("[data-viewer-position]")!;
     const openLink = viewer.querySelector<HTMLAnchorElement>("[data-viewer-open]")!;
     const prev = viewer.querySelector<HTMLButtonElement>("[data-viewer-prev]")!;
@@ -170,6 +189,7 @@ const { id, closeLabel, prevLabel, nextLabel, openLabel, positionLabel } = Astro
       if (item.poster) poster.src = item.poster;
       else poster.removeAttribute("src");
       title.textContent = item.title;
+      renderWorkCaption(caption, item.caption);
       openLink.href = item.openUrl || item.url;
       if (item.color) {
         viewer.style.setProperty("--viewer-accent", item.color);

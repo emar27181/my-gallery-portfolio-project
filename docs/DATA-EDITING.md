@@ -37,6 +37,10 @@ AI に渡すときは「このマニュアル」と「`src/data/image.ts` の全
 | `tags` | 文字列の配列（1 つ以上） | 絞り込みに使う。**先頭のタグが「カテゴリ」** として並び替えに使われる |
 | `date` | `'YYYY-MM-DD'` | 制作日・撮影日。「日付」の並び替えに使う |
 | `visible` | boolean（省略可） | `false` のときデータは残すがギャラリーには表示しない。省略時は表示 |
+| `description` | 文字列（省略可） | 拡大表示の下に出す説明文。省略時、Web サイトは `alt` を説明として使い、他は説明なし |
+| `link` | `https://` の URL（省略可） | 関連するページ。拡大表示の説明にリンクとして出す。展示中のサイトの `url` と同じなら「〈サイト名〉 を開く」と表示される |
+
+拡大表示（画像のモーダル・サイトや動画の全画面）の下には「説明（`description`）・リンク（`link`）・作成日（`date`）・タグ（`tags`）」が出る。
 
 ### 画像（`type: 'image'`）
 
@@ -55,6 +59,20 @@ AI に渡すときは「このマニュアル」と「`src/data/image.ts` の全
 - 画像ファイルは人が `src/assets/gallery/` に置く（AI はファイルを置けない）
 - 縮小・WebP 化・寸法と代表色の取得はビルド時に自動。サイズ調整は不要
 - ファイル名は既存に合わせて `image_<種類>_<名前><番号>.jpg`（例 `image_cat_ann1.jpg`、`image_photo_sky1.jpg`）
+- 自作サイトのロゴ（アプリアイコン）は `link` にそのサイトの `url` を書く。拡大表示からサイトを開ける
+
+```ts
+{
+  src: 'image_logo_music_atlas.png',
+  alt: 'Music Atlas のアプリアイコン',
+  title: 'Music Atlas ロゴ',
+  description: 'Music Atlas のアプリアイコン（PWA のホーム画面アイコン）として作ったロゴです．',
+  link: 'https://music-atlas.netlify.app/',
+  tags: ['ロゴ', 'オリジナル'],
+  date: '2026-09-28',
+  type: 'image'
+},
+```
 
 ### 動画（`type: 'video'`、YouTube）
 

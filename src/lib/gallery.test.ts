@@ -5,9 +5,11 @@ import {
   DEFAULT_SORT,
   SORT_OPTIONS,
   isSortKey,
+  linkedSiteTitle,
   matchesAllTags,
   sortItems,
   tagsByUsage,
+  workDescription,
   filterTagsByUsage,
   HIDDEN_FILTER_TAGS,
   type SortableItem,
@@ -153,5 +155,27 @@ describe('作品データ', () => {
     const urls = images.flatMap((work) => (work.type === 'site' ? [work.url] : []));
     for (const url of urls) expect(new URL(url).protocol, url).toBe('https:');
     expect(new Set(urls).size).toBe(urls.length);
+  });
+
+  it('関連リンク（link）は https で、ロゴのリンクは展示中のサイトを指す', () => {
+    for (const work of images) {
+      if (!work.link) continue;
+      expect(new URL(work.link).protocol, work.title).toBe('https:');
+      if (work.tags.includes('ロゴ')) expect(linkedSiteTitle(work.link, images), work.title).toBeTruthy();
+    }
+  });
+});
+
+describe('拡大表示の説明', () => {
+  it('description があればそれを、無ければ Web サイトだけ alt を説明にする', () => {
+    expect(workDescription({ type: 'image', alt: 'a', description: 'd' })).toBe('d');
+    expect(workDescription({ type: 'site', alt: 'サイトの説明' })).toBe('サイトの説明');
+    expect(workDescription({ type: 'image', alt: 'Cat 1' })).toBeUndefined();
+  });
+
+  it('リンク先の展示中サイトのタイトルを引ける', () => {
+    const works = [{ type: 'site', title: 'Music Atlas', url: 'https://music-atlas.netlify.app/' }];
+    expect(linkedSiteTitle('https://music-atlas.netlify.app/', works)).toBe('Music Atlas');
+    expect(linkedSiteTitle('https://example.com/', works)).toBeUndefined();
   });
 });

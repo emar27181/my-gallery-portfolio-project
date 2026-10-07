@@ -56,6 +56,7 @@ Pinterest と違えている点（このサイトで既に決めた見た目を�
 | `--color-media-overlay` | `color-mix(in srgb, var(--color-black) 30%, transparent)` | 写真を少し暗くする |
 | `--color-scrim` | `color-mix(in srgb, var(--color-black) 50%, transparent)` | メニューの背景 |
 | `--color-scrim-strong` | `color-mix(in srgb, var(--color-black) 90%, transparent)` | 拡大表示の背景 |
+| `--color-on-scrim` | `var(--color-white)` | 拡大表示の背景に載せる説明の文字 |
 
 コントラスト（WCAG 2.x の相対輝度から計算）:
 

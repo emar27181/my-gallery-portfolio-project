@@ -191,7 +191,42 @@ test('ローディング画面が閉じた時点で、画面内の画像はす�
   expect(inView.filter((img) => !img.loaded)).toEqual([]);
 });
 
-test('Web サイトは大きな枠に埋め込まれ、クリックするとその場で操作できる', async ({ page }) => {
+test('拡大表示の下に説明・作成日・タグを出し、ロゴには対応するサイトへのリンクを付ける', async ({ page }) => {
+  const logo = data.find((item) => item.type === 'image' && item.link);
+  test.skip(logo?.type !== 'image', 'リンク付きの画像が無い');
+  if (logo?.type !== 'image' || !logo.link) return;
+  const site = data.find((item) => item.type === 'site' && item.url === logo.link);
+
+  await openGallery(page);
+  const trigger = page.locator(`.gallery-item[data-index="${logo.index}"] [data-lightbox-trigger]`);
+  await trigger.scrollIntoViewIfNeeded();
+  await trigger.click();
+  const caption = page.locator('#image-lightbox [data-lightbox-caption]');
+  await expect(caption).toBeVisible();
+  await expect(caption.locator('.work-caption__description')).toHaveText(logo.description!);
+  await expect(caption.locator('.work-caption__date')).toHaveText(`作成日 ${logo.date}`);
+  await expect(caption.locator('.work-caption__tag')).toHaveText(logo.tags);
+  const link = caption.locator('.work-caption__link');
+  await expect(link).toHaveAttribute('href', logo.link);
+  await expect(link).toHaveAttribute('target', '_blank');
+  if (site) await expect(link).toHaveText(`${site.title} を開く`);
+
+  // 説明（リンク）は画像の下にあり、画面内に収まる
+  const imgBox = (await page.locator('#image-lightbox [data-lightbox-img]').boundingBox())!;
+  const captionBox = (await caption.boundingBox())!;
+  expect(captionBox.y).toBeGreaterThanOrEqual(imgBox.y + imgBox.height);
+  expect(captionBox.y + captionBox.height).toBeLessThanOrEqual(page.viewportSize()!.height);
+
+  // 説明の無い画像は作成日とタグだけを出す
+  const plain = data.find((item) => item.type === 'image' && !item.description)!;
+  await page.keyboard.press('Escape');
+  await page.locator(`.gallery-item[data-index="${plain.index}"] [data-lightbox-trigger]`).click();
+  await expect(caption.locator('.work-caption__description')).toHaveCount(0);
+  await expect(caption.locator('.work-caption__link')).toHaveCount(0);
+  await expect(caption.locator('.work-caption__date')).toHaveText(`作成日 ${plain.date}`);
+});
+
+test('Web サイトは大きな枠に埋め込まれ、クリックするとその場で操作できる', async ({ page }, testInfo) => {
   const site = data.find((item) => item.type === 'site');
   test.skip(!site, 'Web サイトの作品が無い');
   if (site?.type !== 'site') return;
@@ -218,13 +253,23 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
   });
   expect(itemWidth).toBeGreaterThan(gridWidth / columns);
 
-  // 操作前はサイトにクリックが届かない
+  const button = page.frameLocator(`.gallery-item[data-index="${site.index}"] iframe`).locator('#b');
+
+  // マウスで操作する端末は、最初から枠の中をそのまま操作できる（「操作する」は出さない）
+  if (testInfo.project.name !== 'mobile') {
+    await expect(frame).toHaveCSS('pointer-events', 'auto');
+    await expect(item.locator('[data-embed-activate]')).toBeHidden();
+    await button.click();
+    await expect(button).toHaveText('押された');
+    return;
+  }
+
+  // 指で操作する端末は、縦スクロールを奪わないよう「操作する」を押すまでサイトにタップが届かない
   await expect(frame).toHaveCSS('pointer-events', 'none');
   await item.locator('[data-embed-activate]').click();
   await expect(embed).toHaveClass(/is-active/);
   await expect(frame).toHaveCSS('pointer-events', 'auto');
 
-  const button = page.frameLocator(`.gallery-item[data-index="${site.index}"] iframe`).locator('#b');
   await button.click();
   await expect(button).toHaveText('押された');
 
@@ -240,18 +285,16 @@ test('Web サイトは大きな枠に埋め込まれ、クリックするとそ�
   await expect(embed).not.toHaveClass(/is-active/);
 });
 
-test('Web サイトは画面に近づくまで読み込まず、届くまでは画面写真かタイトルを見せる', async ({ page }) => {
+test('Web サイトは最初から読み込み、届くまでは画面写真かタイトルを見せる', async ({ page }) => {
   const site = data.find((item) => item.type === 'site' && item.poster);
   const bare = data.find((item) => item.type === 'site' && !item.poster);
   test.skip(site?.type !== 'site', '画面写真つきの Web サイトの作品が無い');
   if (site?.type !== 'site') return;
 
   // サイトの応答を止めておき、読み込み中の見た目を確かめる
-  let requested = false;
   let respond = () => {};
   const responded = new Promise<void>((resolve) => (respond = resolve));
   await page.route(site.url, async (route) => {
-    requested = true;
     await responded;
     await route.fulfill({ contentType: 'text/html; charset=utf-8', body: SITE_STUB });
   });
@@ -261,13 +304,11 @@ test('Web サイトは画面に近づくまで読み込まず、届くまでは�
   const frame = item.locator('iframe');
   const poster = item.locator('[data-embed-poster]');
 
-  // 末尾にあるので、開いた直後はまだ読み込まない
-  await expect(frame).not.toHaveAttribute('src');
-  expect(requested).toBe(false);
-
-  // 近づくと読み込みを始め、届くまでは画面写真を見せる（ページは透明）
-  await item.scrollIntoViewIfNeeded();
+  // 末尾にあってもスクロールを待たずに読み込みを始める
   await expect(frame).toHaveAttribute('src', site.url);
+
+  // 届くまでは画面写真を見せる（ページは透明）
+  await item.scrollIntoViewIfNeeded();
   await expect(poster).toBeVisible();
   await expect.poll(() => poster.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(frame).toHaveCSS('opacity', '0');
@@ -307,7 +348,7 @@ test('Web サイトはクリックで全画面になり、左右の矢印でサ�
   const second = media[firstIndex + 1];
   if (first.type !== 'site' || !second) return;
   const openFirst = () =>
-    page.locator(`.gallery-item[data-index="${first.index}"] .embed__viewport [data-embed-expand]`).click();
+    page.locator(`.gallery-item[data-index="${first.index}"] .embed__toolbar [data-embed-expand]`).click();
 
   await openFirst();
   await expect(viewer).toBeVisible();
@@ -320,6 +361,10 @@ test('Web サイトはクリックで全画面になり、左右の矢印でサ�
   await expect(viewer.locator('[data-viewer-poster]')).toBeVisible({ visible: Boolean(first.poster) });
   await expect(frame).toHaveClass(/is-loaded/);
   await expect(viewer.locator('[data-viewer-title]')).toHaveText(first.title);
+  // 説明（サイトは alt）・作成日・タグを下に出す
+  const viewerCaption = viewer.locator('[data-viewer-caption]');
+  await expect(viewerCaption.locator('.work-caption__description')).toHaveText(first.description ?? first.alt);
+  await expect(viewerCaption.locator('.work-caption__date')).toHaveText(`作成日 ${first.date}`);
   await expect(viewer.locator('[data-viewer-position]')).toHaveText(`${firstIndex + 1} / ${media.length}`);
   if (firstIndex === 0) await expect(viewer.locator('[data-viewer-prev]')).toBeDisabled();
   else await expect(viewer.locator('[data-viewer-prev]')).toBeEnabled();

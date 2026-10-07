@@ -105,3 +105,16 @@ export const HIDDEN_FILTER_TAGS = new Set([
 export function filterTagsByUsage(items: readonly { tags: readonly string[] }[]): string[] {
   return tagsByUsage(items).filter((tag) => !HIDDEN_FILTER_TAGS.has(tag as never));
 }
+
+/** 拡大表示の下に出す説明。省略時、Web サイトは alt（何ができるサイトかの説明文）を使う */
+export function workDescription(work: { type: string; alt: string; description?: string }): string | undefined {
+  return work.description ?? (work.type === 'site' ? work.alt : undefined);
+}
+
+/** link 先が展示中の Web サイトなら、そのサイトのタイトルを返す（リンクの文言に使う） */
+export function linkedSiteTitle(
+  link: string,
+  works: readonly { type: string; title: string; url?: string }[],
+): string | undefined {
+  return works.find((work) => work.type === 'site' && work.url === link)?.title;
+}

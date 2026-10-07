@@ -67,6 +67,7 @@
   --color-media-overlay: color-mix(in srgb, var(--color-black) 30%, transparent);
   --color-scrim: color-mix(in srgb, var(--color-black) 50%, transparent);
   --color-scrim-strong: color-mix(in srgb, var(--color-black) 90%, transparent);
+  --color-on-scrim: var(--color-white); /* 拡大表示の暗い背景に載せる文字 */
 
   /* ---- 文字 ---- */
   --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Hiragino Sans',
