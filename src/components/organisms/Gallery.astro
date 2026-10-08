@@ -3,6 +3,7 @@
 // 見た目の部品は atoms / molecules を組み合わせ、文言（日本語）はここで渡す。
 import CoverButton from "../atoms/CoverButton.astro";
 import Tile from "../atoms/Tile.astro";
+import TagButton from "../atoms/TagButton.astro";
 import EmbedFrame from "../molecules/EmbedFrame.astro";
 import EmbedViewer from "../molecules/EmbedViewer.astro";
 import Lightbox from "../molecules/Lightbox.astro";
@@ -33,6 +34,7 @@ const captionOf = (entry: (typeof entries)[number]): WorkCaption => {
     description: workDescription(entry),
     link: entry.link ? { href: entry.link, label: linkTitle ? `${linkTitle} を開く` : "リンクを開く" } : undefined,
     tags: entry.tags,
+    filterLabel: "{tag} をフィルターに追加",
   };
 };
 ---
@@ -114,6 +116,10 @@ const captionOf = (entry: (typeof entries)[number]): WorkCaption => {
     }
   </div>
 </section>
+
+<template data-tag-button-template>
+  <TagButton label="" tone="neutral" filled data-filter-tag="" />
+</template>
 
 <Lightbox id={LIGHTBOX_ID} closeLabel="閉じる" prevLabel="前の画像" nextLabel="次の画像" />
 <EmbedViewer
@@ -299,6 +305,17 @@ const captionOf = (entry: (typeof entries)[number]): WorkCaption => {
   tagFilter.addEventListener("multiselect-change", (e) => {
     state.selectedTags = (e as CustomEvent<{ values: string[] }>).detail.values;
     layout();
+  });
+
+  document.addEventListener("click", (e) => {
+    const button = (e.target as HTMLElement).closest<HTMLElement>("[data-filter-tag]");
+    const tag = button?.dataset.filterTag;
+    if (!tag) return;
+    tagFilter.dispatchEvent(
+      new CustomEvent("multiselect-add", {
+        detail: { value: tag, label: tag, tone: button.dataset.tone },
+      }),
+    );
   });
 
   sortSelect.addEventListener("singleselect-change", (e) => {
