@@ -1,11 +1,10 @@
-// 作品の説明（説明文・リンク・作成日・タグ）を拡大表示の下に描く。Lightbox と EmbedViewer で共通に使う。
-// 文言（「作成日」やリンクの文言）は呼び出し側（organism）が渡す。見た目は work-caption.css。
+// 作品の説明（説明文・リンク・タグ）を拡大表示の下に描く。Lightbox と EmbedViewer で共通に使う。
+// タグ色はフィルターと同じ tagTone() → tag-tones.css → tokens.css を使う。
+import { tagTone } from "../../lib/tag-visuals";
 
 export interface WorkCaption {
   description?: string;
   link?: { href: string; label: string };
-  date?: string;
-  dateLabel?: string;
   tags?: string[];
 }
 
@@ -32,8 +31,11 @@ export function renderWorkCaption(container: HTMLElement, caption: WorkCaption |
     container.append(a);
   }
   const meta = el("div", "work-caption__meta");
-  if (caption.date) meta.append(el("span", "work-caption__date", `${caption.dateLabel ?? ""} ${caption.date}`.trim()));
-  for (const tag of caption.tags ?? []) meta.append(el("span", "work-caption__tag", tag));
+  for (const tag of caption.tags ?? []) {
+    const tagEl = el("span", "work-caption__tag tag-pill tag-pill--filled", tag);
+    tagEl.dataset.tone = tagTone(tag);
+    meta.append(tagEl);
+  }
   if (meta.childElementCount > 0) container.append(meta);
   container.hidden = container.childElementCount === 0;
 }

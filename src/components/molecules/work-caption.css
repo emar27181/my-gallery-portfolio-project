@@ -1,3 +1,5 @@
+@import "../../styles/tag-pill.css";
+
 /* 作品の説明（work-caption.ts が描く）。色は置かれた場所の文字色を継ぐ（拡大画像の暗い背景・全画面表示の面の両方で使う） */
 .work-caption {
   display: flex;
@@ -23,12 +25,4 @@
   gap: var(--space-4) var(--space-6);
   color: color-mix(in srgb, currentColor 75%, transparent);
   font-size: var(--font-size-caption);
-}
-.work-caption__date {
-  margin-right: var(--space-4);
-}
-.work-caption__tag {
-  padding: 0 var(--space-8);
-  border: var(--border-width) solid color-mix(in srgb, currentColor 40%, transparent);
-  border-radius: var(--radius-pill);
 }
