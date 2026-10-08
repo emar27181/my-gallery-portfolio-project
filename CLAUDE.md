@@ -95,7 +95,8 @@
 - 選択済みタグはボタン直下に小さなチップで表示し、×ボタンで個別削除可能。「全て」で一括解除する
 - タグの色分けは `src/lib/tag-visuals.ts` の `TAG_TONES` を唯一の対応表とする。色値は `src/styles/tokens.css` の `--color-tag-*`、tone→token対応は `src/styles/tag-tones.css` に置き、コンポーネントへタグ名や色値をハードコードしない。例: `VALORANT = red`
 - タグ候補は未選択でも意味色を薄く敷き、ONでは同じ色を全面に強く表示する。選択済みチップもON色を使う
-- タグの見た目（高さ・padding・角丸・文字サイズ・色）は `src/styles/tag-pill.css` を唯一の定義元にする。検索フィルター候補・選択済みタグ・拡大表示下のタグで同じクラスを使い、個別CSSを持たない
+- タグボタンは atom の `src/components/atoms/TagButton.astro` を唯一の表示部品にする。検索フィルター候補と拡大表示下のタグは必ずこの同じ部品を使う。高さ・padding・角丸・文字サイズ・色は `src/styles/tag-pill.css` に一元化し、個別CSSを持たない
+- 拡大表示下のタグを押すと、そのタグを現在のANDフィルターへ追加する。フィルター候補に通常表示しない詳細タグでも、拡大表示から追加した場合は選択済みタグとして表示・解除できる
 - 拡大表示のタグもフィルターと同じ `TAG_TONES` / `tag-tones.css` / `--color-tag-*` を使う。見た目はON状態と同じ塗りつぶし＋ `--tag-on-color` とし、別の色定義を作らない
 - **並び替え機能**
   - 常時ラベル「並び替え:」は出さず、Lucide ArrowUpDown＋現在の選択値＋ChevronDownだけのコンパクトなピル型selectにする。44pxのタップ領域は維持する

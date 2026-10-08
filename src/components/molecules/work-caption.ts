@@ -6,6 +6,7 @@ export interface WorkCaption {
   description?: string;
   link?: { href: string; label: string };
   tags?: string[];
+  filterLabel?: string;
 }
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string) => {
@@ -31,9 +32,14 @@ export function renderWorkCaption(container: HTMLElement, caption: WorkCaption |
     container.append(a);
   }
   const meta = el("div", "work-caption__meta");
+  const tagTemplate = document.querySelector<HTMLTemplateElement>("[data-tag-button-template]");
   for (const tag of caption.tags ?? []) {
-    const tagEl = el("span", "work-caption__tag tag-pill tag-pill--filled", tag);
+    const tagEl = tagTemplate?.content.firstElementChild?.cloneNode(true) as HTMLButtonElement | undefined;
+    if (!tagEl) continue;
+    tagEl.textContent = tag;
     tagEl.dataset.tone = tagTone(tag);
+    tagEl.dataset.filterTag = tag;
+    tagEl.setAttribute("aria-label", (caption.filterLabel ?? "{tag}").replace("{tag}", tag));
     meta.append(tagEl);
   }
   if (meta.childElementCount > 0) container.append(meta);

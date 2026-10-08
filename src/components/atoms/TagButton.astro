@@ -1,0 +1,25 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import Button from "./Button.astro";
+import type { TagTone } from "../../lib/tag-visuals";
+import "../../styles/tag-pill.css";
+
+interface Props extends HTMLAttributes<"button"> {
+  label?: string;
+  tone?: TagTone;
+  filled?: boolean;
+}
+
+const { label = "", tone = "neutral", filled = false, class: className, ...rest } = Astro.props;
+---
+
+<Button
+  class:list={["tag-button", "tag-pill", "tag-pill--interactive", { "tag-pill--filled": filled }, className]}
+  variant="ghost"
+  size="sm"
+  shape="pill"
+  data-tone={tone}
+  {...rest}
+>
+  <slot>{label}</slot>
+</Button>

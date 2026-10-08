@@ -3,13 +3,15 @@
 // 選択肢と文言はすべて props で受け取り、選択が変わると root に "multiselect-change"
 // （detail.values: 選択中の値の配列）を送る。何を絞り込むかは呼び出し側が決める。
 import Button from "../atoms/Button.astro";
+import TagButton from "../atoms/TagButton.astro";
 import Icon from "../atoms/Icon.astro";
 import RemovableChip from "./RemovableChip.astro";
+import type { TagTone } from "../../lib/tag-visuals";
 import "./selection-menu.css";
 
 interface Props {
   id: string;
-  options: readonly { value: string; label: string; tone?: string }[];
+  options: readonly { value: string; label: string; tone?: TagTone }[];
   placeholder: string;
   /** 全解除の選択肢の文言 */
   allLabel: string;
@@ -36,21 +38,17 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
   </Button>
 
   <div class="selection-menu__menu" id={`${id}-menu`} role="listbox" aria-multiselectable="true" data-multiselect-menu hidden>
-    <Button class="selection-menu__option tag-pill tag-pill--interactive" variant="ghost" size="sm" shape="pill" role="option" aria-selected="true" data-option="" data-tone="neutral">{allLabel}</Button>
+    <TagButton class="selection-menu__option" label={allLabel} tone="neutral" role="option" aria-selected="true" data-option="" />
     {
       options.map((option) => (
-        <Button
-          class="selection-menu__option tag-pill tag-pill--interactive"
-          variant="ghost"
-          size="sm"
-          shape="pill"
+        <TagButton
+          class="selection-menu__option"
+          label={option.label}
+          tone={option.tone}
           role="option"
           aria-selected="false"
           data-option={option.value}
-          data-tone={option.tone}
-        >
-          {option.label}
-        </Button>
+        />
       ))
     }
   </div>
@@ -89,12 +87,13 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     const box = root.querySelector<HTMLElement>("[data-multiselect-box]")!;
     const menu = root.querySelector<HTMLElement>("[data-multiselect-menu]")!;
     const chips = root.querySelector<HTMLElement>("[data-multiselect-chips]")!;
-    const placeholder = root.querySelector<HTMLElement>("[data-multiselect-placeholder]")!;
     const count = root.querySelector<HTMLElement>("[data-multiselect-count]")!;
     const template = root.querySelector<HTMLTemplateElement>("template[data-multiselect-chip]")!;
     const options = [...menu.querySelectorAll<HTMLElement>("[data-option]")];
     const optionOf = (value: string) => options.find((o) => o.dataset.option === value);
-    const labelOf = (value: string) => optionOf(value)?.textContent?.trim() ?? value;
+    const external = new Map<string, { label: string; tone?: string }>();
+    const labelOf = (value: string) => optionOf(value)?.textContent?.trim() ?? external.get(value)?.label ?? value;
+    const toneOf = (value: string) => optionOf(value)?.dataset.tone ?? external.get(value)?.tone;
 
     let selected: string[] = [];
 
@@ -108,7 +107,7 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
         ...selected.map((value) => {
           const chip = (template.content.cloneNode(true) as DocumentFragment).firstElementChild as HTMLElement;
           chip.querySelector("[data-chip-label]")!.textContent = labelOf(value);
-          const tone = optionOf(value)?.dataset.tone;
+          const tone = toneOf(value);
           if (tone) chip.dataset.tone = tone;
           const remove = chip.querySelector<HTMLElement>("[data-chip-remove]")!;
           const name = (root.dataset.removeLabel ?? "").replace("{label}", labelOf(value));
@@ -118,7 +117,6 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
           return chip;
         }),
       );
-      placeholder.textContent = "タグ";
       count.hidden = selected.length === 0;
       count.textContent = String(selected.length);
       chips.hidden = selected.length === 0;
@@ -136,6 +134,14 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     };
 
     box.addEventListener("click", () => setOpen(menu.hidden));
+
+    root.addEventListener("multiselect-add", (e) => {
+      const detail = (e as CustomEvent<{ value: string; label?: string; tone?: string }>).detail;
+      if (!detail?.value || selected.includes(detail.value)) return;
+      if (!optionOf(detail.value)) external.set(detail.value, { label: detail.label ?? detail.value, tone: detail.tone });
+      commit([...selected, detail.value]);
+      setOpen(false);
+    });
 
     chips.addEventListener("click", (e) => {
       const remove = (e.target as HTMLElement).closest<HTMLElement>("[data-chip-remove]");
