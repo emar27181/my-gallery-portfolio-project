@@ -26,14 +26,12 @@ const youtubeEmbed = (videoId: string) =>
   `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=0&vq=hd1080`;
 const youtubeWatch = (videoId: string) => `https://www.youtube.com/watch?v=${videoId}`;
 
-/** 拡大表示の下に出す説明（説明文・関連リンク・作成日・タグ）。文言はここで決める */
+/** 拡大表示の下に出す説明（説明文・関連リンク・タグ）。文言はここで決める */
 const captionOf = (entry: (typeof entries)[number]): WorkCaption => {
   const linkTitle = entry.link ? linkedSiteTitle(entry.link, entries) : undefined;
   return {
     description: workDescription(entry),
     link: entry.link ? { href: entry.link, label: linkTitle ? `${linkTitle} を開く` : "リンクを開く" } : undefined,
-    date: entry.date,
-    dateLabel: "作成日",
     tags: entry.tags,
   };
 };
