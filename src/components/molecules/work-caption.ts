@@ -32,7 +32,7 @@ export function renderWorkCaption(container: HTMLElement, caption: WorkCaption |
   }
   const meta = el("div", "work-caption__meta");
   for (const tag of caption.tags ?? []) {
-    const tagEl = el("span", "work-caption__tag", tag);
+    const tagEl = el("span", "work-caption__tag tag-pill tag-pill--filled", tag);
     tagEl.dataset.tone = tagTone(tag);
     meta.append(tagEl);
   }
