@@ -6,11 +6,12 @@ import Button from "../atoms/Button.astro";
 import TagButton from "../atoms/TagButton.astro";
 import Icon from "../atoms/Icon.astro";
 import RemovableChip from "./RemovableChip.astro";
+import type { TagTone } from "../../lib/tag-visuals";
 import "./selection-menu.css";
 
 interface Props {
   id: string;
-  options: readonly { value: string; label: string; tone?: string }[];
+  options: readonly { value: string; label: string; tone?: TagTone }[];
   placeholder: string;
   /** 全解除の選択肢の文言 */
   allLabel: string;
@@ -86,7 +87,6 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
     const box = root.querySelector<HTMLElement>("[data-multiselect-box]")!;
     const menu = root.querySelector<HTMLElement>("[data-multiselect-menu]")!;
     const chips = root.querySelector<HTMLElement>("[data-multiselect-chips]")!;
-    const placeholder = root.querySelector<HTMLElement>("[data-multiselect-placeholder]")!;
     const count = root.querySelector<HTMLElement>("[data-multiselect-count]")!;
     const template = root.querySelector<HTMLTemplateElement>("template[data-multiselect-chip]")!;
     const options = [...menu.querySelectorAll<HTMLElement>("[data-option]")];
