@@ -1,4 +1,4 @@
-@import "../../styles/tag-tones.css";
+@import "../../styles/tag-pill.css";
 
 /* 作品の説明（work-caption.ts が描く）。色は置かれた場所の文字色を継ぐ（拡大画像の暗い背景・全画面表示の面の両方で使う） */
 .work-caption {
@@ -25,10 +25,4 @@
   gap: var(--space-4) var(--space-6);
   color: color-mix(in srgb, currentColor 75%, transparent);
   font-size: var(--font-size-caption);
-}
-.work-caption__tag {
-  padding: 0 var(--space-8);
-  border-radius: var(--radius-pill);
-  background-color: var(--tag-color);
-  color: var(--tag-on-color);
 }
