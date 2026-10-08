@@ -265,6 +265,22 @@ test('画像を切り替えたとき、次の画像が届くまで前の画像�
   await expect(img).toHaveCSS('opacity', '1');
 });
 
+test('拡大表示下のタグを押すとANDフィルターへ追加できる', async ({ page }) => {
+  const target = data.find((item) => item.type === 'image' && item.tags.length > 0)!;
+  const tag = target.tags[0];
+  await openGallery(page);
+  await page.locator(`.gallery-item[data-index="${target.index}"] [data-lightbox-trigger]`).click();
+
+  const captionTag = page.locator('#image-lightbox .work-caption__tag').filter({ hasText: tag }).first();
+  await expect(captionTag).toHaveClass(/tag-button/);
+  await captionTag.click();
+
+  await expect(page.locator('[data-chip-label]').filter({ hasText: tag })).toHaveCount(1);
+  await page.keyboard.press('Escape');
+  const expected = data.filter((item) => item.tags.includes(tag));
+  await expect(page.locator(SHOWN)).toHaveCount(expected.length);
+});
+
 test('拡大表示の下に説明・色付きタグを出し、ロゴには対応するサイトへのリンクを付ける', async ({ page }) => {
   const logo = data.find((item) => item.type === 'image' && item.link);
   test.skip(logo?.type !== 'image', 'リンク付きの画像が無い');
@@ -281,7 +297,9 @@ test('拡大表示の下に説明・色付きタグを出し、ロゴには対�
   await expect(caption.locator('.work-caption__date')).toHaveCount(0);
   await expect(caption.locator('.work-caption__tag')).toHaveText(logo.tags);
   for (const [i, tag] of logo.tags.entries()) {
-    await expect(caption.locator('.work-caption__tag').nth(i)).toHaveAttribute('data-tone', tagTone(tag));
+    const captionTag = caption.locator('.work-caption__tag').nth(i);
+    await expect(captionTag).toHaveAttribute('data-tone', tagTone(tag));
+    await expect(captionTag).toHaveClass(/tag-button/);
   }
   const link = caption.locator('.work-caption__link');
   await expect(link).toHaveAttribute('href', logo.link);
