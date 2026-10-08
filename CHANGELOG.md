@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### 拡大表示のタグ色をフィルターと統一
+- 拡大表示のタグを、検索フィルターと同じ `TAG_TONES → tag-tones.css → tokens.css` の色定義へ統一。
+- 拡大表示では選択済みタグと同じ塗りつぶし表示にし、文字色も共通の `--tag-on-color` を使用。
+- 後から追加されていた「作成日」表示は拡大表示から外した。作品データの `date` は並び替え用として保持する。
+
 ### 自作サイトのロゴに AI タグ
 - AI で生成したロゴ 6 点（Memorio・Music Atlas・TAKUS・ThrowFlowDarts・VALORANT Point Viewer・色相・トーン推薦アプリ）に `AI` タグを付けた。
   ゲーム用ポートフォリオと Flex Railway Map のロゴは手描き・自作のため付けない（ユーザー判断）。
