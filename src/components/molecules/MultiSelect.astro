@@ -36,11 +36,11 @@ const { id, options, placeholder, allLabel, removeLabel } = Astro.props;
   </Button>
 
   <div class="selection-menu__menu" id={`${id}-menu`} role="listbox" aria-multiselectable="true" data-multiselect-menu hidden>
-    <Button class="selection-menu__option" variant="ghost" size="sm" shape="pill" role="option" aria-selected="true" data-option="" data-tone="neutral">{allLabel}</Button>
+    <Button class="selection-menu__option tag-pill tag-pill--interactive" variant="ghost" size="sm" shape="pill" role="option" aria-selected="true" data-option="" data-tone="neutral">{allLabel}</Button>
     {
       options.map((option) => (
         <Button
-          class="selection-menu__option"
+          class="selection-menu__option tag-pill tag-pill--interactive"
           variant="ghost"
           size="sm"
           shape="pill"
