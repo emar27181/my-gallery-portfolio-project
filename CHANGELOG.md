@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### TagButton の型チェック修正
+- MultiSelect の tag tone 型を `string` ではなく共通の `TagTone` に統一し、TagButton へ安全に渡せるよう修正。
+- 不要になった placeholder DOM 参照を削除。
+
 ### 拡大表示のタグから直接フィルター
 - 検索フィルター候補と拡大表示下のタグを、新しい atom `TagButton.astro` に統一。CSSだけでなく実際の表示コンポーネントも共通化。
 - 拡大表示下のタグを押すと現在のANDフィルターへ追加できる。通常の候補一覧に出さない詳細タグも、この経路では選択済みタグとして保持・解除可能。
