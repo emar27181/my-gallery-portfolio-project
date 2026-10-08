@@ -1,0 +1,33 @@
+@import "./tag-tones.css";
+
+/*
+ * タグの共通見た目。
+ * 検索フィルター候補・選択済みタグ・拡大表示下のタグはすべてこの定義を使う。
+ */
+.tag-pill[data-tone] {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: var(--space-4);
+  min-height: var(--control-height-sm);
+  padding: 0 var(--space-10);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-pill);
+  background-color: color-mix(in srgb, var(--tag-color) 12%, var(--color-surface));
+  color: var(--tag-color);
+  font-family: inherit;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  white-space: nowrap;
+}
+
+.tag-pill--interactive[data-tone]:hover {
+  background-color: color-mix(in srgb, var(--tag-color) 22%, var(--color-surface));
+}
+
+.tag-pill--filled[data-tone],
+.tag-pill[data-tone][aria-selected="true"] {
+  background-color: var(--tag-color);
+  color: var(--tag-on-color);
+}
