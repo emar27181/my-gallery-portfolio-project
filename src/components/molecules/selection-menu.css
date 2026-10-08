@@ -1,4 +1,4 @@
-@import "../../styles/tag-tones.css";
+@import "../../styles/tag-pill.css";
 
 .selection-menu {
   position: relative;
@@ -49,28 +49,6 @@
   box-shadow: var(--shadow-md);
 }
 
-.selection-menu__option {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-tight);
-}
-
-.selection-menu__option[data-tone] {
-  border-color: transparent;
-  background-color: color-mix(in srgb, var(--tag-color) 12%, var(--color-surface));
-  color: var(--tag-color);
-}
-
-.selection-menu__option[data-tone]:hover {
-  background-color: color-mix(in srgb, var(--tag-color) 22%, var(--color-surface));
-}
-
-.selection-menu__option[data-tone][aria-selected="true"] {
-  background-color: var(--tag-color);
-  color: var(--tag-on-color);
-}
-
-
 .selection-menu--end .selection-menu__menu {
   left: auto;
   right: 0;
@@ -80,8 +58,3 @@
   max-width: calc(100vw - var(--space-16) * 2);
 }
 
-.selection-menu__option {
-  flex: 0 0 auto;
-  min-height: var(--control-height-sm);
-  padding-inline: var(--space-10);
-}
